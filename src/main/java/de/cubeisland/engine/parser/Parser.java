@@ -22,6 +22,17 @@
  */
 package de.cubeisland.engine.parser;
 
-public class Parser
+public class Parser<T>
 {
+    private final Grammar grammar;
+
+    public Parser(Grammar grammar)
+    {
+        this.grammar = grammar;
+    }
+
+    public T parse(TokenStream tokens) {
+        // TODO implement me
+        return null;
+    }
 }
