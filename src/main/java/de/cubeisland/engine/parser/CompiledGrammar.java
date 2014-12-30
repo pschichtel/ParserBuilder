@@ -1,20 +1,25 @@
 package de.cubeisland.engine.parser;
 
-import java.util.List;
 import java.util.Set;
-import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.token.TokenSpec;
 
 public class CompiledGrammar extends Grammar
 {
+    private final Set<ParseState> states;
     private final GotoTable gotoTable;
     private final ActionTable actionTable;
 
-    public CompiledGrammar(Set<Variable> variable, Set<TokenSpec> tokens, List<Rule> rules, Rule startRule, GotoTable gotos, ActionTable actions)
+
+    public CompiledGrammar(AugmentedGrammar g, Set<ParseState> states, GotoTable gotos, ActionTable actions)
     {
-        super(variable, tokens, rules, startRule);
+        super(g.getVariables(), g.getTokens(), g.getRules(), g.getStart());
+        this.states = states;
         this.gotoTable = gotos;
         this.actionTable = actions;
+    }
+
+    public Set<ParseState> getStates()
+    {
+        return states;
     }
 
     public GotoTable getGotoTable()

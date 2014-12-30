@@ -1,6 +1,6 @@
 package de.cubeisland.engine.parser.action;
 
-public class Fork implements Action
+public class Fork extends Action
 {
     private final Action left;
     private final Action right;
@@ -19,5 +19,11 @@ public class Fork implements Action
     public Action getRight()
     {
         return right;
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString() + "(" + left + ", " + right + ")";
     }
 }

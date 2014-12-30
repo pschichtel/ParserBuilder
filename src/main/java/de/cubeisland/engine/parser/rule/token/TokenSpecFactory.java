@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser.token;
+package de.cubeisland.engine.parser.rule.token;
 
 import java.util.regex.Pattern;
 

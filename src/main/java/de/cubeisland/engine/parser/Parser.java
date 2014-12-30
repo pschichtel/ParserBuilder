@@ -22,19 +22,20 @@
  */
 package de.cubeisland.engine.parser;
 
-import de.cubeisland.engine.parser.token.TokenStream;
+import de.cubeisland.engine.parser.rule.token.TokenStream;
 
-public class Parser<T>
+public class Parser
 {
-    private final Grammar grammar;
+    private final CompiledGrammar grammar;
 
-    public Parser(Grammar grammar)
+    public Parser(CompiledGrammar grammar)
     {
         this.grammar = grammar;
     }
 
-    public T parse(TokenStream tokens) {
+    public boolean parse(TokenStream tokens)
+    {
         // TODO implement me
-        return null;
+        return false;
     }
 }

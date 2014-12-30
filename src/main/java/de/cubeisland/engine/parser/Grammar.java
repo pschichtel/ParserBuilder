@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
-import de.cubeisland.engine.parser.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
@@ -17,14 +17,19 @@ public class Grammar
     private final Set<Variable> variables;
     private final Set<TokenSpec> tokens;
     private final List<Rule> rules;
-    private final Rule startRule;
+    private final Variable start;
 
-    public Grammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Rule startRule)
+    public Grammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
     {
         this.variables = unmodifiableSet(variables);
         this.tokens = unmodifiableSet(tokens);
         this.rules = unmodifiableList(rules);
-        this.startRule = startRule;
+        this.start = start;
+    }
+
+    public AugmentedGrammar augment()
+    {
+        return new AugmentedGrammar(variables, tokens, rules, start);
     }
 
     public Set<Variable> getVariables()
@@ -42,33 +47,45 @@ public class Grammar
         return rules;
     }
 
-    public Rule getStartRule()
+    public Variable getStart()
     {
-        return startRule;
+        return start;
     }
 
-    public static Builder build()
+    public static Builder with(Variable head, RuleElement... elements)
     {
-        return new Builder();
+        return new Builder().and(head, elements);
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder out = new StringBuilder(getClass().getSimpleName() + "(\n");
+
+        for (final TokenSpec token : getTokens())
+        {
+            out.append('\t').append(token).append('\n');
+        }
+
+        for (final Rule rule : getRules())
+        {
+            out.append('\t').append(rule).append('\n');
+        }
+        return out.append(")").toString();
     }
 
     public static final class Builder
     {
         private final List<Rule> rules = new ArrayList<Rule>();
 
-        public Builder with(Variable head, RuleElement... elements)
+        public Builder and(Variable head, RuleElement... elements)
         {
             this.rules.add(new Rule(head, elements));
             return this;
         }
 
-        public Builder and(Variable head, RuleElement... elements)
-        {
-            return this.with(head, elements);
-        }
-
-        public Grammar get() {
-            return new Grammar(variables(rules), tokens(rules), rules, rules.get(0));
+        public Grammar startingWith(Variable start) {
+            return new Grammar(variables(rules), tokens(rules), rules, start);
         }
 
         private static Set<Variable> variables(List<Rule> rules)

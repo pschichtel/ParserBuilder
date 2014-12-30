@@ -2,7 +2,7 @@ package de.cubeisland.engine.parser.action;
 
 import de.cubeisland.engine.parser.rule.Rule;
 
-public class Reduce implements Action
+public class Reduce extends Action
 {
     private final Rule rule;
 
@@ -14,5 +14,11 @@ public class Reduce implements Action
     public Rule getRule()
     {
         return rule;
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString() + "(" + rule + ")";
     }
 }

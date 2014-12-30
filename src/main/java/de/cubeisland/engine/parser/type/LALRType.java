@@ -1,13 +1,13 @@
 package de.cubeisland.engine.parser.type;
 
+import de.cubeisland.engine.parser.AugmentedGrammar;
 import de.cubeisland.engine.parser.CompiledGrammar;
-import de.cubeisland.engine.parser.Grammar;
 
 public class LALRType extends LRType
 {
-    public CompiledGrammar compile(Grammar grammar)
+    public CompiledGrammar compile(AugmentedGrammar g)
     {
-        CompiledGrammar cg = super.compile(grammar);
+        CompiledGrammar cg = super.compile(g);
         return optimize(cg);
     }
 

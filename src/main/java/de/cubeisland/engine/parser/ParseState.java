@@ -1,27 +1,23 @@
 package de.cubeisland.engine.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-import de.cubeisland.engine.parser.rule.MarkedRule;
+import java.util.Set;
+import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
+
+import static java.util.Collections.unmodifiableSet;
 
 public class ParseState
 {
     private static volatile short idCounter = 0;
 
-    private final short id;
+    private final short id = idCounter++;
+    private final Set<MarkedRule> rules;
 
+    public ParseState(Set<MarkedRule> rules)
     {
-        this.id = idCounter++;
+        this.rules = unmodifiableSet(rules);
     }
 
-    private final List<MarkedRule> rules;
-
-    public ParseState(List<MarkedRule> rules)
-    {
-        this.rules = new ArrayList<MarkedRule>(rules);
-    }
-
-    public List<MarkedRule> getRules()
+    public Set<MarkedRule> getRules()
     {
         return rules;
     }
@@ -29,5 +25,11 @@ public class ParseState
     public short getId()
     {
         return this.id;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "s" + getId();
     }
 }

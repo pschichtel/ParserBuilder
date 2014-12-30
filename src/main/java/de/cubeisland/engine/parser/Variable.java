@@ -4,7 +4,6 @@ import de.cubeisland.engine.parser.rule.RuleElement;
 
 public class Variable extends RuleElement
 {
-
     public Variable(String name)
     {
         super(name);
@@ -13,6 +12,6 @@ public class Variable extends RuleElement
     @Override
     public String toString()
     {
-        return "Variable(" + getName() + ')';
+        return getClass().getSimpleName() + "(" + getName() + ')';
     }
 }

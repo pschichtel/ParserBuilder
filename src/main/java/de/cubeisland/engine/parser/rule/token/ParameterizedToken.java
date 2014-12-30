@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser.token;
+package de.cubeisland.engine.parser.rule.token;
 
 public class ParameterizedToken<T> implements Token
 {

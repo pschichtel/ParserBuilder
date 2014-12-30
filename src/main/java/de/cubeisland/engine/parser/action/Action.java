@@ -1,5 +1,10 @@
 package de.cubeisland.engine.parser.action;
 
-public interface Action
+public abstract class Action
 {
+    @Override
+    public String toString()
+    {
+        return getClass().getSimpleName();
+    }
 }

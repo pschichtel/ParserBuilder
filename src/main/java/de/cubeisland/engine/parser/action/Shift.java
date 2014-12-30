@@ -2,7 +2,7 @@ package de.cubeisland.engine.parser.action;
 
 import de.cubeisland.engine.parser.ParseState;
 
-public class Shift implements Action
+public class Shift extends Action
 {
     private final ParseState state;
 
@@ -14,5 +14,11 @@ public class Shift implements Action
     public ParseState getState()
     {
         return state;
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString() + "(" + state + ")";
     }
 }

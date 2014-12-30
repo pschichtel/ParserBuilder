@@ -1,12 +1,11 @@
 package de.cubeisland.engine.parser;
 
-import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.token.ParametrizedTokenSpec;
-import de.cubeisland.engine.parser.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;
 
-import static de.cubeisland.engine.parser.token.TokenSpecFactory.simple;
-import static de.cubeisland.engine.parser.token.TokenSpecFactory.parametrized;
+import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
+import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.parametrized;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -28,7 +27,6 @@ public class BuilderTest
         final ParametrizedTokenSpec<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", Integer.class);
 
         Grammar g = Grammar
-            .build()
             .with(expr, expr, ADD, product)
             .and(expr, expr, SUB, product)
             .and(expr, product)
@@ -37,17 +35,9 @@ public class BuilderTest
             .and(product, factor)
             .and(factor, BGN, expr, END)
             .and(factor, NUM)
-            .get();
+            .startingWith(expr);
 
-        for (final TokenSpec token : g.getTokens())
-        {
-            System.out.println(token);
-        }
-
-        for (final Rule rule : g.getRules())
-        {
-            System.out.println(rule);
-        }
+        System.out.println(g);
 
         assertThat("Number of rules does not equal defined rules", g.getRules().size(), is(8));
         assertThat("Number of variables does not equal defined variable", g.getVariables().size(), is(3));
