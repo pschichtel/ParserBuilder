@@ -63,25 +63,11 @@
           <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
           <option name="KEEP_BLANK_LINES_BEFORE_RBRACKET" value="0" />
         </HoconCodeStyleSettings>
-        <JSCodeStyleSettings>
-          <option name="USE_SEMICOLON_AFTER_STATEMENT" value="false" />
-          <option name="ALIGN_OBJECT_PROPERTIES" value="1" />
-          <option name="ALIGN_MULTILINE_VAR_DECLARATION" value="true" />
-        </JSCodeStyleSettings>
         <ScalaCodeStyleSettings>
           <option name="REPLACE_CASE_ARROW_WITH_UNICODE_CHAR" value="true" />
           <option name="REPLACE_MAP_ARROW_WITH_UNICODE_CHAR" value="true" />
           <option name="REPLACE_FOR_GENERATOR_ARROW_WITH_UNICODE_CHAR" value="true" />
         </ScalaCodeStyleSettings>
-        <SqlCodeStyleSettings>
-          <option name="QUOTE_IDENTIFIER" value="1" />
-        </SqlCodeStyleSettings>
-        <XML>
-          <option name="XML_ATTRIBUTE_WRAP" value="0" />
-          <option name="XML_KEEP_BLANK_LINES" value="1" />
-          <option name="XML_KEEP_WHITE_SPACES_INSIDE_CDATA" value="true" />
-          <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
-        </XML>
         <editorconfig>
           <option name="ENABLED" value="false" />
         </editorconfig>
