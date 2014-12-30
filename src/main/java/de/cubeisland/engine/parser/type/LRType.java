@@ -1,5 +1,6 @@
 package de.cubeisland.engine.parser.type;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,16 +20,14 @@ public class LRType implements GrammarType
 {
     public CompiledGrammar compile(AugmentedGrammar g)
     {
-        Rule start = g.getStartRule();
+        Set<MarkedRule> in = asSet(g.getStartRule().mark());
+        Set<MarkedRule> out = calculateClosure(in);
 
+        Set<ParseState> states = new HashSet<ParseState>();
         Map<ActionTable.Entry, Action> actions = new HashMap<ActionTable.Entry, Action>();
         Map<GotoTable.Entry, ParseState> gotos = new HashMap<GotoTable.Entry, ParseState>();
 
-        Set<ParseState> states = new HashSet<ParseState>();
-        ActionTable actionTable = new ActionTable(actions);
-        GotoTable gotoTable = new GotoTable(gotos);
-
-        return new CompiledGrammar(g, states, gotoTable, actionTable);
+        return new CompiledGrammar(g, states, new GotoTable(gotos), new ActionTable(actions));
     }
 
     protected Set<ParameterizedToken> calculateFollows(Rule rule)
@@ -41,5 +40,10 @@ public class LRType implements GrammarType
         Set<MarkedRule> closure = new HashSet<MarkedRule>(rules);
 
         return closure;
+    }
+
+    protected static <T> Set<T> asSet(T... elements)
+    {
+        return new HashSet<T>(Arrays.asList(elements));
     }
 }

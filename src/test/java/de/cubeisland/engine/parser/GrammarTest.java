@@ -1,7 +1,6 @@
 package de.cubeisland.engine.parser;
 
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static de.cubeisland.engine.parser.AugmentedGrammar.AUGMENTED_START;

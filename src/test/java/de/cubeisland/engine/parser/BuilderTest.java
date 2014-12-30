@@ -4,8 +4,8 @@ import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;
 
-import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.parametrized;
+import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
