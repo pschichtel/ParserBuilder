@@ -1,26 +1,21 @@
-package de.cubeisland.engine.parser;
+package de.cubeisland.engine.parser.grammar;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.token.EndOfFileToken;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
-public class AugmentedGrammar extends Grammar
+public class AugmentedGrammar extends BaseGrammar
 {
     public static final Variable AUGMENTED_START = new AugmentedStartVariable();
 
     public AugmentedGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
     {
         super(augment(variables), tokens, augment(rules, start), AUGMENTED_START);
-    }
-
-    @Override
-    public AugmentedGrammar augment()
-    {
-        return this;
     }
 
     public Rule getStartRule()

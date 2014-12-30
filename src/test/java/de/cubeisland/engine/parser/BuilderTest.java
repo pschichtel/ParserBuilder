@@ -1,5 +1,6 @@
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;

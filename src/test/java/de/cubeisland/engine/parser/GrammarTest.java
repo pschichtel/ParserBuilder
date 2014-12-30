@@ -1,9 +1,11 @@
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
+import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;
 
-import static de.cubeisland.engine.parser.AugmentedGrammar.AUGMENTED_START;
+import static de.cubeisland.engine.parser.grammar.AugmentedGrammar.AUGMENTED_START;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

@@ -1,8 +1,11 @@
-package de.cubeisland.engine.parser;
+package de.cubeisland.engine.parser.grammar;
 
 import java.util.Set;
+import de.cubeisland.engine.parser.ActionTable;
+import de.cubeisland.engine.parser.GotoTable;
+import de.cubeisland.engine.parser.ParseState;
 
-public class CompiledGrammar extends Grammar
+public class CompiledGrammar extends BaseGrammar
 {
     private final Set<ParseState> states;
     private final GotoTable gotoTable;

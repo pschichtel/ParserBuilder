@@ -1,21 +1,14 @@
 package de.cubeisland.engine.parser.rule;
 
-public class RuleElement
-{
-    private static volatile short idCounter = 0;
+import de.cubeisland.engine.parser.Identified;
 
-    private final short id;
+public class RuleElement extends Identified
+{
     private final String name;
 
     public RuleElement(String name)
     {
-        this.id = idCounter++;
         this.name = name;
-    }
-
-    public short getId()
-    {
-        return this.id;
     }
 
     public String getName()

@@ -22,6 +22,7 @@
  */
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.grammar.CompiledGrammar;
 import de.cubeisland.engine.parser.rule.token.TokenStream;
 
 public class Parser
