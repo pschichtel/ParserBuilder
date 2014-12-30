@@ -1,8 +1,9 @@
-package de.cubeisland.engine.parser;
+package de.cubeisland.engine.parser.rule;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import de.cubeisland.engine.parser.Variable;
 
 public class Rule
 {
@@ -27,5 +28,16 @@ public class Rule
     public List<RuleElement> getElements()
     {
         return elements;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder ruleString = new StringBuilder(head.getName()).append(" ->");
+        for (final RuleElement element : elements)
+        {
+            ruleString.append(' ').append(element.getName());
+        }
+        return ruleString.toString();
     }
 }

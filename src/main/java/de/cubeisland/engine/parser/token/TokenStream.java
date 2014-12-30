@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser;
+package de.cubeisland.engine.parser.token;
 
 public class TokenStream
 {

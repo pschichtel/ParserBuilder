@@ -3,4 +3,5 @@
 /.idea/**
 !/.idea/codeStyleSettings.xml
 !/pom.xml
+/target
 !.gitignore

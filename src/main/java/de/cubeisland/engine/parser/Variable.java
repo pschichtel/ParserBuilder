@@ -1,22 +1,18 @@
 package de.cubeisland.engine.parser;
 
-public class Variable
+import de.cubeisland.engine.parser.rule.RuleElement;
+
+public class Variable extends RuleElement
 {
-    private final String name;
 
     public Variable(String name)
     {
-        this.name = name;
-    }
-
-    public String getName()
-    {
-        return this.name;
+        super(name);
     }
 
     @Override
     public String toString()
     {
-        return "Variable(" + this.name + ')';
+        return "Variable(" + getName() + ')';
     }
 }

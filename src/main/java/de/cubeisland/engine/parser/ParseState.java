@@ -2,6 +2,7 @@ package de.cubeisland.engine.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import de.cubeisland.engine.parser.rule.MarkedRule;
 
 public class ParseState
 {

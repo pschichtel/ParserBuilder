@@ -22,6 +22,8 @@
  */
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.token.TokenStream;
+
 public class Parser<T>
 {
     private final Grammar grammar;

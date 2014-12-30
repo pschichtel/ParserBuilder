@@ -1,10 +1,9 @@
-package de.cubeisland.engine.parser.compiler;
+package de.cubeisland.engine.parser.type;
 
 import de.cubeisland.engine.parser.CompiledGrammar;
 import de.cubeisland.engine.parser.Grammar;
-import de.cubeisland.engine.parser.GrammarCompiler;
 
-public class SLRCompiler implements GrammarCompiler
+public class GLRType extends LRType
 {
     public CompiledGrammar compile(Grammar grammar)
     {
