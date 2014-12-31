@@ -16,4 +16,10 @@ public abstract class Identified
     {
         return getId();
     }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        return super.equals(obj);
+    }
 }

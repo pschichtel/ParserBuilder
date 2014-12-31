@@ -1,12 +1,10 @@
 package de.cubeisland.engine.parser.type;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
 import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.rule.token.ParameterizedToken;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 public class SLRType extends LRType

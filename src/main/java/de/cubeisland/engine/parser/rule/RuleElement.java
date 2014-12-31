@@ -30,4 +30,10 @@ public class RuleElement extends Identified
 
         return false;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
 }

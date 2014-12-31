@@ -5,6 +5,10 @@ import de.cubeisland.engine.parser.grammar.CompiledGrammar;
 
 public abstract class CompilationResult
 {
+    protected CompilationResult()
+    {
+    }
+
     public static CompilationResult success(CompiledGrammar grammar)
     {
         return new SuccessfulResult(grammar);

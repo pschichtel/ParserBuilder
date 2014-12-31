@@ -42,7 +42,7 @@ public class Grammar extends BaseGrammar
 
         private static Set<Variable> variables(List<Rule> rules)
         {
-            HashSet<Variable> variables = new HashSet<Variable>();
+            Set<Variable> variables = new HashSet<Variable>();
             for (final Rule rule : rules)
             {
                 variables.add(rule.getHead());

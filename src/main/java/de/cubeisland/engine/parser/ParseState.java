@@ -30,4 +30,36 @@ public class ParseState extends Identified
         out.append(')');
         return out.toString();
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        final ParseState that = (ParseState)o;
+
+        if (!rules.equals(that.rules))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode();
+    }
 }

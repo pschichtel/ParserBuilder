@@ -6,11 +6,10 @@ import de.cubeisland.engine.parser.TestGrammars;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
 import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class LRTypeTest
 {

@@ -14,6 +14,6 @@ public class ParameterizedToken<T> implements Token
     @Override
     public String toString()
     {
-        return spec.getName() + "(" + String.valueOf(value) + ')';
+        return spec.getName() + "(" + value + ')';
     }
 }

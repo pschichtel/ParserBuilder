@@ -4,6 +4,10 @@ import java.util.regex.Pattern;
 
 public class TokenSpecFactory
 {
+    private TokenSpecFactory()
+    {
+    }
+
     public static TokenSpec simple(String name, String pattern)
     {
         return new SimpleTokenSpec(name, pattern);
