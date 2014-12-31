@@ -35,6 +35,6 @@ public class SimpleTokenSpec extends TokenSpec
     @Override
     public String toString()
     {
-        return getName() + " ⇒ " + this.output;
+        return getName() + " ↦ " + this.output;
     }
 }

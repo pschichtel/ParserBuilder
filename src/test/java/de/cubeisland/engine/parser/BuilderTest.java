@@ -26,8 +26,8 @@ public class BuilderTest
 
         System.out.println(g);
 
-        assertThat("Number of rules does not equal defined rules", g.getRules().size(), is(8));
-        assertThat("Number of variables does not equal defined variable", g.getVariables().size(), is(3));
-        assertThat("Number of tokens does not equal defined tokens", g.getTokens().size(), is(7));
+        assertThat("Number of rules does not equal defined rules", g.getRules().size(), is(2));
+        assertThat("Number of variables does not equal defined variable", g.getVariables().size(), is(1));
+        assertThat("Number of tokens does not equal defined tokens", g.getTokens().size(), is(2));
     }
 }
