@@ -4,7 +4,7 @@ import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
-import static de.cubeisland.engine.parser.TestGrammars.SimpleExprTokens.*;
+import static de.cubeisland.engine.parser.TestGrammars.SimpleExpr.*;
 import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.parametrized;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
@@ -12,7 +12,7 @@ import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 public class TestGrammars
 {
 
-    public static class SimpleExprTokens
+    public static class SimpleExpr
     {
         public static final Variable product = new Variable("product");
         public static final Variable factor = new Variable("factor");

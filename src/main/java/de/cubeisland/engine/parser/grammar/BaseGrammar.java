@@ -97,6 +97,7 @@ public abstract class BaseGrammar
     {
         first(variable, 0, firstSet);
     }
+
     private void first(Variable variable, int offset, Set<TokenSpec> firstSet)
     {
         for (final Rule rule : getRulesFor(variable))
@@ -106,7 +107,7 @@ public abstract class BaseGrammar
             {
                 firstSet.add((TokenSpec)first);
             }
-            else if (first instanceof Variable)
+            else if (first instanceof Variable && first != rule.getHead())
             {
                 Variable var = (Variable)first;
                 first(var, firstSet);

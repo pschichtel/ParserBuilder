@@ -9,7 +9,7 @@ import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class BuilderTest
+public class GrammarBuilderTest
 {
     @Test
     public void testBuild() throws Exception

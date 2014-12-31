@@ -1,6 +1,5 @@
 package de.cubeisland.engine.parser.type;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +18,7 @@ import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import de.cubeisland.engine.parser.type.result.CompilationResult;
 
+import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.type.result.CompilationResult.success;
 
 public class LRType implements GrammarType
@@ -111,10 +111,5 @@ public class LRType implements GrammarType
         }
 
         return marked;
-    }
-
-    protected static <T> Set<T> asSet(T... elements)
-    {
-        return new HashSet<T>(Arrays.asList(elements));
     }
 }
