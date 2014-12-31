@@ -22,6 +22,12 @@ public class ParseState extends Identified
     @Override
     public String toString()
     {
-        return "s" + getId();
+        StringBuilder out = new StringBuilder("s").append(getId()).append("(\n");
+        for (final MarkedRule rule : rules)
+        {
+            out.append('\t').append(rule).append('\n');
+        }
+        out.append(')');
+        return out.toString();
     }
 }

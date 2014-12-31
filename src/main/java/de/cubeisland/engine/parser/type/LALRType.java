@@ -2,17 +2,25 @@ package de.cubeisland.engine.parser.type;
 
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
 import de.cubeisland.engine.parser.grammar.CompiledGrammar;
+import de.cubeisland.engine.parser.type.result.CompilationResult;
+import de.cubeisland.engine.parser.type.result.SuccessfulResult;
+
+import static de.cubeisland.engine.parser.type.result.CompilationResult.success;
 
 public class LALRType extends LRType
 {
-    public CompiledGrammar compile(AugmentedGrammar g)
+    public CompilationResult compile(AugmentedGrammar g)
     {
-        CompiledGrammar cg = super.compile(g);
-        return optimize(cg);
+        CompilationResult result = super.compile(g);
+        if (result instanceof SuccessfulResult)
+        {
+            return optimize(((SuccessfulResult)result).getGrammar());
+        }
+        return result;
     }
 
-    protected CompiledGrammar optimize(CompiledGrammar cg)
+    protected CompilationResult optimize(CompiledGrammar cg)
     {
-        return cg;
+        return success(cg);
     }
 }

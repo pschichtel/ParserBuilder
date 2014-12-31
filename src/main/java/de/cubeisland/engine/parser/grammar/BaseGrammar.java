@@ -1,9 +1,11 @@
 package de.cubeisland.engine.parser.grammar;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
+import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import static java.util.Collections.unmodifiableList;
@@ -37,6 +39,83 @@ public abstract class BaseGrammar
     public List<Rule> getRules()
     {
         return rules;
+    }
+
+    public Set<Rule> getRulesFor(Variable head)
+    {
+        Set<Rule> rules = new HashSet<Rule>();
+        for (final Rule rule : this.rules)
+        {
+            if (rule.getHead() == head)
+            {
+                rules.add(rule);
+            }
+        }
+        return rules;
+    }
+
+    public Set<Rule> getRulesContaining(RuleElement element)
+    {
+        Set<Rule> rules = new HashSet<Rule>();
+
+        for (final Rule rule : this.rules)
+        {
+            if (rule.getBody().contains(element))
+            {
+                rules.add(rule);
+            }
+        }
+
+        return rules;
+    }
+
+    public boolean isNullable(Variable variable)
+    {
+        for (final Rule rule : getRulesFor(variable))
+        {
+            if (rule.isEpsilonProducing())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Set<TokenSpec> first(Rule rule)
+    {
+        return first(rule.getHead());
+    }
+
+    public Set<TokenSpec> first(Variable variable)
+    {
+        Set<TokenSpec> first = new HashSet<TokenSpec>();
+        first(variable, first);
+        return first;
+    }
+
+    private void first(Variable variable, Set<TokenSpec> firstSet)
+    {
+        first(variable, 0, firstSet);
+    }
+    private void first(Variable variable, int offset, Set<TokenSpec> firstSet)
+    {
+        for (final Rule rule : getRulesFor(variable))
+        {
+            RuleElement first = rule.getBody().get(offset);
+            if (first instanceof TokenSpec)
+            {
+                firstSet.add((TokenSpec)first);
+            }
+            else if (first instanceof Variable)
+            {
+                Variable var = (Variable)first;
+                first(var, firstSet);
+                if (isNullable(var))
+                {
+                    first(variable, offset + 1, firstSet);
+                }
+            }
+        }
     }
 
     public Variable getStart()

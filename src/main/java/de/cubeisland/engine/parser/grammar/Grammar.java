@@ -21,18 +21,18 @@ public class Grammar extends BaseGrammar
         return new AugmentedGrammar(getVariables(), getTokens(), getRules(), getStart());
     }
 
-    public static Builder with(Variable head, RuleElement... elements)
+    public static Builder with(Rule rule)
     {
-        return new Builder().and(head, elements);
+        return new Builder().with(rule);
     }
 
     public static final class Builder
     {
         private final List<Rule> rules = new ArrayList<Rule>();
 
-        public Builder and(Variable head, RuleElement... elements)
+        public Builder with(Rule rule)
         {
-            this.rules.add(new Rule(head, elements));
+            this.rules.add(rule);
             return this;
         }
 
@@ -55,7 +55,7 @@ public class Grammar extends BaseGrammar
             HashSet<TokenSpec> tokens = new HashSet<TokenSpec>();
             for (final Rule rule : rules)
             {
-                for (final RuleElement element : rule.getElements())
+                for (final RuleElement element : rule.getBody())
                 {
                     if (element instanceof TokenSpec)
                     {

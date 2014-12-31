@@ -6,12 +6,12 @@ public class TokenSpecFactory
 {
     public static TokenSpec simple(String name, String pattern)
     {
-        return new TokenSpec(name, pattern);
+        return new SimpleTokenSpec(name, pattern);
     }
 
     public static TokenSpec simple(String name, Pattern pattern)
     {
-        return new TokenSpec(name, pattern);
+        return new SimpleTokenSpec(name, pattern);
     }
 
     public static <T> ParametrizedTokenSpec<T> parametrized(String name, String pattern, Class<T> valueType)

@@ -1,11 +1,11 @@
 package de.cubeisland.engine.parser.type;
 
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
-import de.cubeisland.engine.parser.grammar.CompiledGrammar;
+import de.cubeisland.engine.parser.type.result.CompilationResult;
 
 public class GLRType extends LRType
 {
-    public CompiledGrammar compile(AugmentedGrammar g)
+    public CompilationResult compile(AugmentedGrammar g)
     {
         return null;
     }

@@ -2,7 +2,7 @@ package de.cubeisland.engine.parser.rule.token;
 
 import java.util.regex.Pattern;
 
-public class ParametrizedTokenSpec<T> extends TokenSpec
+public class ParametrizedTokenSpec<T> extends SimpleTokenSpec
 {
     private final Class<T> valueType;
 

@@ -5,6 +5,7 @@ import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;
 
+import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.parametrized;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static org.hamcrest.core.Is.is;
@@ -15,28 +16,13 @@ public class BuilderTest
     @Test
     public void testBuild() throws Exception
     {
-        final Variable product = new Variable("product");
-        final Variable factor = new Variable("factor");
-        final Variable expr = new Variable("expr");
-
-        final TokenSpec ADD = simple("ADD", "+");
-        final TokenSpec SUB = simple("SUB", "-");
-        final TokenSpec MUL = simple("MUL", "*");
-        final TokenSpec DIV = simple("DIV", "/");
-        final TokenSpec BGN = simple("BGN", "(");
-        final TokenSpec END = simple("END", ")");
-        final ParametrizedTokenSpec<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", Integer.class);
-
+        final Variable start = new Variable("start");
+        final TokenSpec A = simple("a", "a");
+        final TokenSpec B = simple("b", "b");
         Grammar g = Grammar
-            .with(expr, expr, ADD, product)
-            .and(expr, expr, SUB, product)
-            .and(expr, product)
-            .and(product, product, MUL, factor)
-            .and(product, product, DIV, factor)
-            .and(product, factor)
-            .and(factor, BGN, expr, END)
-            .and(factor, NUM)
-            .startingWith(expr);
+            .with(head(start).produces(A).skip())
+            .with(head(start).produces(B).skip())
+            .startingWith(start);
 
         System.out.println(g);
 

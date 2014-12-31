@@ -10,4 +10,10 @@ public abstract class Identified
     {
         return this.id;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return getId();
+    }
 }

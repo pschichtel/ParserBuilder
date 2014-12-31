@@ -15,4 +15,19 @@ public class RuleElement extends Identified
     {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o instanceof RuleElement && getName().equals(((RuleElement)o).getName()))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

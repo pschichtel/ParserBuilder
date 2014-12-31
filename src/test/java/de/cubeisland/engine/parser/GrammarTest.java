@@ -6,6 +6,7 @@ import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;
 
 import static de.cubeisland.engine.parser.grammar.AugmentedGrammar.AUGMENTED_START;
+import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -15,14 +16,7 @@ public class GrammarTest
     @Test
     public void testAugment() throws Exception
     {
-        final Variable start = new Variable("start");
-        final TokenSpec A = simple("a", "a");
-        final TokenSpec B = simple("b", "b");
-        Grammar g = Grammar
-            .with(start, A)
-            .and(start, B)
-            .startingWith(start);
-
+        Grammar g = TestGrammars.SIMPLE_EXPR;
         AugmentedGrammar a = g.augment();
 
         System.out.println(g);
