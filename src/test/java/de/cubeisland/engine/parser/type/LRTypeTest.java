@@ -22,7 +22,11 @@ public class LRTypeTest
     @Test
     public void testClosure() throws Exception
     {
-        Set<MarkedRule> closure = lr.closure(a, asSet(a.getStartRule().mark()));
+        System.out.println(a);
+        Set<MarkedRule> markedRules = asSet(a.getStartRule().mark());
+        System.out.println(markedRules);
+        Set<MarkedRule> closure = lr.closure(a, markedRules);
+        System.out.println(closure);
 
         assertThat("LRType.closure() did not find all productions", closure.size(), is(9));
     }
