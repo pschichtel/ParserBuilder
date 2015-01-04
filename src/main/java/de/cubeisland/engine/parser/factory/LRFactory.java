@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser.type;
+package de.cubeisland.engine.parser.factory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,23 +7,23 @@ import java.util.Map;
 import java.util.Set;
 import de.cubeisland.engine.parser.ActionTable;
 import de.cubeisland.engine.parser.GotoTable;
+import de.cubeisland.engine.parser.LRParser;
 import de.cubeisland.engine.parser.ParseState;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.action.Action;
+import de.cubeisland.engine.parser.factory.result.CompilationResult;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
-import de.cubeisland.engine.parser.grammar.CompiledGrammar;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
-import de.cubeisland.engine.parser.type.result.CompilationResult;
 
 import static de.cubeisland.engine.parser.Util.asSet;
-import static de.cubeisland.engine.parser.type.result.CompilationResult.success;
+import static de.cubeisland.engine.parser.factory.result.CompilationResult.success;
 
-public class LRType implements GrammarType
+public class LRFactory implements ParserFactory<LRParser>
 {
-    public CompilationResult compile(AugmentedGrammar g)
+    public CompilationResult<LRParser> produce(AugmentedGrammar g)
     {
         final ParseState initial = calculateInitialState(g);
         final Set<RuleElement> elements = new HashSet<RuleElement>(g.getVariables());
@@ -45,8 +45,7 @@ public class LRType implements GrammarType
 //            }
 //        }
 
-
-        return success(new CompiledGrammar(g, states, new GotoTable(gotos), new ActionTable(actions)));
+        return success(new LRParser(g, states, new GotoTable(gotos), new ActionTable(actions)));
     }
 
     protected ParseState calculateInitialState(AugmentedGrammar g)

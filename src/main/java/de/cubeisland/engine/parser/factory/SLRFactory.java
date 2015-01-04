@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser.type;
+package de.cubeisland.engine.parser.factory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
-public class SLRType extends LRType
+public class SLRFactory extends LRFactory
 {
     private final Map<Rule, Set<TokenSpec>> followSets = new HashMap<Rule, Set<TokenSpec>>();
 

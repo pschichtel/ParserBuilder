@@ -22,16 +22,44 @@
  */
 package de.cubeisland.engine.parser;
 
-import de.cubeisland.engine.parser.grammar.CompiledGrammar;
+import java.util.Set;
+import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
+import de.cubeisland.engine.parser.parser.Parser;
 import de.cubeisland.engine.parser.rule.token.TokenStream;
 
-public class Parser
+public class LRParser implements Parser
 {
-    private final CompiledGrammar grammar;
+    private final AugmentedGrammar grammar;
+    private final Set<ParseState> states;
+    private final GotoTable gotoTable;
+    private final ActionTable actionTable;
 
-    public Parser(CompiledGrammar grammar)
+    public LRParser(AugmentedGrammar grammar, Set<ParseState> states, GotoTable gotoTable, ActionTable actionTable)
     {
         this.grammar = grammar;
+        this.states = states;
+        this.gotoTable = gotoTable;
+        this.actionTable = actionTable;
+    }
+
+    public AugmentedGrammar getGrammar()
+    {
+        return grammar;
+    }
+
+    public Set<ParseState> getStates()
+    {
+        return states;
+    }
+
+    public GotoTable getGotoTable()
+    {
+        return gotoTable;
+    }
+
+    public ActionTable getActionTable()
+    {
+        return actionTable;
     }
 
     public boolean parse(TokenStream tokens)

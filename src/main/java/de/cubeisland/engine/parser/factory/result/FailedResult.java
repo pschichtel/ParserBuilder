@@ -1,9 +1,10 @@
-package de.cubeisland.engine.parser.type.result;
+package de.cubeisland.engine.parser.factory.result;
 
 import java.util.Collections;
 import java.util.List;
+import de.cubeisland.engine.parser.parser.Parser;
 
-public class FailedResult extends CompilationResult
+public class FailedResult<T extends Parser> extends CompilationResult<T>
 {
     private final List<Conflict> conflicts;
 

@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser.type;
+package de.cubeisland.engine.parser.factory;
 
 import java.util.Set;
 import de.cubeisland.engine.parser.ParseState;
@@ -13,11 +13,11 @@ import static de.cubeisland.engine.parser.Util.asSet;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class LRTypeTest
+public class LRFactoryTest
 {
     Grammar g = TestGrammars.SIMPLE_EXPR;
     AugmentedGrammar a = g.augment();
-    LRType lr = new LRType();
+    LRFactory lr = new LRFactory();
 
     @Test
     public void testClosure() throws Exception

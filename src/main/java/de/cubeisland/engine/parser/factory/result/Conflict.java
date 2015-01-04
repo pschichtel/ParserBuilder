@@ -1,4 +1,4 @@
-package de.cubeisland.engine.parser.type.result;
+package de.cubeisland.engine.parser.factory.result;
 
 import de.cubeisland.engine.parser.ParseState;
 import de.cubeisland.engine.parser.action.Action;
