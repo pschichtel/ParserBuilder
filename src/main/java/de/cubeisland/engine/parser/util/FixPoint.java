@@ -9,6 +9,7 @@ public class FixPoint
     {
         Set<T> result = new HashSet<T>(in);
         Set<T> newSet = func.apply(in);
+        newSet.removeAll(result);
 
         newSet.removeAll(in);
         if (!newSet.isEmpty())
