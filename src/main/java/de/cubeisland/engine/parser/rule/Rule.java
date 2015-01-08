@@ -13,14 +13,12 @@ public class Rule
     private final Variable head;
     private final List<RuleElement> body;
     private final Reaction reaction;
-    private final boolean epsilonProducing;
 
     public Rule(Variable head, List<RuleElement> body, Reaction reaction)
     {
         this.head = head;
         this.body = Collections.unmodifiableList(body);
         this.reaction = reaction;
-        this.epsilonProducing = this.body.size() == 1 && this.body.get(0) == EPSILON;
     }
 
     public Variable getHead() {
@@ -35,11 +33,6 @@ public class Rule
     public Reaction getReaction()
     {
         return reaction;
-    }
-
-    public boolean isEpsilonProducing()
-    {
-        return this.epsilonProducing;
     }
 
     public MarkedRule mark()

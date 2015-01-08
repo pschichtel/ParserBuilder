@@ -6,7 +6,11 @@ import java.util.Set;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
+import de.cubeisland.engine.parser.rule.token.Epsilon;
+import de.cubeisland.engine.parser.rule.token.Token;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.util.FixPoint;
+import de.cubeisland.engine.parser.util.SetMapper;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
@@ -15,15 +19,65 @@ public abstract class BaseGrammar
 {
     private final Set<Variable> variables;
     private final Set<TokenSpec> tokens;
+    private final Set<Variable> nullables;
     private final List<Rule> rules;
     private final Variable start;
 
-    public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
+    public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, final List<Rule> rules, Variable start)
     {
         this.variables = unmodifiableSet(variables);
         this.tokens = unmodifiableSet(tokens);
         this.rules = unmodifiableList(rules);
         this.start = start;
+
+        this.nullables = this.nullClosure();
+    }
+
+    private Set<Variable> nullClosure()
+    {
+        Set<Variable> nullable = new HashSet<Variable>();
+        int oldSize = 0;
+        int newSize = 0;
+
+        do
+        {
+            Set<Variable> notNullVariables = new HashSet<Variable>(variables);
+            notNullVariables.removeAll(nullable);
+
+            for (Variable variable : notNullVariables)
+            {
+                Set<Rule> rulesForVar = getRulesFor(variable);
+                for (Rule rule : rulesForVar)
+                {
+                    boolean allNullable = true;
+                    for (RuleElement ruleElement : rule.getBody())
+                    {
+                        if (ruleElement instanceof TokenSpec)
+                        {
+                            allNullable = false;
+                            break;
+                        }
+                        else if (ruleElement instanceof Variable && !nullable.contains(ruleElement))
+                        {
+                            allNullable = false;
+                            break;
+                        }
+                    }
+
+                    if (allNullable)
+                    {
+                        nullable.add(variable);
+                        break;
+                    }
+                }
+            }
+
+            oldSize = newSize;
+            newSize = nullable.size();
+
+        } while (oldSize < newSize);
+
+        return nullable;
     }
 
     public Set<Variable> getVariables()
@@ -71,14 +125,7 @@ public abstract class BaseGrammar
 
     public boolean isNullable(Variable variable)
     {
-        for (final Rule rule : getRulesFor(variable))
-        {
-            if (rule.isEpsilonProducing())
-            {
-                return true;
-            }
-        }
-        return false;
+        return this.nullables.contains(variable);
     }
 
     public Set<TokenSpec> first(Rule rule)
