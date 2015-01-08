@@ -6,11 +6,7 @@ import java.util.Set;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
-import de.cubeisland.engine.parser.rule.token.Epsilon;
-import de.cubeisland.engine.parser.rule.token.Token;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
-import de.cubeisland.engine.parser.util.FixPoint;
-import de.cubeisland.engine.parser.util.SetMapper;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
@@ -74,8 +70,8 @@ public abstract class BaseGrammar
 
             oldSize = newSize;
             newSize = nullable.size();
-
-        } while (oldSize < newSize);
+        }
+        while (oldSize < newSize);
 
         return nullable;
     }

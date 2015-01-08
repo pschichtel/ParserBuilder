@@ -36,7 +36,8 @@ public class Grammar extends BaseGrammar
             return this;
         }
 
-        public Grammar startingWith(Variable start) {
+        public Grammar startingWith(Variable start)
+        {
             return new Grammar(variables(rules), tokens(rules), rules, start);
         }
 
