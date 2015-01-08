@@ -17,6 +17,8 @@ import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.util.FixPoint;
+import de.cubeisland.engine.parser.util.SetMapper;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.factory.result.CompilationResult.success;
@@ -73,26 +75,24 @@ public class LRFactory implements ParserFactory<LRParser>
         return new ParseState(closure(g, consumed));
     }
 
-    protected Set<MarkedRule> closure(AugmentedGrammar g, Set<MarkedRule> rules)
+    protected Set<MarkedRule> closure(final AugmentedGrammar g, Set<MarkedRule> rules)
     {
-        Set<MarkedRule> closure = new HashSet<MarkedRule>(rules);
-        Set<MarkedRule> newRules = new HashSet<MarkedRule>();
-        for (final MarkedRule rule : rules)
+        return FixPoint.apply(rules, new SetMapper<MarkedRule>()
         {
-            RuleElement marked = rule.getMarkedElement();
-            if (marked instanceof Variable)
+            public Set<MarkedRule> apply(Set<MarkedRule> in)
             {
-                newRules.addAll(markAll(g.getRulesFor((Variable)marked)));
+                Set<MarkedRule> newRules = new HashSet<MarkedRule>();
+                for (final MarkedRule rule : in)
+                {
+                    RuleElement marked = rule.getMarkedElement();
+                    if (marked instanceof Variable)
+                    {
+                        newRules.addAll(markAll(g.getRulesFor((Variable)marked)));
+                    }
+                }
+                return newRules;
             }
-        }
-
-        newRules.removeAll(rules);
-        if (!newRules.isEmpty())
-        {
-            closure.addAll(closure(g, newRules));
-        }
-
-        return closure;
+        });
     }
 
     protected Set<TokenSpec> calculateFollows(AugmentedGrammar g, Rule rule)
