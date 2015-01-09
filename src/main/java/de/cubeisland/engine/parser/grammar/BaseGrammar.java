@@ -19,17 +19,17 @@ public abstract class BaseGrammar
     private final List<Rule> rules;
     private final Variable start;
 
-    public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, final List<Rule> rules, Variable start)
+    public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
     {
         this.variables = unmodifiableSet(variables);
         this.tokens = unmodifiableSet(tokens);
         this.rules = unmodifiableList(rules);
         this.start = start;
 
-        this.nullables = this.nullClosure();
+        this.nullables = nullClosure();
     }
 
-    private Set<Variable> nullClosure()
+    protected Set<Variable> nullClosure()
     {
         Set<Variable> nullable = new HashSet<Variable>();
         int oldSize = 0;
