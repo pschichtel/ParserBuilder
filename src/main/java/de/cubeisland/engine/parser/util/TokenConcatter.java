@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import de.cubeisland.engine.parser.rule.token.Epsilon;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
-public class tokenConcatter
+public class TokenConcatter
 {
     public static List<TokenSpec> concatPrefix(int k, List<TokenSpec> v, List<TokenSpec> w)
     {

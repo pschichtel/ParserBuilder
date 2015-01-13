@@ -10,7 +10,7 @@ import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
-import de.cubeisland.engine.parser.util.tokenConcatter;
+import de.cubeisland.engine.parser.util.TokenConcatter;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
@@ -121,11 +121,9 @@ public abstract class BaseGrammar
         return this.firstsCache.get(k).get(variable);
     }
 
-    public void calculateFirsts(int k)
+    protected void calculateFirsts(int k)
     {
         final HashMap<Variable, Set<List<TokenSpec>>> first = new HashMap<Variable, Set<List<TokenSpec>>>();
-
-        this.firstsCache.put(k, first);
 
         for (Variable variable : this.variables)
         {
@@ -148,7 +146,7 @@ public abstract class BaseGrammar
                 {
                     if (ruleElement instanceof Variable)
                     {
-                        ruleFirst = tokenConcatter.concatPrefix(k, ruleFirst, first.get(ruleElement));
+                        ruleFirst = TokenConcatter.concatPrefix(k, ruleFirst, first.get(ruleElement));
                     }
                     else if (ruleElement instanceof TokenSpec)
                     {
@@ -158,7 +156,7 @@ public abstract class BaseGrammar
                         Set<List<TokenSpec>> firstOfToken = new HashSet<List<TokenSpec>>();
                         firstOfToken.add(tokenFirstList);
 
-                        ruleFirst = tokenConcatter.concatPrefix(k, ruleFirst, firstOfToken);
+                        ruleFirst = TokenConcatter.concatPrefix(k, ruleFirst, firstOfToken);
                     }
                 }
 
@@ -167,7 +165,11 @@ public abstract class BaseGrammar
 
             oldHash = newHash;
             newHash = first.hashCode();
-        } while (oldHash != newHash);
+        }
+        // TODO don't use hash codes
+        while (oldHash != newHash);
+
+        this.firstsCache.put(k, first);
     }
 
     public Set<Rule> getRulesContaining(RuleElement element)

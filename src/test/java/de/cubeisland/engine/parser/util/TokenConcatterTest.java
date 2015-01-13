@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import de.cubeisland.engine.parser.rule.token.Epsilon;
 import de.cubeisland.engine.parser.rule.token.SimpleTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import junit.framework.TestCase;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 
-public class tokenConcatterTest extends TestCase
+public class TokenConcatterTest extends TestCase
 {
     private List<TokenSpec> v = new ArrayList<TokenSpec>();
     private List<TokenSpec> w = new ArrayList<TokenSpec>();
@@ -30,7 +29,7 @@ public class tokenConcatterTest extends TestCase
     private Set<List<TokenSpec>> n = new HashSet<List<TokenSpec>>();
     private Set<List<TokenSpec>> o = new HashSet<List<TokenSpec>>();
 
-    public tokenConcatterTest()
+    public TokenConcatterTest()
     {
         this.v.add(this.ta);
         this.v.add(this.tb);
@@ -63,7 +62,7 @@ public class tokenConcatterTest extends TestCase
 
         for (int i = 0; i < 10; i++)
         {
-            List<TokenSpec> concatList = tokenConcatter.concatPrefix(i, this.v, this.w);
+            List<TokenSpec> concatList = TokenConcatter.concatPrefix(i, this.v, this.w);
 
             assertThat("Concatenation of two lists with k = " + i + " failed.", concatList, is(solution.subList(0, i < solution.size() ? i : solution.size())));
         }
@@ -75,12 +74,12 @@ public class tokenConcatterTest extends TestCase
         {
             Set<List<TokenSpec>> solution = new HashSet<List<TokenSpec>>();
 
-            solution.add(tokenConcatter.concatPrefix(i, this.v, this.w));
-            solution.add(tokenConcatter.concatPrefix(i, this.v, this.v));
-            solution.add(tokenConcatter.concatPrefix(i, this.w, this.v));
-            solution.add(tokenConcatter.concatPrefix(i, this.w, this.w));
+            solution.add(TokenConcatter.concatPrefix(i, this.v, this.w));
+            solution.add(TokenConcatter.concatPrefix(i, this.v, this.v));
+            solution.add(TokenConcatter.concatPrefix(i, this.w, this.v));
+            solution.add(TokenConcatter.concatPrefix(i, this.w, this.w));
 
-            Set<List<TokenSpec>> proposal = tokenConcatter.concatPrefix(i, this.m, this.n);
+            Set<List<TokenSpec>> proposal = TokenConcatter.concatPrefix(i, this.m, this.n);
 
             assertThat("Concatenation of two sets with k = " + i + " failed.", proposal, is(solution));
         }
@@ -90,9 +89,10 @@ public class tokenConcatterTest extends TestCase
     {
         for (int i = 0; i < 10; i++)
         {
-            Set<List<TokenSpec>> solution = tokenConcatter.concatPrefix(i, tokenConcatter.concatPrefix(i, this.m, this.n), this.o);
+            Set<List<TokenSpec>> solution = TokenConcatter.concatPrefix(i, TokenConcatter.concatPrefix(i, this.m,
+                                                                                                       this.n), this.o);
 
-            Set<List<TokenSpec>> proposal = tokenConcatter.concatPrefix(i, this.m, this.n, this.o);
+            Set<List<TokenSpec>> proposal = TokenConcatter.concatPrefix(i, this.m, this.n, this.o);
 
             assertThat("Concatenation of three sets with k = " + i + " failed.", proposal, is(solution));
         }
