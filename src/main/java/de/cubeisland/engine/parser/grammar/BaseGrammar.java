@@ -1,12 +1,16 @@
 package de.cubeisland.engine.parser.grammar;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.util.tokenConcatter;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
@@ -19,6 +23,8 @@ public abstract class BaseGrammar
     private final List<Rule> rules;
     private final Variable start;
 
+    private final Map<Integer, Map<Variable, Set<List<TokenSpec>>>> firstsCache = new HashMap<Integer, Map<Variable, Set<List<TokenSpec>>>>();
+
     public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
     {
         this.variables = unmodifiableSet(variables);
@@ -27,6 +33,7 @@ public abstract class BaseGrammar
         this.start = start;
 
         this.nullables = nullClosure();
+
     }
 
     protected Set<Variable> nullClosure()
@@ -102,6 +109,65 @@ public abstract class BaseGrammar
             }
         }
         return rules;
+    }
+
+    public Set<List<TokenSpec>> first(int k, Variable variable)
+    {
+        if (!this.firstsCache.containsKey(k))
+        {
+            this.calculateFirsts(k);
+        }
+
+        return this.firstsCache.get(k).get(variable);
+    }
+
+    public void calculateFirsts(int k)
+    {
+        final HashMap<Variable, Set<List<TokenSpec>>> first = new HashMap<Variable, Set<List<TokenSpec>>>();
+
+        this.firstsCache.put(k, first);
+
+        for (Variable variable : this.variables)
+        {
+            first.put(variable, new HashSet<List<TokenSpec>>());
+        }
+
+
+        int oldHash;
+        int newHash = first.hashCode();
+
+        do
+        {
+
+            for (Rule rule : this.rules)
+            {
+                Set<List<TokenSpec>> ruleFirst = new HashSet<List<TokenSpec>>();
+                ruleFirst.add(new ArrayList<TokenSpec>());
+
+                for (RuleElement ruleElement : rule.getBody())
+                {
+                    if (ruleElement instanceof Variable)
+                    {
+                        ruleFirst = tokenConcatter.concatPrefix(k, ruleFirst, first.get(ruleElement));
+                    }
+                    else if (ruleElement instanceof TokenSpec)
+                    {
+                        List<TokenSpec> tokenFirstList = new ArrayList<TokenSpec>();
+                        tokenFirstList.add((TokenSpec) ruleElement);
+
+                        Set<List<TokenSpec>> firstOfToken = new HashSet<List<TokenSpec>>();
+                        firstOfToken.add(tokenFirstList);
+
+                        ruleFirst = tokenConcatter.concatPrefix(k, ruleFirst, firstOfToken);
+                    }
+                }
+
+                first.get(rule.getHead()).addAll(ruleFirst);
+            }
+
+            oldHash = newHash;
+            newHash = first.hashCode();
+        } while (oldHash != newHash);
     }
 
     public Set<Rule> getRulesContaining(RuleElement element)
