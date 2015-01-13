@@ -176,7 +176,7 @@ public abstract class BaseGrammar
                 final int oldSize = firstSet.size();
                 firstSet.addAll(ruleFirst);
 
-                if (oldSize == firstSet.size())
+                if (oldSize != firstSet.size())
                 {
                     changed = true;
                 }
