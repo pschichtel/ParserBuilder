@@ -25,7 +25,7 @@ import static de.cubeisland.engine.parser.factory.result.CompilationResult.succe
 
 public class LRFactory implements ParserFactory<LRParser>
 {
-    public CompilationResult<LRParser> produce(AugmentedGrammar g)
+    public CompilationResult<LRParser> produce(AugmentedGrammar g, int k)
     {
         final ParseState initial = calculateInitialState(g);
         final Set<RuleElement> elements = new HashSet<RuleElement>(g.getVariables());

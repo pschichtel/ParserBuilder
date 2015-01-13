@@ -23,8 +23,6 @@ public abstract class BaseGrammar
     private final List<Rule> rules;
     private final Variable start;
 
-    private final Map<Integer, Map<Variable, Set<List<TokenSpec>>>> firstsCache = new HashMap<Integer, Map<Variable, Set<List<TokenSpec>>>>();
-
     public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
     {
         this.variables = unmodifiableSet(variables);
@@ -111,19 +109,14 @@ public abstract class BaseGrammar
         return rules;
     }
 
-    public Set<List<TokenSpec>> first(int k, Variable variable)
+    public Map<Variable, Set<List<TokenSpec>>> first()
     {
-        if (!this.firstsCache.containsKey(k))
-        {
-            this.calculateFirsts(k);
-        }
-
-        return this.firstsCache.get(k).get(variable);
+        return first(1);
     }
 
-    protected void calculateFirsts(int k)
+    public Map<Variable, Set<List<TokenSpec>>> first(int k)
     {
-        final HashMap<Variable, Set<List<TokenSpec>>> first = new HashMap<Variable, Set<List<TokenSpec>>>();
+        final Map<Variable, Set<List<TokenSpec>>> first = new HashMap<Variable, Set<List<TokenSpec>>>();
 
         for (Variable variable : this.variables)
         {
@@ -169,7 +162,7 @@ public abstract class BaseGrammar
         // TODO don't use hash codes
         while (oldHash != newHash);
 
-        this.firstsCache.put(k, first);
+        return first;
     }
 
     public Set<Rule> getRulesContaining(RuleElement element)
@@ -190,44 +183,6 @@ public abstract class BaseGrammar
     public boolean isNullable(Variable variable)
     {
         return this.nullables.contains(variable);
-    }
-
-    public Set<TokenSpec> first(Rule rule)
-    {
-        return first(rule.getHead());
-    }
-
-    public Set<TokenSpec> first(Variable variable)
-    {
-        Set<TokenSpec> first = new HashSet<TokenSpec>();
-        first(variable, first);
-        return first;
-    }
-
-    private void first(Variable variable, Set<TokenSpec> firstSet)
-    {
-        first(variable, 0, firstSet);
-    }
-
-    private void first(Variable variable, int offset, Set<TokenSpec> firstSet)
-    {
-        for (final Rule rule : getRulesFor(variable))
-        {
-            RuleElement first = rule.getBody().get(offset);
-            if (first instanceof TokenSpec)
-            {
-                firstSet.add((TokenSpec)first);
-            }
-            else if (first instanceof Variable && first != rule.getHead())
-            {
-                Variable var = (Variable)first;
-                first(var, firstSet);
-                if (isNullable(var))
-                {
-                    first(variable, offset + 1, firstSet);
-                }
-            }
-        }
     }
 
     public Variable getStart()

@@ -43,7 +43,7 @@ public class BaseGrammarTest extends TestCase
         System.out.println("test");
         for (Variable var : h.getVariables())
         {
-            System.out.println(var + " --> " + h.first(2, var));
+            //System.out.println(var + " --> " + h.first(2, var));
         }
         assertThat("dummy", true, is(true));
     }

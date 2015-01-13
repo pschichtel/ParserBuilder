@@ -6,5 +6,5 @@ import de.cubeisland.engine.parser.parser.Parser;
 
 public interface ParserFactory<T extends Parser>
 {
-    CompilationResult<T> produce(AugmentedGrammar grammar);
+    CompilationResult<T> produce(AugmentedGrammar grammar, int k);
 }

@@ -9,9 +9,10 @@ import static de.cubeisland.engine.parser.factory.result.CompilationResult.succe
 
 public class LALRFactory extends LRFactory
 {
-    public CompilationResult<LRParser> produce(AugmentedGrammar g)
+    @Override
+    public CompilationResult<LRParser> produce(AugmentedGrammar g, int k)
     {
-        CompilationResult<LRParser> result = super.produce(g);
+        CompilationResult<LRParser> result = super.produce(g, k);
         if (result instanceof SuccessfulResult)
         {
             return optimize(((SuccessfulResult<LRParser>)result).getParser());

@@ -1,8 +1,10 @@
 package de.cubeisland.engine.parser.grammar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
@@ -26,21 +28,19 @@ public class AugmentedGrammar extends BaseGrammar
         return getRules().get(0);
     }
 
-    public Set<TokenSpec> follow(Rule rule)
+    public Map<Variable, Set<List<TokenSpec>>> follow()
     {
-        return follow(rule.getHead());
+        return follow(1);
     }
 
-    public Set<TokenSpec> follow(Variable variable)
+    public Map<Variable, Set<List<TokenSpec>>> follow(int k)
     {
-        Set<TokenSpec> follow = new HashSet<TokenSpec>();
-        follow(variable, follow);
+        final Map<Variable, Set<List<TokenSpec>>> follow = new HashMap<Variable, Set<List<TokenSpec>>>();
+        final Map<Variable, Set<List<TokenSpec>>> first = first(k);
+
+
+
         return follow;
-    }
-
-    private void follow(Variable variable, Set<TokenSpec> followSet)
-    {
-
     }
 
     private static Set<Variable> augment(Set<Variable> original)
