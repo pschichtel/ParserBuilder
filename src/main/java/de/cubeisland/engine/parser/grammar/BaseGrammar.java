@@ -1,3 +1,25 @@
+/**
+ * The MIT License
+ * Copyright (c) 2014 Cube Island
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package de.cubeisland.engine.parser.grammar;
 
 import java.util.ArrayList;
@@ -11,7 +33,10 @@ import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import de.cubeisland.engine.parser.util.TokenConcatter;
+import de.cubeisland.engine.parser.util.TokenString;
 
+import static de.cubeisland.engine.parser.Util.asSet;
+import static de.cubeisland.engine.parser.util.TokenString.str;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
@@ -109,58 +134,55 @@ public abstract class BaseGrammar
         return rules;
     }
 
-    public Map<Variable, Set<List<TokenSpec>>> first()
+    public Map<Variable, Set<TokenString>> first()
     {
         return first(1);
     }
 
-    public Map<Variable, Set<List<TokenSpec>>> first(int k)
+    public Map<Variable, Set<TokenString>> first(int k)
     {
-        final Map<Variable, Set<List<TokenSpec>>> first = new HashMap<Variable, Set<List<TokenSpec>>>();
+        final Map<Variable, Set<TokenString>> first = new HashMap<Variable, Set<TokenString>>();
 
         for (Variable variable : this.variables)
         {
-            first.put(variable, new HashSet<List<TokenSpec>>());
+            first.put(variable, new HashSet<TokenString>());
         }
 
 
-        int oldHash;
-        int newHash = first.hashCode();
-
+        boolean changed;
         do
         {
-
+            changed = false;
             for (Rule rule : this.rules)
             {
-                Set<List<TokenSpec>> ruleFirst = new HashSet<List<TokenSpec>>();
-                ruleFirst.add(new ArrayList<TokenSpec>());
+                // TODO is a new set required on every iteration?
+                Set<TokenString> ruleFirst = new HashSet<TokenString>();
+                ruleFirst.add(TokenString.EMPTY);
 
                 for (RuleElement ruleElement : rule.getBody())
                 {
                     if (ruleElement instanceof Variable)
                     {
-                        ruleFirst = TokenConcatter.concatPrefix(k, ruleFirst, first.get(ruleElement));
+                        ruleFirst = TokenString.concatMany(k, ruleFirst, first.get(ruleElement));
                     }
                     else if (ruleElement instanceof TokenSpec)
                     {
-                        List<TokenSpec> tokenFirstList = new ArrayList<TokenSpec>();
-                        tokenFirstList.add((TokenSpec) ruleElement);
-
-                        Set<List<TokenSpec>> firstOfToken = new HashSet<List<TokenSpec>>();
-                        firstOfToken.add(tokenFirstList);
-
-                        ruleFirst = TokenConcatter.concatPrefix(k, ruleFirst, firstOfToken);
+                        final TokenSpec token = (TokenSpec)ruleElement;
+                        ruleFirst = TokenString.concatMany(k, ruleFirst, asSet(str(token)));
                     }
                 }
 
-                first.get(rule.getHead()).addAll(ruleFirst);
-            }
+                final Set<TokenString> firstSet = first.get(rule.getHead());
+                final int oldSize = firstSet.size();
+                firstSet.addAll(ruleFirst);
 
-            oldHash = newHash;
-            newHash = first.hashCode();
+                if (oldSize == firstSet.size())
+                {
+                    changed = true;
+                }
+            }
         }
-        // TODO don't use hash codes
-        while (oldHash != newHash);
+        while (changed);
 
         return first;
     }
