@@ -2,9 +2,9 @@ package de.cubeisland.engine.parser.rule.token.automate;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static de.cubeisland.engine.parser.rule.token.automate.Matcher.match;
 
-public class ReadTest
+public class MatcherTest
 {
 
     protected static void printAutomate(String name, FiniteAutomate<? extends Transition> a)
@@ -20,7 +20,7 @@ public class ReadTest
     @Test
     public void testRead() throws Exception
     {
-        DFA a = Read.read('a');
+        DFA a = match('a');
 
         printAutomate("Read char", a);
     }
@@ -28,29 +28,29 @@ public class ReadTest
     @Test
     public void testAnd() throws Exception
     {
-        DFA a = Read.read('a');
-        DFA b = Read.read('b');
+        DFA a = match('a');
+        DFA b = match('b');
 
-        NFA c = Read.and(a, b);
+        NFA c = a.and(b);
         printAutomate("And", c);
     }
 
     @Test
     public void testOr() throws Exception
     {
-        DFA a = Read.read('a');
-        DFA b = Read.read('b');
+        DFA a = match('a');
+        DFA b = match('b');
 
-        NFA c = Read.and(a, b);
+        NFA c = a.and(b);
         printAutomate("Or", c);
     }
 
     @Test
     public void testKleene() throws Exception
     {
-        DFA a = Read.read('a');
+        DFA a = match('a');
 
-        NFA b = Read.kleene(a);
+        NFA b = a.kleene();
         printAutomate("Kleene", b);
     }
 }

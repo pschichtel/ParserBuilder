@@ -2,6 +2,7 @@ package de.cubeisland.engine.parser.rule.token.automate;
 
 import java.util.*;
 
+import static de.cubeisland.engine.parser.Util.asSet;
 import static java.util.Collections.unmodifiableSet;
 
 public abstract class FiniteAutomate<T extends Transition>
@@ -127,6 +128,65 @@ public abstract class FiniteAutomate<T extends Transition>
         return lookup.getExpectedChars();
     }
 
+    @SuppressWarnings("unchecked")
+    public NFA and(FiniteAutomate<? extends Transition> other)
+    {
+        final Set<State> states = mergeStates(this, other);
+        final Set<Transition> transitions = mergeTransitions(this, other);
+
+        for (State state : this.getAcceptingStates())
+        {
+            transitions.add(new SpontaneousTransition(state, other.getStartState()));
+        }
+
+        return new NFA(states, transitions, this.getStartState(), other.getAcceptingStates());
+    }
+
+    @SuppressWarnings("unchecked")
+    public NFA or(FiniteAutomate<? extends Transition> other)
+    {
+        final Set<State> states = mergeStates(this, other);
+        final Set<Transition> transitions = mergeTransitions(this, other);
+
+        final State start = new State();
+        final State accept = new State();
+
+        transitions.add(new SpontaneousTransition(start, this.getStartState()));
+        transitions.add(new SpontaneousTransition(start, other.getStartState()));
+
+        for (State state : this.getAcceptingStates())
+        {
+            transitions.add(new SpontaneousTransition(state, accept));
+        }
+
+        for (State state : other.getAcceptingStates())
+        {
+            transitions.add(new SpontaneousTransition(state, accept));
+        }
+
+        return new NFA(states, transitions, start, asSet(accept));
+    }
+
+    public NFA kleene()
+    {
+        final Set<State> states = new HashSet<State>(getStates());
+        final Set<Transition> transitions = new HashSet<Transition>(getTransitions());
+
+        final State start = new State();
+        final State accept = new State();
+
+        transitions.add(new SpontaneousTransition(start, accept));
+        transitions.add(new SpontaneousTransition(start, getStartState()));
+        for (State state : getAcceptingStates())
+        {
+            transitions.add(new SpontaneousTransition(state, getStartState()));
+            transitions.add(new SpontaneousTransition(state, accept));
+        }
+
+        return new NFA(states, transitions, start, asSet(accept));
+    }
+
+
     @Override
     public boolean equals(Object o)
     {
@@ -171,4 +231,23 @@ public abstract class FiniteAutomate<T extends Transition>
         return result;
     }
 
+    protected static Set<State> mergeStates(FiniteAutomate<? extends Transition>... automates)
+    {
+        Set<State> states = new HashSet<State>();
+        for (FiniteAutomate<? extends Transition> automate : automates)
+        {
+            states.addAll(automate.getStates());
+        }
+        return states;
+    }
+
+    protected static Set<Transition> mergeTransitions(FiniteAutomate<? extends Transition>... automates)
+    {
+        Set<Transition> transitions = new HashSet<Transition>();
+        for (FiniteAutomate<? extends Transition> automate : automates)
+        {
+            transitions.addAll(automate.getTransitions());
+        }
+        return transitions;
+    }
 }

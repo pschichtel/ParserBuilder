@@ -9,7 +9,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         super(states, transitions, start, acceptingStates);
     }
 
-    public DFA optimize()
+    public DFA minimize()
     {
         // TODO implement me
         throw new UnsupportedOperationException("implement me");

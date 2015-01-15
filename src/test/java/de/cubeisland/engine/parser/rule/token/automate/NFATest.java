@@ -4,7 +4,6 @@ import de.cubeisland.engine.parser.Util;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
@@ -58,7 +57,7 @@ public class NFATest
     @Test
     public void testClosure44() throws Exception
     {
-        ReadTest.printAutomate("Stroeti NFA example 4.4", stroetiExample44);
+        MatcherTest.printAutomate("Stroeti NFA example 4.4", stroetiExample44);
 
         for (State state : stroetiExample44.getStates())
         {
@@ -69,12 +68,12 @@ public class NFATest
     @Test
     public void testToDFA() throws Exception
     {
-        ReadTest.printAutomate("toDFA", stroetiExample44.toDFA());
+        MatcherTest.printAutomate("toDFA", stroetiExample44.toDFA());
     }
 
     @Test
     public void testToDFA2() throws Exception
     {
-        ReadTest.printAutomate("toDFA", stroetiExample43.toDFA());
+        MatcherTest.printAutomate("toDFA", stroetiExample43.toDFA());
     }
 }
