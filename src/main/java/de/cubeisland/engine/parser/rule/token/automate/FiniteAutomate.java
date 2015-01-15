@@ -189,4 +189,9 @@ public abstract class FiniteAutomate<T extends Transition>
         }
         return transitions;
     }
+
+    public boolean isAccepting(State s)
+    {
+        return getAcceptingStates().contains(s);
+    }
 }
