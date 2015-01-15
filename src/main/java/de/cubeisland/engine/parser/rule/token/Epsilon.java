@@ -32,4 +32,10 @@ public class Epsilon extends RuleElement
     {
         super("ε");
     }
+
+    @Override
+    public String toString()
+    {
+        return getName();
+    }
 }

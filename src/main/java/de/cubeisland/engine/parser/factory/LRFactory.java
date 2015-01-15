@@ -74,7 +74,7 @@ public class LRFactory implements ParserFactory<LRParser>
 
     protected ParseState calculateInitialState(AugmentedGrammar g)
     {
-        return new ParseState(this.closure(g, asSet(g.getStartRule().mark())));
+        return new ParseState(closure(g, asSet(g.getStartRule().mark())));
     }
 
     public ParseState goTo(AugmentedGrammar g, ParseState initial, RuleElement element)
