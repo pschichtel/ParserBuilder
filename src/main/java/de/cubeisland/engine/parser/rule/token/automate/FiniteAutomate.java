@@ -12,7 +12,7 @@ public abstract class FiniteAutomate<T extends Transition>
     private final Set<State> acceptingStates;
     private final State start;
 
-    private final Map<State, TransitionMap> transitionLookup;
+    private final Set<Character> alphabet;
 
     protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates) {
 
@@ -23,59 +23,23 @@ public abstract class FiniteAutomate<T extends Transition>
         this.transitions = unmodifiableSet(transitions);
         this.acceptingStates = unmodifiableSet(acceptingStates);
         this.start = start;
-        this.transitionLookup = calculateTransitionLookup(transitions);
+        this.alphabet = unmodifiableSet(calculateAlphabet(transitions));
 
     }
 
-    private static <T extends Transition> Map<State, TransitionMap> calculateTransitionLookup(Set<T> transitions)
+    private static Set<Character> calculateAlphabet(Set<? extends Transition> transitions)
     {
-        Map<State, TransitionMap> transitionLookup = new HashMap<State, TransitionMap>();
+        Set<Character> chars = new HashSet<Character>();
 
-        Map<State, Set<T>> stateTransitions = new HashMap<State, Set<T>>();
-        for (T transition : transitions)
+        for (Transition transition : transitions)
         {
-            Set<T> t = stateTransitions.get(transition.getOrigin());
-            if (t == null)
+            if (transition instanceof ExpectedTransition)
             {
-                t = new HashSet<T>();
-                stateTransitions.put(transition.getOrigin(), t);
+                chars.add(((ExpectedTransition) transition).getWith());
             }
-            t.add(transition);
         }
 
-        for (Map.Entry<State, Set<T>> entry : stateTransitions.entrySet())
-        {
-            Map<Character, Set<ExpectedTransition>> expectedTransitions = new HashMap<Character, Set<ExpectedTransition>>();
-            Set<SpontaneousTransition> spontaneousTransitions = new HashSet<SpontaneousTransition>();
-            Set<Character> expectedChars = new HashSet<Character>();
-
-            for (T t : entry.getValue())
-            {
-                if (t instanceof SpontaneousTransition)
-                {
-                    spontaneousTransitions.add((SpontaneousTransition) t);
-                }
-                else if (t instanceof ExpectedTransition)
-                {
-                    ExpectedTransition et = (ExpectedTransition) t;
-                    Set<ExpectedTransition> expected = expectedTransitions.get(et.getWith());
-                    if (expected == null)
-                    {
-                        expected = new HashSet<ExpectedTransition>();
-                        expectedTransitions.put(et.getWith(), expected);
-                    }
-                    expected.add(et);
-                    expectedChars.add(et.getWith());
-                }
-                else
-                {
-                    throw new IllegalArgumentException("Unknown transition type!");
-                }
-            }
-            transitionLookup.put(entry.getKey(), new TransitionMap(expectedTransitions, spontaneousTransitions, expectedChars));
-        }
-
-        return transitionLookup;
+        return chars;
     }
 
     public Set<State> getStates()
@@ -98,34 +62,9 @@ public abstract class FiniteAutomate<T extends Transition>
         return this.start;
     }
 
-    public Set<SpontaneousTransition> getSpontaneousTransitionsFor(State s)
+    public Set<Character> getAlphabet()
     {
-        TransitionMap lookup = this.transitionLookup.get(s);
-        if (lookup == null)
-        {
-            return Collections.emptySet();
-        }
-        return lookup.getSpontaneousTransitions();
-    }
-
-    public Set<ExpectedTransition> getExpectedTransitionsFor(State s, char c)
-    {
-        TransitionMap lookup = this.transitionLookup.get(s);
-        if (lookup == null)
-        {
-            return Collections.emptySet();
-        }
-        return lookup.getTransitionsFor(c);
-    }
-
-    public Set<Character> getExpectedCharsFor(State s)
-    {
-        TransitionMap lookup = this.transitionLookup.get(s);
-        if (lookup == null)
-        {
-            return Collections.emptySet();
-        }
-        return lookup.getExpectedChars();
+        return this.alphabet;
     }
 
     @SuppressWarnings("unchecked")

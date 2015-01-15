@@ -10,6 +10,11 @@ public class State
 
     private final int id = COUNTER.getAndIncrement();
 
+    public State transition(DFA a, char c)
+    {
+        return a.getBy(this, c);
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -19,7 +24,6 @@ public class State
         State state = (State) o;
 
         return id == state.id;
-
     }
 
     @Override
