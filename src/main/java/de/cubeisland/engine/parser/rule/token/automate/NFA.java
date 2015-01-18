@@ -95,7 +95,7 @@ public class NFA extends FiniteAutomate<Transition>
         {
             return Collections.emptySet();
         }
-        return lookup.getExpectedChars();
+        return lookup.getAlphabet();
     }
 
     protected Set<State> epsilonClosure(Set<State> states)
@@ -160,12 +160,20 @@ public class NFA extends FiniteAutomate<Transition>
 
         Set<State> initialClosure = epsilonClosure(asSet(start));
         System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
-        knownStates.put(initialClosure, start);
         checkStates.push(start);
         checkStateSets.push(initialClosure);
+        knownStates.put(initialClosure, start);
+        for (State acceptingState : getAcceptingStates())
+        {
+            if (initialClosure.contains(acceptingState))
+            {
+                accepting.add(start);
+                break;
+            }
+        }
 
         int i = 1;
-        do
+        while (!checkStates.empty())
         {
             final State state = checkStates.pop();
             final Set<State> stateSet = checkStateSets.pop();
@@ -181,7 +189,7 @@ public class NFA extends FiniteAutomate<Transition>
                     states.add(newState);
                     checkStates.push(newState);
                     checkStateSets.push(newStateSet);
-                    knownStates.put(newStateSet, state);
+                    knownStates.put(newStateSet, newState);
                     transitions.add(new ExpectedTransition(state, c, newState));
                     System.out.println(" = " + newState);
 
@@ -190,6 +198,7 @@ public class NFA extends FiniteAutomate<Transition>
                         if (newStateSet.contains(acceptingState))
                         {
                             accepting.add(newState);
+                            break;
                         }
                     }
                 }
@@ -200,7 +209,6 @@ public class NFA extends FiniteAutomate<Transition>
                 }
             }
         }
-        while (!checkStates.empty());
 
         System.out.println("Transitions: " + transitions.size());
 

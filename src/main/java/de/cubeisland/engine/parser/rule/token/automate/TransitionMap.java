@@ -11,13 +11,13 @@ final class TransitionMap
 {
     private final Map<Character, Set<ExpectedTransition>> expectedTransitions;
     private final Set<SpontaneousTransition> spontaneousTransitions;
-    private final Set<Character> expectedChars;
+    private final Set<Character> alphabet;
 
-    public TransitionMap(Map<Character, Set<ExpectedTransition>> expectedTransitions, Set<SpontaneousTransition> spontaneousTransitions, Set<Character> expectedChars)
+    public TransitionMap(Map<Character, Set<ExpectedTransition>> expectedTransitions, Set<SpontaneousTransition> spontaneousTransitions, Set<Character> alphabet)
     {
         this.expectedTransitions = unmodifiableMap(expectedTransitions);
         this.spontaneousTransitions = unmodifiableSet(spontaneousTransitions);
-        this.expectedChars = unmodifiableSet(expectedChars);
+        this.alphabet = unmodifiableSet(alphabet);
     }
 
     public Set<ExpectedTransition> getTransitionsFor(char c)
@@ -35,8 +35,14 @@ final class TransitionMap
         return this.spontaneousTransitions;
     }
 
-    public Set<Character> getExpectedChars()
+    public Set<Character> getAlphabet()
     {
-        return this.expectedChars;
+        return this.alphabet;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Σ = " + getAlphabet() + ", ε-δ = " + getSpontaneousTransitions() + ", δ = " + this.expectedTransitions;
     }
 }

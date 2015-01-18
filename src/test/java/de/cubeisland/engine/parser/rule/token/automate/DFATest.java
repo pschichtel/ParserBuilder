@@ -37,6 +37,7 @@ public class DFATest
     @Test
     public void testMinimize() throws Exception
     {
-
+        DFA det = Matcher.match("a").kleene().toDFA();
+        MatcherTest.printAutomate("unminimized", det);
     }
 }
