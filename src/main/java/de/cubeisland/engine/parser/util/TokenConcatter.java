@@ -22,11 +22,12 @@
  */
 package de.cubeisland.engine.parser.util;
 
+import de.cubeisland.engine.parser.rule.token.TokenSpec;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 /**
  * @deprecated TODO Migrate tests please

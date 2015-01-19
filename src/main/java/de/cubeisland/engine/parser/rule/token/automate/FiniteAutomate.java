@@ -1,6 +1,10 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
-import java.util.*;
+import de.cubeisland.engine.parser.util.FixPoint;
+import de.cubeisland.engine.parser.util.Function;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static java.util.Collections.unmodifiableSet;
@@ -125,6 +129,32 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, start, asSet(accept));
     }
 
+    public boolean isAccepting(State s)
+    {
+        return getAcceptingStates().contains(s);
+    }
+
+    public Set<State> getReachableStates()
+    {
+        return FixPoint.apply(asSet(getStartState()), new Function<State, Set<State>>()
+        {
+            @Override
+            public Set<State> apply(State in)
+            {
+                Set<State> out = new HashSet<State>();
+
+                for (T t : getTransitions())
+                {
+                    if (t.getOrigin() == in)
+                    {
+                        out.add(t.getDestination());
+                    }
+                }
+
+                return out;
+            }
+        });
+    }
 
     @Override
     public boolean equals(Object o)
@@ -188,10 +218,5 @@ public abstract class FiniteAutomate<T extends Transition>
             transitions.addAll(automate.getTransitions());
         }
         return transitions;
-    }
-
-    public boolean isAccepting(State s)
-    {
-        return getAcceptingStates().contains(s);
     }
 }

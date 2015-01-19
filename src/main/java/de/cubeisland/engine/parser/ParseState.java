@@ -22,8 +22,9 @@
  */
 package de.cubeisland.engine.parser;
 
-import java.util.Set;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
+
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableSet;
 

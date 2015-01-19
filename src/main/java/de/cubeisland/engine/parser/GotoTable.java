@@ -22,8 +22,9 @@
  */
 package de.cubeisland.engine.parser;
 
-import java.util.Map;
 import de.cubeisland.engine.parser.rule.RuleElement;
+
+import java.util.Map;
 
 public class GotoTable
 {

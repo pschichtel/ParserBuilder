@@ -22,18 +22,12 @@
  */
 package de.cubeisland.engine.parser.grammar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import de.cubeisland.engine.parser.TestGrammars;
 import de.cubeisland.engine.parser.Variable;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import junit.framework.TestCase;
 
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class BaseGrammarTest extends TestCase
 {

@@ -22,16 +22,17 @@
  */
 package de.cubeisland.engine.parser.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import de.cubeisland.engine.parser.rule.token.SimpleTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import junit.framework.TestCase;
 
-import static org.junit.Assert.assertThat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 
 public class TokenConcatterTest extends TestCase

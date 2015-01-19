@@ -1,7 +1,5 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class State

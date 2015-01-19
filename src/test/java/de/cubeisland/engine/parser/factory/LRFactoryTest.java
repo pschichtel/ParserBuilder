@@ -22,7 +22,6 @@
  */
 package de.cubeisland.engine.parser.factory;
 
-import java.util.Set;
 import de.cubeisland.engine.parser.ParseState;
 import de.cubeisland.engine.parser.TestGrammars;
 import de.cubeisland.engine.parser.TestGrammars.SimpleExpr;
@@ -30,6 +29,8 @@ import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
 import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
 import org.junit.Test;
+
+import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static org.hamcrest.core.Is.is;

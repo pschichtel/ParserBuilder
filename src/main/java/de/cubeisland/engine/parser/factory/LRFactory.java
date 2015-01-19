@@ -22,16 +22,7 @@
  */
 package de.cubeisland.engine.parser.factory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import de.cubeisland.engine.parser.ActionTable;
-import de.cubeisland.engine.parser.GotoTable;
-import de.cubeisland.engine.parser.LRParser;
-import de.cubeisland.engine.parser.ParseState;
-import de.cubeisland.engine.parser.Variable;
+import de.cubeisland.engine.parser.*;
 import de.cubeisland.engine.parser.action.Action;
 import de.cubeisland.engine.parser.factory.result.CompilationResult;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
@@ -40,7 +31,9 @@ import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import de.cubeisland.engine.parser.util.FixPoint;
-import de.cubeisland.engine.parser.util.SetMapper;
+import de.cubeisland.engine.parser.util.Function;
+
+import java.util.*;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.factory.result.CompilationResult.success;
@@ -99,18 +92,16 @@ public class LRFactory implements ParserFactory<LRParser>
 
     protected Set<MarkedRule> closure(final AugmentedGrammar g, Set<MarkedRule> rules)
     {
-        return FixPoint.apply(rules, new SetMapper<MarkedRule>()
+        return FixPoint.apply(rules, new Function<MarkedRule, Set<MarkedRule>>()
         {
-            public Set<MarkedRule> apply(Set<MarkedRule> in)
+            @Override
+            public Set<MarkedRule> apply(MarkedRule in)
             {
                 Set<MarkedRule> newRules = new HashSet<MarkedRule>();
-                for (final MarkedRule rule : in)
+                RuleElement marked = in.getMarkedElement();
+                if (marked instanceof Variable)
                 {
-                    RuleElement marked = rule.getMarkedElement();
-                    if (marked instanceof Variable)
-                    {
-                        newRules.addAll(markAll(g.getRulesFor((Variable)marked)));
-                    }
+                    newRules.addAll(markAll(g.getRulesFor((Variable)marked)));
                 }
                 return newRules;
             }

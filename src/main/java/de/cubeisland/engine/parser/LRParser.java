@@ -22,10 +22,11 @@
  */
 package de.cubeisland.engine.parser;
 
-import java.util.Set;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
 import de.cubeisland.engine.parser.parser.Parser;
 import de.cubeisland.engine.parser.rule.token.TokenStream;
+
+import java.util.Set;
 
 public class LRParser implements Parser
 {

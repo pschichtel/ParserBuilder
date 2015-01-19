@@ -1,7 +1,7 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.util.FixPoint;
-import de.cubeisland.engine.parser.util.SetMapper;
+import de.cubeisland.engine.parser.util.Function;
 
 import java.util.*;
 
@@ -100,18 +100,15 @@ public class NFA extends FiniteAutomate<Transition>
 
     protected Set<State> epsilonClosure(Set<State> states)
     {
-        return FixPoint.apply(states, new SetMapper<State>()
+        return FixPoint.apply(states, new Function<State, Set<State>>()
         {
             @Override
-            public Set<State> apply(Set<State> in)
+            public Set<State> apply(State in)
             {
                 Set<State> states = new HashSet<State>();
-                for (State state : in)
+                for (SpontaneousTransition transition : getSpontaneousTransitionsFor(in))
                 {
-                    for (SpontaneousTransition transition : getSpontaneousTransitionsFor(state))
-                    {
-                        states.add(transition.getDestination());
-                    }
+                    states.add(transition.getDestination());
                 }
                 return states;
             }

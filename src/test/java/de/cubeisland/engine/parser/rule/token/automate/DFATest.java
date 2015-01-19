@@ -7,7 +7,7 @@ import java.util.Set;
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.rule.token.automate.Matcher.match;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class DFATest
 {
@@ -45,8 +45,11 @@ public class DFATest
         State q2 = new NamedState("q2");
         State q3 = new NamedState("q3");
         State q4 = new NamedState("q4");
+        State q5 = new NamedState("q5");
+        State q6 = new NamedState("q6");
+        State q7 = new NamedState("q7");
 
-        Set<State> states = asSet(q0, q1, q2, q3, q4);
+        Set<State> states = asSet(q0, q1, q2, q3, q4, q5, q6, q7);
         Set<ExpectedTransition> transitions = asSet(
                 new ExpectedTransition(q0, 'a', q1),
                 new ExpectedTransition(q0, 'b', q2),
@@ -57,7 +60,9 @@ public class DFATest
                 new ExpectedTransition(q3, 'a', q1),
                 new ExpectedTransition(q3, 'b', q1),
                 new ExpectedTransition(q4, 'a', q2),
-                new ExpectedTransition(q4, 'b', q2)
+                new ExpectedTransition(q4, 'b', q2),
+                new ExpectedTransition(q5, 'c', q6),
+                new ExpectedTransition(q6, 'd', q7)
         );
 
         DFA stroeti51 = new DFA(states, transitions, q0, asSet(q3, q4));

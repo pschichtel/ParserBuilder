@@ -27,18 +27,24 @@ import java.util.Set;
 
 public class FixPoint
 {
-    public static <T> Set<T> apply(Set<T> in, Function<Set<T>, Set<T>> func)
+    public static <T> Set<T> apply(Set<T> in, Function<T, Set<T>> func)
     {
         Set<T> result = new HashSet<T>(in);
-        Set<T> newSet = func.apply(in);
-        newSet.removeAll(result);
+        Set<T> newElements = new HashSet<T>(in);
 
-        newSet.removeAll(in);
-        if (!newSet.isEmpty())
+        while (true)
         {
-            result.addAll(apply(newSet, func));
+            Set<T> temp = new HashSet<T>();
+            for (T element : newElements)
+            {
+                temp.addAll(func.apply(element));
+            }
+            newElements = temp;
+            if (result.containsAll(newElements))
+            {
+                return result;
+            }
+            result.addAll(newElements);
         }
-
-        return result;
     }
 }

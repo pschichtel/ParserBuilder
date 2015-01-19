@@ -58,11 +58,17 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
 
     public DFA minimize()
     {
+        final Set<State> states = getReachableStates();
+        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(getTransitions());
+        State start = getStartState();
+        final Set<State> accepting = new HashSet<State>(getAcceptingStates());
+
+
         Set<StatePair> statePairs = new HashSet<StatePair>();
 
-        for (State p : getStates())
+        for (State p : states)
         {
-            for (State q : getStates())
+            for (State q : states)
             {
                 if (p != q)
                 {
@@ -79,8 +85,6 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
                 separableStates.add(p);
             }
         }
-
-        System.out.println(separableStates);
 
         boolean changed;
         do
@@ -107,11 +111,6 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         while (changed);
 
         statePairs.removeAll(separableStates);
-
-        final Set<State> states = new HashSet<State>(getStates());
-        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(getTransitions());
-        State start = getStartState();
-        final Set<State> accepting = new HashSet<State>(getAcceptingStates());
 
         for (StatePair pair : statePairs)
         {

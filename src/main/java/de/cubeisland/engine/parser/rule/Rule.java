@@ -22,12 +22,12 @@
  */
 package de.cubeisland.engine.parser.rule;
 
-import java.util.Collections;
-import java.util.List;
 import de.cubeisland.engine.parser.Variable;
 
+import java.util.Collections;
+import java.util.List;
+
 import static de.cubeisland.engine.parser.rule.Reaction.SkipReaction.SKIP;
-import static de.cubeisland.engine.parser.rule.token.Epsilon.EPSILON;
 import static java.util.Arrays.asList;
 
 public class Rule
