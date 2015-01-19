@@ -1,5 +1,6 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
+import de.cubeisland.engine.parser.Util;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
 
@@ -9,6 +10,17 @@ import static de.cubeisland.engine.parser.Util.asSet;
 
 public class NFA extends FiniteAutomate<Transition>
 {
+    public static final NFA EMPTY;
+    public static final NFA EPSILON;
+
+    static
+    {
+        State a = new State();
+        State b = new State();
+        EMPTY = new NFA(asSet(a, b), Collections.<Transition>emptySet(), a, asSet(b));
+        EPSILON = new NFA(asSet(a, b), Util.<Transition>asSet(new SpontaneousTransition(a, b)), a, asSet(b));
+    }
+
     private final Map<State, TransitionMap> transitionLookup;
 
     public NFA(Set<State> states, Set<Transition> transitions, State start, Set<State> acceptingStates)
