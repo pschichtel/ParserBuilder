@@ -51,12 +51,8 @@ public class ExpectedTransition extends Transition
 
         ExpectedTransition that = (ExpectedTransition) o;
 
-        if (with != that.with)
-        {
-            return false;
-        }
+        return this.with == that.with;
 
-        return true;
     }
 
     @Override

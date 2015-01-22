@@ -22,6 +22,8 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
+import de.cubeisland.engine.parser.util.UnorderedPair;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -78,6 +80,12 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return t.getDestination();
     }
 
+    @Override
+    public DFA toDFA()
+    {
+        return this;
+    }
+
     public DFA minimize()
     {
         final Set<State> states = getReachableStates();
@@ -86,7 +94,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         final Set<State> accepting = new HashSet<State>(getAcceptingStates());
 
 
-        Set<StatePair> statePairs = new HashSet<StatePair>();
+        Set<UnorderedPair<State, State>> statePairs = new HashSet<UnorderedPair<State, State>>();
 
         for (State p : states)
         {
@@ -94,15 +102,15 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
             {
                 if (p != q)
                 {
-                    statePairs.add(new StatePair(p, q));
+                    statePairs.add(new UnorderedPair<State, State>(p, q));
                 }
             }
         }
 
-        Set<StatePair> separableStates = new HashSet<StatePair>();
-        for (StatePair p : statePairs)
+        Set<UnorderedPair> separableStates = new HashSet<UnorderedPair>();
+        for (UnorderedPair<State, State> p : statePairs)
         {
-            if (isAccepting(p.left) && !isAccepting(p.right) || !isAccepting(p.left) && isAccepting(p.right))
+            if (isAccepting(p.getLeft()) && !isAccepting(p.getRight()) || !isAccepting(p.getLeft()) && isAccepting(p.getRight()))
             {
                 separableStates.add(p);
             }
@@ -114,15 +122,15 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
             changed = false;
             for (Character c : getAlphabet())
             {
-                for (StatePair pair : statePairs)
+                for (UnorderedPair<State, State> pair : statePairs)
                 {
-                    State p = pair.left.transition(this, c);
-                    State q = pair.right.transition(this, c);
+                    final State p = pair.getLeft().transition(this, c);
+                    final State q = pair.getRight().transition(this, c);
                     if (p == ERROR || q == ERROR)
                     {
                         continue;
                     }
-                    if (separableStates.contains(new StatePair(p, q)) && !separableStates.contains(pair))
+                    if (separableStates.contains(new UnorderedPair<State, State>(p, q)) && !separableStates.contains(pair))
                     {
                         separableStates.add(pair);
                         changed = true;
@@ -134,26 +142,29 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
 
         statePairs.removeAll(separableStates);
 
-        for (StatePair pair : statePairs)
+        for (UnorderedPair<State, State> pair : statePairs)
         {
-            states.remove(pair.right);
-            accepting.remove(pair.right);
-            if (start == pair.right)
+            final State p = pair.getLeft();
+            final State q = pair.getRight();
+
+            states.remove(q);
+            accepting.remove(q);
+            if (start == q)
             {
-                start = pair.left;
+                start = p;
             }
 
             for (ExpectedTransition t : transitions)
             {
                 State origin = t.getOrigin();
                 State destination = t.getDestination();
-                if (origin.equals(pair.right))
+                if (origin.equals(q))
                 {
-                    origin = pair.left;
+                    origin = p;
                 }
-                if (destination.equals(pair.right))
+                if (destination.equals(q))
                 {
-                    destination = pair.left;
+                    destination = p;
                 }
 
                 if (origin != t.getOrigin() || destination != t.getDestination())
@@ -168,63 +179,9 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return new DFA(states, new HashSet<ExpectedTransition>(transitions), start, accepting);
     }
 
-    private class StatePair
+    @Override
+    public DFA complement()
     {
-        public final State left;
-        public final State right;
-
-        public StatePair(State left, State right)
-        {
-            this.left = left;
-            this.right = right;
-        }
-
-        /**
-         * This implementation ignores the order of the fields, so <a, b> = <b, a>
-         *
-         * @param o the other object
-         * @return true of they're the same
-         */
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
-                return true;
-            }
-            if (!(o instanceof StatePair))
-            {
-                return false;
-            }
-
-            StatePair that = (StatePair) o;
-
-            if (left.equals(that.left) && right.equals(that.right))
-            {
-                return true;
-            }
-            if (left.equals(that.right) && right.equals(that.left))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * This implementation just adds up both hashCodes to drop ordering
-         *
-         * @return hash code
-         */
-        @Override
-        public int hashCode()
-        {
-            return left.hashCode() + right.hashCode();
-        }
-
-        @Override
-        public String toString()
-        {
-            return "<" + this.left + ", " + this.right + ">";
-        }
+        return new DFA(getStates(), getTransitions(), getStartState(), complementaryAcceptingStates());
     }
 }

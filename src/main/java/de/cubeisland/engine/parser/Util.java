@@ -22,6 +22,9 @@
  */
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.util.OrderedPair;
+import de.cubeisland.engine.parser.util.UnorderedPair;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,5 +39,35 @@ public abstract class Util
     public static <T> Set<T> asSet(T... elements)
     {
         return new HashSet<T>(Arrays.asList(elements));
+    }
+
+    public static <L, R> Set<OrderedPair<L, R>> orderedMultiply(Set<L> left, Set<R> right)
+    {
+        Set<OrderedPair<L, R>> out = new HashSet<OrderedPair<L, R>>();
+
+        for (L l : left)
+        {
+            for (R r : right)
+            {
+                out.add(new OrderedPair<L, R>(l, r));
+            }
+        }
+
+        return out;
+    }
+
+    public static <L, R> Set<UnorderedPair<L, R>> unorderedMultiply(Set<L> left, Set<R> right)
+    {
+        Set<UnorderedPair<L, R>> out = new HashSet<UnorderedPair<L, R>>();
+
+        for (L l : left)
+        {
+            for (R r : right)
+            {
+                out.add(new UnorderedPair<L, R>(l, r));
+            }
+        }
+
+        return out;
     }
 }

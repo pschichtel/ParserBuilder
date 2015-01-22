@@ -26,7 +26,12 @@ import de.cubeisland.engine.parser.Util;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 
@@ -176,6 +181,7 @@ public class NFA extends FiniteAutomate<Transition>
         return out;
     }
 
+    @Override
     public DFA toDFA()
     {
         final Set<State> states = new HashSet<State>();
@@ -244,5 +250,11 @@ public class NFA extends FiniteAutomate<Transition>
         System.out.println("Transitions: " + transitions.size());
 
         return new DFA(states, transitions, start, accepting);
+    }
+
+    @Override
+    public NFA complement()
+    {
+        return new NFA(getStates(), getTransitions(), getStartState(), complementaryAcceptingStates());
     }
 }

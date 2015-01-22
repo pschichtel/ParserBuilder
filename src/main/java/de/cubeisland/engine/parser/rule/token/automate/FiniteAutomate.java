@@ -24,11 +24,13 @@ package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
+import de.cubeisland.engine.parser.util.OrderedPair;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
+import static java.util.Collections.disjoint;
 import static java.util.Collections.unmodifiableSet;
 
 public abstract class FiniteAutomate<T extends Transition>
@@ -39,6 +41,7 @@ public abstract class FiniteAutomate<T extends Transition>
     private final State start;
 
     private final Set<Character> alphabet;
+    private final Set<State> reachableStates;
 
     protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates) {
 
@@ -50,6 +53,7 @@ public abstract class FiniteAutomate<T extends Transition>
         this.acceptingStates = unmodifiableSet(acceptingStates);
         this.start = start;
         this.alphabet = unmodifiableSet(calculateAlphabet(transitions));
+        this.reachableStates = unmodifiableSet(findReachableStates());
 
     }
 
@@ -66,6 +70,28 @@ public abstract class FiniteAutomate<T extends Transition>
         }
 
         return chars;
+    }
+
+    private Set<State> findReachableStates()
+    {
+        return FixPoint.apply(asSet(getStartState()), new Function<State, Set<State>>()
+        {
+            @Override
+            public Set<State> apply(State in)
+            {
+                Set<State> out = new HashSet<State>();
+
+                for (T t : getTransitions())
+                {
+                    if (t.getOrigin() == in)
+                    {
+                        out.add(t.getDestination());
+                    }
+                }
+
+                return out;
+            }
+        });
     }
 
     public Set<State> getStates()
@@ -158,24 +184,23 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public Set<State> getReachableStates()
     {
-        return FixPoint.apply(asSet(getStartState()), new Function<State, Set<State>>()
-        {
-            @Override
-            public Set<State> apply(State in)
-            {
-                Set<State> out = new HashSet<State>();
+        return this.reachableStates;
+    }
 
-                for (T t : getTransitions())
-                {
-                    if (t.getOrigin() == in)
-                    {
-                        out.add(t.getDestination());
-                    }
-                }
+    protected Set<State> complementaryAcceptingStates()
+    {
+        Set<State> states = new HashSet<State>(getStates());
+        states.removeAll(getAcceptingStates());
+        return states;
+    }
 
-                return out;
-            }
-        });
+    public abstract FiniteAutomate<? extends Transition> complement();
+
+    public abstract DFA toDFA();
+
+    public boolean isEmpty()
+    {
+        return disjoint(getReachableStates(), getAcceptingStates());
     }
 
     @Override
@@ -190,26 +215,8 @@ public abstract class FiniteAutomate<T extends Transition>
             return false;
         }
 
-        FiniteAutomate that = (FiniteAutomate) o;
-
-        if (!acceptingStates.equals(that.acceptingStates))
-        {
-            return false;
-        }
-        if (!start.equals(that.start))
-        {
-            return false;
-        }
-        if (!states.equals(that.states))
-        {
-            return false;
-        }
-        if (!transitions.equals(that.transitions))
-        {
-            return false;
-        }
-
-        return true;
+        // TODO implement me properly
+        return false;
     }
 
     @Override
