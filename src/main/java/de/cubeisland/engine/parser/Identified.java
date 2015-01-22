@@ -22,13 +22,15 @@
  */
 package de.cubeisland.engine.parser;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public abstract class Identified
 {
-    private static volatile short idCounter = 0;
+    private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-    private final short id = idCounter++;
+    private final int id = COUNTER.getAndIncrement();
 
-    public short getId()
+    public int getId()
     {
         return this.id;
     }
