@@ -40,13 +40,13 @@ public class TokenConcatterTest extends TestCase
     private List<TokenSpec> v = new ArrayList<TokenSpec>();
     private List<TokenSpec> w = new ArrayList<TokenSpec>();
 
-    private SimpleTokenSpec ta = new SimpleTokenSpec("a", "a");
-    private SimpleTokenSpec tb = new SimpleTokenSpec("b", "b");
-    private SimpleTokenSpec tc = new SimpleTokenSpec("c", "c");
+    private SimpleTokenSpec ta = new SimpleTokenSpec("a");
+    private SimpleTokenSpec tb = new SimpleTokenSpec("b");
+    private SimpleTokenSpec tc = new SimpleTokenSpec("c");
 
-    private SimpleTokenSpec t1 = new SimpleTokenSpec("1", "1");
-    private SimpleTokenSpec t2 = new SimpleTokenSpec("2", "2");
-    private SimpleTokenSpec t3 = new SimpleTokenSpec("3", "3");
+    private SimpleTokenSpec t1 = new SimpleTokenSpec("1");
+    private SimpleTokenSpec t2 = new SimpleTokenSpec("2");
+    private SimpleTokenSpec t3 = new SimpleTokenSpec("3");
 
     private Set<List<TokenSpec>> m = new HashSet<List<TokenSpec>>();
     private Set<List<TokenSpec>> n = new HashSet<List<TokenSpec>>();

@@ -20,52 +20,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser;
+package de.cubeisland.engine.parser.rule.token;
 
-import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
-import de.cubeisland.engine.parser.parser.Parser;
-import de.cubeisland.engine.parser.rule.token.TokenStream;
-
-import java.util.Set;
-
-public class LRParser implements Parser
+public class ParametrizedToken<T> implements Token
 {
-    private final AugmentedGrammar grammar;
-    private final Set<ParseState> states;
-    private final GotoTable gotoTable;
-    private final ActionTable actionTable;
+    private final ParametrizedTokenSpec<T> spec;
+    private final T value;
 
-    public LRParser(AugmentedGrammar grammar, Set<ParseState> states, GotoTable gotoTable, ActionTable actionTable)
+    public ParametrizedToken(ParametrizedTokenSpec<T> spec, T value)
     {
-        this.grammar = grammar;
-        this.states = states;
-        this.gotoTable = gotoTable;
-        this.actionTable = actionTable;
+        this.spec = spec;
+        this.value = value;
     }
 
-    public AugmentedGrammar getGrammar()
+    @Override
+    public String getName()
     {
-        return grammar;
+        return spec.getName();
     }
 
-    public Set<ParseState> getStates()
+    @Override
+    public String toString()
     {
-        return states;
-    }
-
-    public GotoTable getGotoTable()
-    {
-        return gotoTable;
-    }
-
-    public ActionTable getActionTable()
-    {
-        return actionTable;
-    }
-
-    public boolean parse(TokenStream tokens)
-    {
-        // TODO implement me
-        return false;
+        return spec.getName() + "(" + value + ')';
     }
 }

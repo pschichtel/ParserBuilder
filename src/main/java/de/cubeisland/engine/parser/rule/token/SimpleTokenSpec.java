@@ -22,41 +22,29 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
-import java.util.regex.Pattern;
-
 import static java.util.regex.Pattern.compile;
-import static java.util.regex.Pattern.quote;
 
-public class SimpleTokenSpec extends TokenSpec
+public class SimpleTokenSpec extends ReadableTokenSpec
 {
-    private final Pattern pattern;
-    private final String output;
+    private static final TokenAction ACTION = new SimpleTokenAction();
 
-    public SimpleTokenSpec(String name, String pattern)
+    public SimpleTokenSpec(String string)
     {
-        this(name, compile(quote(pattern)), pattern);
-    }
-
-    public SimpleTokenSpec(String name, Pattern pattern)
-    {
-        this(name, pattern, "Regex(" + pattern.toString() + ")");
-    }
-
-    private SimpleTokenSpec(String name, Pattern pattern, String output)
-    {
-        super(name);
-        this.pattern = pattern;
-        this.output = output;
-    }
-
-    public Pattern getPattern()
-    {
-        return pattern;
+        super(string, ACTION);
     }
 
     @Override
     public String toString()
     {
-        return getName() + " ↦ " + this.output;
+        return getName() + " ↦ " + getName();
+    }
+
+    private static final class SimpleTokenAction implements TokenAction
+    {
+        @Override
+        public Token act(TokenSpec spec, String s)
+        {
+            return new SimpleToken(spec);
+        }
     }
 }

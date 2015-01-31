@@ -22,7 +22,7 @@
  */
 package de.cubeisland.engine.parser.action;
 
-import de.cubeisland.engine.parser.ParseState;
+import de.cubeisland.engine.parser.parser.ParseState;
 
 public class Shift extends Action
 {

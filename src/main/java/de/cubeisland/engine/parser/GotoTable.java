@@ -22,6 +22,7 @@
  */
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.rule.RuleElement;
 
 import java.util.Map;

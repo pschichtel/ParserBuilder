@@ -22,7 +22,7 @@
  */
 package de.cubeisland.engine.parser.factory;
 
-import de.cubeisland.engine.parser.ParseState;
+import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.TestGrammars;
 import de.cubeisland.engine.parser.TestGrammars.SimpleExpr;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;

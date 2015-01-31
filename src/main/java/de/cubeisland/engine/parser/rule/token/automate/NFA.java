@@ -37,14 +37,12 @@ import static de.cubeisland.engine.parser.Util.asSet;
 
 public class NFA extends FiniteAutomate<Transition>
 {
-    public static final NFA EMPTY;
     public static final NFA EPSILON;
 
     static
     {
         State a = new State();
         State b = new State();
-        EMPTY = new NFA(asSet(a, b), Collections.<Transition>emptySet(), a, asSet(b));
         EPSILON = new NFA(asSet(a, b), Util.<Transition>asSet(new SpontaneousTransition(a, b)), a, asSet(b));
     }
 

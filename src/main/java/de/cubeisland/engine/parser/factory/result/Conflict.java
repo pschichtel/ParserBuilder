@@ -22,7 +22,7 @@
  */
 package de.cubeisland.engine.parser.factory.result;
 
-import de.cubeisland.engine.parser.ParseState;
+import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.action.Action;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 

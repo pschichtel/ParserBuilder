@@ -24,7 +24,10 @@ package de.cubeisland.engine.parser;
 
 import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.Epsilon;
+import de.cubeisland.engine.parser.rule.token.ParametrizedToken;
 import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
+import de.cubeisland.engine.parser.rule.token.Token;
+import de.cubeisland.engine.parser.rule.token.TokenAction;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import static de.cubeisland.engine.parser.TestGrammars.SimpleExpr.*;
@@ -41,14 +44,21 @@ public class TestGrammars
         public static final Variable factor = new Variable("factor");
         public static final Variable expr = new Variable("expr");
 
-        public static final TokenSpec ADD = simple("ADD", "+");
-        public static final TokenSpec SUB = simple("SUB", "-");
-        public static final TokenSpec MUL = simple("MUL", "*");
-        public static final TokenSpec DIV = simple("DIV", "/");
-        public static final TokenSpec BGN = simple("BGN", "(");
-        public static final TokenSpec END = simple("END", ")");
+        public static final TokenSpec ADD = simple("+");
+        public static final TokenSpec SUB = simple("-");
+        public static final TokenSpec MUL = simple("*");
+        public static final TokenSpec DIV = simple("/");
+        public static final TokenSpec BGN = simple("(");
+        public static final TokenSpec END = simple(")");
 
-        public static final ParametrizedTokenSpec<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", Integer.class);
+        public static final ParametrizedTokenSpec<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", new TokenAction() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public Token act(TokenSpec spec, String s)
+            {
+                return new ParametrizedToken<Integer>((ParametrizedTokenSpec<Integer>) spec, Integer.valueOf(s));
+            }
+        });
     }
 
     public static final Grammar SIMPLE_EXPR = Grammar

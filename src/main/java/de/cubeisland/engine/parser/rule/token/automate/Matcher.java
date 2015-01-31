@@ -24,6 +24,7 @@ package de.cubeisland.engine.parser.rule.token.automate;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 
@@ -55,5 +56,11 @@ public abstract class Matcher
         }
 
         return new DFA(states, transitions, start, asSet(lastState));
+    }
+
+    public static FiniteAutomate<? extends Transition> match(Pattern pattern)
+    {
+        // TODO implement me
+        return null;
     }
 }

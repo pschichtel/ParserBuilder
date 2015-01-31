@@ -31,4 +31,15 @@ public class SimpleToken implements Token
     {
         this.spec = spec;
     }
+
+    public String getName()
+    {
+        return spec.getName();
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Token(" + spec.getName() + ") - " + spec.getClass();
+    }
 }

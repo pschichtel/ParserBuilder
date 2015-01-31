@@ -37,8 +37,8 @@ public class GrammarBuilderTest
     public void testBuild() throws Exception
     {
         final Variable start = new Variable("start");
-        final TokenSpec A = simple("a", "a");
-        final TokenSpec B = simple("b", "b");
+        final TokenSpec A = simple("a");
+        final TokenSpec B = simple("b");
         Grammar g = Grammar
             .with(head(start).produces(A).skip())
             .with(head(start).produces(B).skip())

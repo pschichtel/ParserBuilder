@@ -23,6 +23,7 @@
 package de.cubeisland.engine.parser;
 
 import de.cubeisland.engine.parser.action.Action;
+import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import java.util.Map;

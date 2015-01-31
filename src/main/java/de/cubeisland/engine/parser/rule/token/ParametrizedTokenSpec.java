@@ -24,18 +24,18 @@ package de.cubeisland.engine.parser.rule.token;
 
 import java.util.regex.Pattern;
 
-public class ParametrizedTokenSpec<T> extends SimpleTokenSpec
+public class ParametrizedTokenSpec<T> extends ReadableTokenSpec
 {
-    private final Class<T> valueType;
+    private final Pattern pattern;
 
-    public ParametrizedTokenSpec(String name, Pattern pattern, Class<T> valueType)
+    public ParametrizedTokenSpec(String name, Pattern pattern, TokenAction action)
     {
-        super(name, pattern);
-        this.valueType = valueType;
+        super(name, action);
+        this.pattern = pattern;
     }
 
-    public Class<T> getValueType()
+    public Pattern getPattern()
     {
-        return valueType;
+        return pattern;
     }
 }

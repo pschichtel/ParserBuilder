@@ -20,69 +20,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser;
+package de.cubeisland.engine.parser.parser;
 
-import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
+import de.cubeisland.engine.parser.ActionTable;
+import de.cubeisland.engine.parser.GotoTable;
+import de.cubeisland.engine.parser.rule.token.InputSource;
+import de.cubeisland.engine.parser.rule.token.Tokenizer;
 
+import java.io.IOException;
 import java.util.Set;
 
-import static java.util.Collections.unmodifiableSet;
-
-public class ParseState extends Identified
+public class LRParser implements Parser
 {
-    private final Set<MarkedRule> rules;
+    private final Tokenizer tokenizer;
+    private final Set<ParseState> states;
+    private final GotoTable gotoTable;
+    private final ActionTable actionTable;
 
-    public ParseState(Set<MarkedRule> rules)
+    public LRParser(Tokenizer tokenizer, Set<ParseState> states, GotoTable gotoTable, ActionTable actionTable)
     {
-        this.rules = unmodifiableSet(rules);
+        this.tokenizer = tokenizer;
+        this.states = states;
+        this.gotoTable = gotoTable;
+        this.actionTable = actionTable;
     }
 
-    public Set<MarkedRule> getRules()
+    public Set<ParseState> getStates()
     {
-        return rules;
+        return states;
     }
 
-    @Override
-    public String toString()
+    public GotoTable getGotoTable()
     {
-        StringBuilder out = new StringBuilder("s").append(getId()).append("(\n");
-        for (final MarkedRule rule : rules)
-        {
-            out.append('\t').append(rule).append('\n');
-        }
-        out.append(')');
-        return out.toString();
+        return gotoTable;
     }
 
-    @Override
-    public boolean equals(Object o)
+    public ActionTable getActionTable()
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
-        if (!super.equals(o))
-        {
-            return false;
-        }
-
-        final ParseState that = (ParseState)o;
-
-        if (!rules.equals(that.rules))
-        {
-            return false;
-        }
-
-        return true;
+        return actionTable;
     }
 
-    @Override
-    public int hashCode()
+    public boolean parse(InputSource source) throws IOException
     {
-        return super.hashCode();
+        this.tokenizer.nextToken(source);
+        // TODO implement me
+        return false;
     }
 }

@@ -24,16 +24,27 @@ package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.util.UnorderedPair;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.rule.token.automate.ErrorState.ERROR;
 
 public class DFA extends FiniteAutomate<ExpectedTransition>
 {
+    public static final DFA EMPTY;
+
+    static
+    {
+        State a = new State();
+        State b = new State();
+        EMPTY = new DFA(asSet(a, b), Collections.<ExpectedTransition>emptySet(), a, asSet(b));
+    }
+
     private final Map<State, Map<Character, ExpectedTransition>> transitionLookup;
 
     public DFA(Set<State> states, Set<ExpectedTransition> transitions, State start, Set<State> acceptingStates)
@@ -88,7 +99,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
 
     public DFA minimize()
     {
-        final Set<State> states = getReachableStates();
+        final Set<State> states = new HashSet<State>(getReachableStates());
         final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(getTransitions());
         State start = getStartState();
         final Set<State> accepting = new HashSet<State>(getAcceptingStates());
