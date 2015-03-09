@@ -28,6 +28,7 @@ import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import static de.cubeisland.engine.parser.TestGrammars.SimpleExpr.*;
+import static de.cubeisland.engine.parser.TestGrammars.FirstFollowExpr.*;
 import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.parametrized;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
@@ -49,6 +50,21 @@ public class TestGrammars
         public static final TokenSpec END = simple("END", ")");
 
         public static final ParametrizedTokenSpec<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", Integer.class);
+    }
+
+    public static class FirstFollowExpr
+    {
+        public static final Variable s = new Variable("s");
+        public static final Variable a = new Variable("a");
+        public static final Variable c = new Variable("c");
+        public static final Variable d = new Variable("d");
+
+        public static final TokenSpec B = simple("B", "b");
+        public static final TokenSpec C = simple("C", "c");
+        public static final TokenSpec D = simple("D", "d");
+        public static final TokenSpec L = simple("L", "l");
+        public static final TokenSpec M = simple("M", "m");
+        public static final TokenSpec H = simple("H", "h");
     }
 
     public static final Grammar SIMPLE_EXPR = Grammar
@@ -73,4 +89,11 @@ public class TestGrammars
         .with(head(factor).produces(BGN, expr, END).skip())
         .with(head(factor).produces(NUM).skip())
         .startingWith(expr);
+
+    public static final Grammar FIRST_N_FOLLOW_TEST_GRAMMAR = Grammar
+            .with(head(s).produces(a, B, c).skip())
+            .with(head(a).produces(C, D).skip())
+            .with(head(c).produces(L, M, d, L).skip())
+            .with(head(d).produces(H).skip())
+            .startingWith(s);
 }
