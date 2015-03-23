@@ -88,7 +88,7 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
 
     public DFA minimize()
     {
-        final Set<State> states = getReachableStates();
+        final Set<State> states = new HashSet<State>(getReachableStates());
         final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(getTransitions());
         State start = getStartState();
         final Set<State> accepting = new HashSet<State>(getAcceptingStates());
