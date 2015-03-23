@@ -28,13 +28,16 @@ import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.EndOfFileToken;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import de.cubeisland.engine.parser.util.TokenString;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.util.TokenString.concatMany;
 import static de.cubeisland.engine.parser.util.TokenString.str;
-import static java.util.Collections.list;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
