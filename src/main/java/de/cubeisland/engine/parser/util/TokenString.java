@@ -55,6 +55,15 @@ public class TokenString implements Iterable<TokenSpec>
         return this.tokens.size();
     }
 
+    public TokenString substring(int begin, int end) {
+        return new TokenString(this.tokens.subList(begin, end));
+    }
+
+    public TokenString maximumSubstring(int begin, int end) {
+        final int max = size();
+        return substring(begin, end < max ? end : max);
+    }
+
     public TokenString concat(int k, TokenString other)
     {
         List<TokenSpec> concatenatedString = new ArrayList<TokenSpec>(this.tokens);
