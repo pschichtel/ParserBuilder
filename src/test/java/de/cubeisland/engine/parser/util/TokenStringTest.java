@@ -23,22 +23,20 @@
 package de.cubeisland.engine.parser.util;
 
 import de.cubeisland.engine.parser.rule.token.SimpleTokenSpec;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import junit.framework.TestCase;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static de.cubeisland.engine.parser.util.TokenString.concatMany;
+import static de.cubeisland.engine.parser.util.TokenString.str;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 
-public class TokenConcatterTest extends TestCase
+public class TokenStringTest extends TestCase
 {
-    private List<TokenSpec> v = new ArrayList<TokenSpec>();
-    private List<TokenSpec> w = new ArrayList<TokenSpec>();
+    private final TokenString v;
+    private final TokenString w;
 
     private SimpleTokenSpec ta = new SimpleTokenSpec("a");
     private SimpleTokenSpec tb = new SimpleTokenSpec("b");
@@ -48,19 +46,14 @@ public class TokenConcatterTest extends TestCase
     private SimpleTokenSpec t2 = new SimpleTokenSpec("2");
     private SimpleTokenSpec t3 = new SimpleTokenSpec("3");
 
-    private Set<List<TokenSpec>> m = new HashSet<List<TokenSpec>>();
-    private Set<List<TokenSpec>> n = new HashSet<List<TokenSpec>>();
-    private Set<List<TokenSpec>> o = new HashSet<List<TokenSpec>>();
+    private Set<TokenString> m = new HashSet<TokenString>();
+    private Set<TokenString> n = new HashSet<TokenString>();
+    private Set<TokenString> o = new HashSet<TokenString>();
 
-    public TokenConcatterTest()
+    public TokenStringTest()
     {
-        this.v.add(this.ta);
-        this.v.add(this.tb);
-        this.v.add(this.tc);
-
-        this.w.add(this.t1);
-        this.w.add(this.t2);
-        this.w.add(this.t3);
+        this.v = str(this.ta, this.tb, this.tc);
+        this.w = str(this.t1, this.t2, this.t3);
 
         this.m.add(this.v);
         this.m.add(this.w);
@@ -73,21 +66,11 @@ public class TokenConcatterTest extends TestCase
 
     public void testConcatPrefix() throws Exception
     {
-        List<TokenSpec> solution = new ArrayList<TokenSpec>();
-
-        solution.add(this.ta);
-        solution.add(this.tb);
-        solution.add(this.tc);
-
-        solution.add(this.t1);
-        solution.add(this.t2);
-        solution.add(this.t3);
+        final TokenString solution = str(this.ta, this.tb, this.tc, this.t1, this.t2, this.t3);
 
         for (int i = 0; i < 10; i++)
         {
-            List<TokenSpec> concatList = TokenConcatter.concatPrefix(i, this.v, this.w);
-
-            assertThat("Concatenation of two lists with k = " + i + " failed.", concatList, is(solution.subList(0, i < solution.size() ? i : solution.size())));
+            assertThat("Concatenation of two lists with k = " + i + " failed.", this.v.concat(i, this.w), is(solution.maximumSubstring(0, i)));
         }
     }
 
@@ -95,14 +78,14 @@ public class TokenConcatterTest extends TestCase
     {
         for (int i = 0; i < 10; i++)
         {
-            Set<List<TokenSpec>> solution = new HashSet<List<TokenSpec>>();
+            Set<TokenString> solution = new HashSet<TokenString>();
 
-            solution.add(TokenConcatter.concatPrefix(i, this.v, this.w));
-            solution.add(TokenConcatter.concatPrefix(i, this.v, this.v));
-            solution.add(TokenConcatter.concatPrefix(i, this.w, this.v));
-            solution.add(TokenConcatter.concatPrefix(i, this.w, this.w));
+            solution.add(this.v.concat(i, this.w));
+            solution.add(this.v.concat(i, this.v));
+            solution.add(this.w.concat(i, this.v));
+            solution.add(this.w.concat(i, this.w));
 
-            Set<List<TokenSpec>> proposal = TokenConcatter.concatPrefix(i, this.m, this.n);
+            Set<TokenString> proposal = concatMany(i, this.m, this.n);
 
             assertThat("Concatenation of two sets with k = " + i + " failed.", proposal, is(solution));
         }
@@ -112,10 +95,9 @@ public class TokenConcatterTest extends TestCase
     {
         for (int i = 0; i < 10; i++)
         {
-            Set<List<TokenSpec>> solution = TokenConcatter.concatPrefix(i, TokenConcatter.concatPrefix(i, this.m,
-                                                                                                       this.n), this.o);
+            Set<TokenString> solution = concatMany(i, concatMany(i, this.m, this.n), this.o);
 
-            Set<List<TokenSpec>> proposal = TokenConcatter.concatPrefix(i, this.m, this.n, this.o);
+            Set<TokenString> proposal = concatMany(i, this.m, this.n, this.o);
 
             assertThat("Concatenation of three sets with k = " + i + " failed.", proposal, is(solution));
         }
