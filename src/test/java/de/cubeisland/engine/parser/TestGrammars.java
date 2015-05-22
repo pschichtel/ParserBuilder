@@ -69,12 +69,12 @@ public class TestGrammars
         public static final Variable c = new Variable("c");
         public static final Variable d = new Variable("d");
 
-        public static final TokenSpec B = simple("B", "b");
-        public static final TokenSpec C = simple("C", "c");
-        public static final TokenSpec D = simple("D", "d");
-        public static final TokenSpec L = simple("L", "l");
-        public static final TokenSpec M = simple("M", "m");
-        public static final TokenSpec H = simple("H", "h");
+        public static final TokenSpec B = simple("b");
+        public static final TokenSpec C = simple("c");
+        public static final TokenSpec D = simple("d");
+        public static final TokenSpec L = simple("l");
+        public static final TokenSpec M = simple("m");
+        public static final TokenSpec H = simple("h");
     }
 
     public static final Grammar SIMPLE_EXPR = Grammar
