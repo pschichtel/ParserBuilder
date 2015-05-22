@@ -25,9 +25,10 @@ package de.cubeisland.engine.parser.grammar;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
-import de.cubeisland.engine.parser.util.TokenString;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static de.cubeisland.engine.parser.rule.Reaction.SkipReaction.SKIP;
 import static de.cubeisland.engine.parser.rule.token.EndOfFileToken.EOF;
@@ -47,20 +48,7 @@ public class AugmentedGrammar extends BaseGrammar
         return getRules().get(0);
     }
 
-    public Map<Variable, Set<TokenString>> follow()
-    {
-        return follow(1);
-    }
 
-    public Map<Variable, Set<TokenString>> follow(int k)
-    {
-        final Map<Variable, Set<TokenString>> follow = new HashMap<Variable, Set<TokenString>>();
-        final Map<Variable, Set<TokenString>> first = first(k);
-
-
-
-        return follow;
-    }
 
     private static Set<Variable> augment(Set<Variable> original)
     {

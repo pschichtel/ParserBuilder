@@ -24,7 +24,12 @@ package de.cubeisland.engine.parser.grammar;
 
 import de.cubeisland.engine.parser.TestGrammars;
 import de.cubeisland.engine.parser.Variable;
+import de.cubeisland.engine.parser.util.TokenString;
 import junit.framework.TestCase;
+import org.junit.Test;
+
+import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -53,14 +58,35 @@ public class BaseGrammarTest extends TestCase
         }
     }
 
+    @Test
     public void testFirst() throws Exception
     {
         // TODO add some fancy magic to the test
-        System.out.println("test");
-        for (Variable var : h.getVariables())
+        final Map<Variable, Set<TokenString>> first = TestGrammars.FIRST_N_FOLLOW_TEST_GRAMMAR.first(2);
+
+        for (Map.Entry<Variable, Set<TokenString>> entry : first.entrySet())
         {
-            //System.out.println(var + " --> " + h.first(2, var));
+            System.out.println(entry.getKey());
+            for (TokenString tokenString : entry.getValue())
+            {
+                System.out.println("\t" + tokenString);
+            }
         }
-        assertThat("dummy", true, is(true));
+    }
+
+    @Test
+    public void testFollow() throws Exception
+    {
+        // TODO add some fancy magic
+        final Map<Variable, Set<TokenString>> first = TestGrammars.FIRST_N_FOLLOW_TEST_GRAMMAR.follow(2);
+
+        for (Map.Entry<Variable, Set<TokenString>> entry : first.entrySet())
+        {
+            System.out.println(entry.getKey());
+            for (TokenString tokenString : entry.getValue())
+            {
+                System.out.println("\t" + tokenString);
+            }
+        }
     }
 }
