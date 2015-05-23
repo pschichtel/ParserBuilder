@@ -31,6 +31,7 @@ import org.junit.Test;
 import java.util.Map;
 import java.util.Set;
 
+import static de.cubeisland.engine.parser.util.PrintingUtil.printTokenStringMap;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -62,31 +63,17 @@ public class BaseGrammarTest extends TestCase
     public void testFirst() throws Exception
     {
         // TODO add some fancy magic to the test
-        final Map<Variable, Set<TokenString>> first = TestGrammars.FIRST_N_FOLLOW_TEST_GRAMMAR.first(2);
+        final Map<Variable, Set<TokenString>> first = TestGrammars.FIRST_N_FOLLOW_TEST_GRAMMAR.first(1);
 
-        for (Map.Entry<Variable, Set<TokenString>> entry : first.entrySet())
-        {
-            System.out.println(entry.getKey());
-            for (TokenString tokenString : entry.getValue())
-            {
-                System.out.println("\t" + tokenString);
-            }
-        }
+        printTokenStringMap(first);
     }
 
     @Test
     public void testFollow() throws Exception
     {
         // TODO add some fancy magic
-        final Map<Variable, Set<TokenString>> first = TestGrammars.FIRST_N_FOLLOW_TEST_GRAMMAR.follow(2);
+        final Map<Variable, Set<TokenString>> follow = TestGrammars.FIRST_N_FOLLOW_TEST_GRAMMAR.follow(2);
 
-        for (Map.Entry<Variable, Set<TokenString>> entry : first.entrySet())
-        {
-            System.out.println(entry.getKey());
-            for (TokenString tokenString : entry.getValue())
-            {
-                System.out.println("\t" + tokenString);
-            }
-        }
+        printTokenStringMap(follow);
     }
 }

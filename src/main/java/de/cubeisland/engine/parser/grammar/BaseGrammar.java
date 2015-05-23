@@ -38,6 +38,7 @@ import java.util.Set;
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.util.TokenString.concatMany;
 import static de.cubeisland.engine.parser.util.TokenString.str;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
@@ -144,7 +145,7 @@ public abstract class BaseGrammar
     public Map<Variable, Set<TokenString>> first(int k)
     {
         final Map<Variable, Set<TokenString>> first = this.initializedMap();
-
+        final Set<TokenString> initialEmptySet = emptySet();
 
         boolean changed;
         do
@@ -152,9 +153,7 @@ public abstract class BaseGrammar
             changed = false;
             for (Rule rule : this.rules)
             {
-                // TODO is a new set required on every iteration?
-                Set<TokenString> ruleFirst = new HashSet<TokenString>();
-                ruleFirst.add(TokenString.EMPTY);
+                Set<TokenString> ruleFirst = initialEmptySet;
 
                 for (RuleElement ruleElement : rule.getBody())
                 {

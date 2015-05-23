@@ -27,7 +27,7 @@ import de.cubeisland.engine.parser.rule.token.Epsilon;
 import de.cubeisland.engine.parser.rule.token.ParametrizedToken;
 import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.Token;
-import de.cubeisland.engine.parser.rule.token.TokenAction;
+import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import static de.cubeisland.engine.parser.TestGrammars.SimpleExpr.*;

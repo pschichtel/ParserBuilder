@@ -22,6 +22,8 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
+import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
+
 import java.util.regex.Pattern;
 
 public class ParametrizedTokenSpec<T> extends ReadableTokenSpec
@@ -37,5 +39,10 @@ public class ParametrizedTokenSpec<T> extends ReadableTokenSpec
     public Pattern getPattern()
     {
         return pattern;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + pattern;
     }
 }

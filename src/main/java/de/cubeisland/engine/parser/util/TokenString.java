@@ -26,12 +26,14 @@ import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import java.util.*;
 
+import static de.cubeisland.engine.parser.Util.asSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
 public class TokenString implements Iterable<TokenSpec>
 {
     public static final TokenString EMPTY = new TokenString(Collections.<TokenSpec>emptyList());
+    private static final Set<TokenString> EMPTY_SET = asSet(EMPTY);
 
     private final List<TokenSpec> tokens;
 
@@ -75,6 +77,11 @@ public class TokenString implements Iterable<TokenSpec>
     public static Set<TokenString> concatMany(int k, Set<TokenString> m, Set<TokenString> n)
     {
         Set<TokenString> result = new HashSet<TokenString>();
+        if (m.isEmpty())
+        {
+            // we have to concat with something for this to work, so we use a set containing just the empty string
+            m = EMPTY_SET;
+        }
         for (TokenString v : m)
         {
             for (TokenString w : n)
@@ -87,8 +94,7 @@ public class TokenString implements Iterable<TokenSpec>
 
     public static Set<TokenString> concatMany(int k, Set<TokenString>... tokenLists)
     {
-        Set<TokenString> result = new HashSet<TokenString>();
-        result.add(EMPTY);
+        Set<TokenString> result = EMPTY_SET;
 
         for (Set<TokenString> m : tokenLists)
         {

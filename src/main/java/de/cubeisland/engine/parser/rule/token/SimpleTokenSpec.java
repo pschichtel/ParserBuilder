@@ -22,6 +22,8 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
+import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
+
 import static java.util.regex.Pattern.compile;
 
 public class SimpleTokenSpec extends ReadableTokenSpec
@@ -36,7 +38,7 @@ public class SimpleTokenSpec extends ReadableTokenSpec
     @Override
     public String toString()
     {
-        return getName() + " ↦ " + getName();
+        return super.toString() + getName();
     }
 
     private static final class SimpleTokenAction implements TokenAction
