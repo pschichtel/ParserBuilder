@@ -22,9 +22,8 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
+import java.util.regex.Pattern;
 import org.junit.Test;
-
-import static de.cubeisland.engine.parser.rule.token.automate.Matcher.match;
 
 public class MatcherTest
 {
@@ -42,7 +41,7 @@ public class MatcherTest
     @Test
     public void testRead() throws Exception
     {
-        DFA a = match('a');
+        DFA a = Matcher.matchAll('a');
 
         printAutomate("Read char", a);
     }
@@ -50,8 +49,8 @@ public class MatcherTest
     @Test
     public void testAnd() throws Exception
     {
-        DFA a = match('a');
-        DFA b = match('b');
+        DFA a = Matcher.matchAll('a');
+        DFA b = Matcher.matchAll('b');
 
         NFA c = a.and(b);
         printAutomate("And", c);
@@ -60,8 +59,8 @@ public class MatcherTest
     @Test
     public void testOr() throws Exception
     {
-        DFA a = match('a');
-        DFA b = match('b');
+        DFA a = Matcher.matchAll('a');
+        DFA b = Matcher.matchAll('b');
 
         NFA c = a.and(b);
         printAutomate("Or", c);
@@ -70,9 +69,22 @@ public class MatcherTest
     @Test
     public void testKleene() throws Exception
     {
-        DFA a = match('a');
+        DFA a = Matcher.matchAll('a');
 
         NFA b = a.kleene();
         printAutomate("Kleene", b);
+    }
+
+    @Test
+    public void testPattern() throws Exception
+    {
+        Pattern p = Pattern.compile("(a+)?");
+        System.out.println("Pattern.toString(): " + p.toString());
+
+        NFA aPlus = Matcher.match(p).toNFA();
+        printAutomate(p.toString() + " NFA", aPlus);
+
+        DFA aPlusD = aPlus.toDFA().minimize();
+        printAutomate(p.toString() + " DFA", aPlusD);
     }
 }

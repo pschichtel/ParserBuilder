@@ -11,7 +11,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.EndOfFileToken.EOF;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 
@@ -25,8 +24,8 @@ public class AutomateTokenizerTest
         Variable x = new Variable("x");
 
         Grammar g = Grammar
-                .with(head(x).produces(A, B).skip())
-                .with(head(x).produces(B, A).skip())
+                .with(x.produces(A, B).skip())
+                .with(x.produces(B, A).skip())
                 .startingWith(x);
 
         AutomateTokenizer t = AutomateTokenizer.fromGrammar(g);

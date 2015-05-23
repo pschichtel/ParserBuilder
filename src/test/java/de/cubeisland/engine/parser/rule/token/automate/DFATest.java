@@ -27,7 +27,6 @@ import org.junit.Test;
 import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
-import static de.cubeisland.engine.parser.rule.token.automate.Matcher.match;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -38,7 +37,7 @@ public class DFATest
     {
         String string  = "Test123";
         String string2 = "super";
-        DFA a = match(string).or(match(string2)).toDFA();
+        DFA a = Matcher.match(string).or(Matcher.match(string2)).toDFA();
 
         State s = a.getStartState();
         for (char c : string.toCharArray())

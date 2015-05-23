@@ -26,7 +26,6 @@ import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
 import org.junit.Test;
 
-import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -40,8 +39,8 @@ public class GrammarBuilderTest
         final TokenSpec A = simple("a");
         final TokenSpec B = simple("b");
         Grammar g = Grammar
-            .with(head(start).produces(A).skip())
-            .with(head(start).produces(B).skip())
+            .with(start.produces(A).skip())
+            .with(start.produces(B).skip())
             .startingWith(start);
 
         System.out.println(g);

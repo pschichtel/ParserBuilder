@@ -25,19 +25,19 @@ package de.cubeisland.engine.parser.util;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Stack<T>
+public class ImmutableStack<T>
 {
-    private static final Stack<Object> NIL = new Nil();
+    private static final ImmutableStack<Object> NIL = new Nil();
 
     private final T head;
-    private final Stack<T> tail;
+    private final ImmutableStack<T> tail;
 
-    public Stack(T head)
+    public ImmutableStack(T head)
     {
-        this(head, Stack.<T>nil());
+        this(head, ImmutableStack.<T>nil());
     }
 
-    public Stack(T head, Stack<T> tail)
+    public ImmutableStack(T head, ImmutableStack<T> tail)
     {
         this.head = head;
         this.tail = tail;
@@ -66,12 +66,12 @@ public class Stack<T>
         return peeked;
     }
 
-    public Stack<T> pop()
+    public ImmutableStack<T> pop()
     {
         return this.tail;
     }
 
-    public Stack<T> pop(int n)
+    public ImmutableStack<T> pop(int n)
     {
         if (n == 0)
         {
@@ -84,9 +84,9 @@ public class Stack<T>
         return this.pop(n - 1);
     }
 
-    public Stack<T> push(T value)
+    public ImmutableStack<T> push(T value)
     {
-        return new Stack<T>(value, this);
+        return new ImmutableStack<T>(value, this);
     }
 
     public int size()
@@ -95,12 +95,12 @@ public class Stack<T>
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> Stack<T> nil()
+    public static <T> ImmutableStack<T> nil()
     {
-        return (Stack<T>)NIL;
+        return (ImmutableStack<T>)NIL;
     }
 
-    public static class Nil extends Stack<Object>
+    public static class Nil extends ImmutableStack<Object>
     {
         public Nil()
         {
@@ -120,13 +120,13 @@ public class Stack<T>
         }
 
         @Override
-        public Stack<Object> pop()
+        public ImmutableStack<Object> pop()
         {
             return this;
         }
 
         @Override
-        public Stack<Object> pop(int n)
+        public ImmutableStack<Object> pop(int n)
         {
             return this;
         }

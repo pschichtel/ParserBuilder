@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
+import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 import static java.util.Collections.disjoint;
 import static java.util.Collections.unmodifiableSet;
 
@@ -177,6 +178,50 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, start, asSet(accept));
     }
 
+    public NFA repeat(int atLeast)
+    {
+        if (atLeast < 0)
+        {
+            throw new IllegalArgumentException("atLeast must be > 0");
+        }
+        NFA automate = EPSILON;
+
+        for (int i = 0; i < atLeast; ++i)
+        {
+            automate = automate.and(this);
+        }
+
+        return automate.and(kleene());
+    }
+
+    public NFA range(int atLeast, int atMost)
+    {
+        if (atLeast < 0)
+        {
+            throw new IllegalArgumentException("atLeast must be > 0");
+        }
+        if (atMost < atLeast)
+        {
+            throw new IllegalArgumentException("atMost must be >= atLeast");
+        }
+
+        NFA automate = EPSILON;
+
+        int i = 0;
+        for (; i < atLeast; ++i)
+        {
+            automate = automate.and(this);
+        }
+
+        NFA maybe = this.or(EPSILON);
+        for (; i < atMost; ++i)
+        {
+            automate = automate.and(maybe);
+        }
+
+        return automate;
+    }
+
     public boolean isAccepting(State s)
     {
         return getAcceptingStates().contains(s);
@@ -197,6 +242,7 @@ public abstract class FiniteAutomate<T extends Transition>
     public abstract FiniteAutomate<? extends Transition> complement();
 
     public abstract DFA toDFA();
+    public abstract NFA toNFA();
 
     public boolean isEmpty()
     {

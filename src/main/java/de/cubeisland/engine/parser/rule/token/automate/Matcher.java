@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import de.cubeisland.engine.parser.util.PatternParser;
+
 import static de.cubeisland.engine.parser.Util.asSet;
 
 public abstract class Matcher
@@ -36,10 +38,10 @@ public abstract class Matcher
 
     public static DFA match(String s)
     {
-        return match(s.toCharArray());
+        return matchAll(s.toCharArray());
     }
 
-    public static DFA match(char... chars)
+    public static DFA matchAll(char... chars)
     {
         Set<State> states = new HashSet<State>();
         Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
@@ -58,9 +60,22 @@ public abstract class Matcher
         return new DFA(states, transitions, start, asSet(lastState));
     }
 
+    public static DFA matchOne(char... chars)
+    {
+        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        State start = new State();
+        State end = new State();
+
+        for (char c : chars)
+        {
+            transitions.add(new ExpectedTransition(start, c, end));
+        }
+
+        return new DFA(asSet(start, end), transitions, start, asSet(end));
+    }
+
     public static FiniteAutomate<? extends Transition> match(Pattern pattern)
     {
-        // TODO implement me
-        return null;
+        return PatternParser.toNFA(pattern);
     }
 }

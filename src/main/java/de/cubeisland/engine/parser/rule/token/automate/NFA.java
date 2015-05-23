@@ -37,6 +37,7 @@ import static de.cubeisland.engine.parser.Util.asSet;
 
 public class NFA extends FiniteAutomate<Transition>
 {
+    public static final NFA EMPTY;
     public static final NFA EPSILON;
 
     static
@@ -44,6 +45,7 @@ public class NFA extends FiniteAutomate<Transition>
         State a = new State();
         State b = new State();
         EPSILON = new NFA(asSet(a, b), Util.<Transition>asSet(new SpontaneousTransition(a, b)), a, asSet(b));
+        EMPTY = new NFA(asSet(a, b), Collections.<Transition>emptySet(), a, asSet(b));
     }
 
     private final Map<State, TransitionMap> transitionLookup;
@@ -248,6 +250,12 @@ public class NFA extends FiniteAutomate<Transition>
         System.out.println("Transitions: " + transitions.size());
 
         return new DFA(states, transitions, start, accepting);
+    }
+
+    @Override
+    public NFA toNFA()
+    {
+        return this;
     }
 
     @Override

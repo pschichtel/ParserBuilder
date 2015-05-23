@@ -204,32 +204,12 @@ public class Rule
         }
     }
 
-    public static BodyBuilder head(Variable head)
-    {
-        return new BodyBuilder(head);
-    }
-
-    public static class BodyBuilder
-    {
-        private final Variable head;
-
-        private BodyBuilder(Variable head)
-        {
-            this.head = head;
-        }
-
-        public ReactionBuilder produces(RuleElement... body)
-        {
-            return new ReactionBuilder(head, asList(body));
-        }
-    }
-
     public static class ReactionBuilder
     {
         private final Variable head;
         private final List<RuleElement> body;
 
-        private ReactionBuilder(Variable head, List<RuleElement> body)
+        public ReactionBuilder(Variable head, List<RuleElement> body)
         {
             this.head = head;
             this.body = body;

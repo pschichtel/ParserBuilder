@@ -22,13 +22,21 @@
  */
 package de.cubeisland.engine.parser;
 
+import de.cubeisland.engine.parser.rule.Rule.ReactionBuilder;
 import de.cubeisland.engine.parser.rule.RuleElement;
+
+import static java.util.Arrays.asList;
 
 public class Variable extends RuleElement
 {
     public Variable(String name)
     {
         super(name);
+    }
+
+    public ReactionBuilder produces(RuleElement... body)
+    {
+        return new ReactionBuilder(this, asList(body));
     }
 
     @Override

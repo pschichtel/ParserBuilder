@@ -32,7 +32,6 @@ import de.cubeisland.engine.parser.rule.token.TokenSpec;
 
 import static de.cubeisland.engine.parser.TestGrammars.SimpleExpr.*;
 import static de.cubeisland.engine.parser.TestGrammars.FirstFollowExpr.*;
-import static de.cubeisland.engine.parser.rule.Rule.head;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.parametrized;
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
 
@@ -78,32 +77,32 @@ public class TestGrammars
     }
 
     public static final Grammar SIMPLE_EXPR = Grammar
-        .with(head(expr).produces(expr, ADD, product).skip())
-        .with(head(expr).produces(expr, SUB, product).skip())
-        .with(head(expr).produces(product).skip())
-        .with(head(product).produces(product, MUL, factor).skip())
-        .with(head(product).produces(product, DIV, factor).skip())
-        .with(head(product).produces(factor).skip())
-        .with(head(factor).produces(BGN, expr, END).skip())
-        .with(head(factor).produces(NUM).skip())
+        .with(expr.produces(expr, ADD, product).skip())
+        .with(expr.produces(expr, SUB, product).skip())
+        .with(expr.produces(product).skip())
+        .with(product.produces(product, MUL, factor).skip())
+        .with(product.produces(product, DIV, factor).skip())
+        .with(product.produces(factor).skip())
+        .with(factor.produces(BGN, expr, END).skip())
+        .with(factor.produces(NUM).skip())
         .startingWith(expr);
 
     public static final Grammar SIMPLE_EXPR_WITH_EPS = Grammar
-        .with(head(expr).produces(expr, ADD, product).skip())
-        .with(head(expr).produces(expr, SUB, product).skip())
-        .with(head(expr).produces(product).skip())
-        .with(head(expr).produces(Epsilon.EPSILON).skip())
-        .with(head(product).produces(product, MUL, factor).skip())
-        .with(head(product).produces(product, DIV, factor).skip())
-        .with(head(product).produces(factor).skip())
-        .with(head(factor).produces(BGN, expr, END).skip())
-        .with(head(factor).produces(NUM).skip())
+        .with(expr.produces(expr, ADD, product).skip())
+        .with(expr.produces(expr, SUB, product).skip())
+        .with(expr.produces(product).skip())
+        .with(expr.produces(Epsilon.EPSILON).skip())
+        .with(product.produces(product, MUL, factor).skip())
+        .with(product.produces(product, DIV, factor).skip())
+        .with(product.produces(factor).skip())
+        .with(factor.produces(BGN, expr, END).skip())
+        .with(factor.produces(NUM).skip())
         .startingWith(expr);
 
     public static final Grammar FIRST_N_FOLLOW_TEST_GRAMMAR = Grammar
-            .with(head(s).produces(a, B, c).skip())
-            .with(head(a).produces(C, D).skip())
-            .with(head(c).produces(L, M, d, L).skip())
-            .with(head(d).produces(H).skip())
+            .with(s.produces(a, B, c).skip())
+            .with(a.produces(C, D).skip())
+            .with(c.produces(L, M, d, L).skip())
+            .with(d.produces(H).skip())
             .startingWith(s);
 }

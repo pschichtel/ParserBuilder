@@ -97,6 +97,18 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return this;
     }
 
+    @Override
+    public NFA toNFA()
+    {
+        // stupid collection API!
+        Set<Transition> transitions = new HashSet<Transition>();
+        for (final ExpectedTransition t : getTransitions())
+        {
+            transitions.add(t);
+        }
+        return new NFA(getStates(), transitions, getStartState(), getAcceptingStates());
+    }
+
     public DFA minimize()
     {
         final Set<State> states = new HashSet<State>(getReachableStates());

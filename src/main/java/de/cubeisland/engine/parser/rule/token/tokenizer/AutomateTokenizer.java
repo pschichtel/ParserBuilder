@@ -17,8 +17,6 @@ import de.cubeisland.engine.parser.rule.token.automate.Transition;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 
 import static de.cubeisland.engine.parser.rule.token.EndOfFileToken.EOF;
@@ -96,7 +94,7 @@ public class AutomateTokenizer implements Tokenizer
     {
         if (p instanceof SimpleTokenSpec)
         {
-            return Matcher.match(p.getName().toCharArray());
+            return Matcher.matchAll(p.getName().toCharArray());
         }
         else if (p instanceof ParametrizedTokenSpec<?>)
         {
