@@ -5,7 +5,6 @@ import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
 import de.cubeisland.engine.parser.rule.token.SimpleTokenSpec;
 import de.cubeisland.engine.parser.rule.token.TokenSpec;
-import de.cubeisland.engine.parser.rule.token.automate.action.IntegerAction;
 import de.cubeisland.engine.parser.rule.token.automate.action.TokenActions;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +60,7 @@ public class MessageCompositorTest {
                 .with(head(args).produces(arg).reactingWith(SKIP))
                 .with(head(arg).produces(named).reactingWith(SKIP))
                 .with(head(arg).produces(VALUE).reactingWith(SKIP))
-                .with(head(named).produces(ID, VALUE_SEPARATOR, VALUE).reactingWith(SKIP))
+                .with(head(named).produces(NAME, VALUE_SEPARATOR, VALUE).reactingWith(SKIP))
                 .startingWith(message);
     }
 
