@@ -23,6 +23,10 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.Util;
+import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.SpontaneousTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
 
@@ -48,7 +52,12 @@ public class NFA extends FiniteAutomate<Transition>
         EMPTY = new NFA(asSet(a, b), Collections.<Transition>emptySet(), a, asSet(b));
     }
 
-    private final Map<State, TransitionMap> transitionLookup;
+    public Set<State> getStartStates()
+    {
+        return epsilonClosure(asSet(getStartState()));
+    }
+
+    private final Map<State, TransitionMultiMap> transitionLookup;
 
     public NFA(Set<State> states, Set<Transition> transitions, State start, Set<State> acceptingStates)
     {
@@ -56,52 +65,13 @@ public class NFA extends FiniteAutomate<Transition>
         this.transitionLookup = calculateTransitionLookup(transitions);
     }
 
-    private static <T extends Transition> Map<State, TransitionMap> calculateTransitionLookup(Set<T> transitions)
+    private static Map<State, TransitionMultiMap> calculateTransitionLookup(Set<Transition> transitions)
     {
-        Map<State, TransitionMap> transitionLookup = new HashMap<State, TransitionMap>();
+        Map<State, TransitionMultiMap> transitionLookup = new HashMap<State, TransitionMultiMap>();
 
-        Map<State, Set<T>> stateTransitions = new HashMap<State, Set<T>>();
-        for (T transition : transitions)
+        for (Map.Entry<State, Set<Transition>> entry : groupByState(transitions).entrySet())
         {
-            Set<T> t = stateTransitions.get(transition.getOrigin());
-            if (t == null)
-            {
-                t = new HashSet<T>();
-                stateTransitions.put(transition.getOrigin(), t);
-            }
-            t.add(transition);
-        }
-
-        for (Map.Entry<State, Set<T>> entry : stateTransitions.entrySet())
-        {
-            Map<Character, Set<ExpectedTransition>> expectedTransitions = new HashMap<Character, Set<ExpectedTransition>>();
-            Set<SpontaneousTransition> spontaneousTransitions = new HashSet<SpontaneousTransition>();
-            Set<Character> expectedChars = new HashSet<Character>();
-
-            for (T t : entry.getValue())
-            {
-                if (t instanceof SpontaneousTransition)
-                {
-                    spontaneousTransitions.add((SpontaneousTransition) t);
-                }
-                else if (t instanceof ExpectedTransition)
-                {
-                    ExpectedTransition et = (ExpectedTransition) t;
-                    Set<ExpectedTransition> expected = expectedTransitions.get(et.getWith());
-                    if (expected == null)
-                    {
-                        expected = new HashSet<ExpectedTransition>();
-                        expectedTransitions.put(et.getWith(), expected);
-                    }
-                    expected.add(et);
-                    expectedChars.add(et.getWith());
-                }
-                else
-                {
-                    throw new IllegalArgumentException("Unknown transition type!");
-                }
-            }
-            transitionLookup.put(entry.getKey(), new TransitionMap(expectedTransitions, spontaneousTransitions, expectedChars));
+            transitionLookup.put(entry.getKey(), TransitionMultiMap.build(entry.getValue()));
         }
 
         return transitionLookup;
@@ -109,7 +79,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     public Set<SpontaneousTransition> getSpontaneousTransitionsFor(State s)
     {
-        TransitionMap lookup = this.transitionLookup.get(s);
+        TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
         {
             return Collections.emptySet();
@@ -119,7 +89,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     public Set<ExpectedTransition> getExpectedTransitionsFor(State s, char c)
     {
-        TransitionMap lookup = this.transitionLookup.get(s);
+        TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
         {
             return Collections.emptySet();
@@ -129,7 +99,7 @@ public class NFA extends FiniteAutomate<Transition>
 
     public Set<Character> getExpectedCharsFor(State s)
     {
-        TransitionMap lookup = this.transitionLookup.get(s);
+        TransitionMultiMap lookup = this.transitionLookup.get(s);
         if (lookup == null)
         {
             return Collections.emptySet();
@@ -137,7 +107,7 @@ public class NFA extends FiniteAutomate<Transition>
         return lookup.getAlphabet();
     }
 
-    protected Set<State> epsilonClosure(Set<State> states)
+    public Set<State> epsilonClosure(Set<State> states)
     {
         return FixPoint.apply(states, new Function<State, Set<State>>()
         {
@@ -166,6 +136,11 @@ public class NFA extends FiniteAutomate<Transition>
         return chars;
     }
 
+    public Set<State> transition(Set<State> states, char c)
+    {
+        return epsilonClosure(read(states, c));
+    }
+
     private Set<State> read(Set<State> states, char c)
     {
         Set<State> out = new HashSet<State>();
@@ -181,6 +156,18 @@ public class NFA extends FiniteAutomate<Transition>
         return out;
     }
 
+    public boolean isAccepting(Set<State> states)
+    {
+        for (final State state : states)
+        {
+            if (isAccepting(state))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    // TODO wildcards!
     @Override
     public DFA toDFA()
     {
@@ -195,7 +182,7 @@ public class NFA extends FiniteAutomate<Transition>
         Stack<Set<State>> checkStateSets = new Stack<Set<State>>();
 
 
-        Set<State> initialClosure = epsilonClosure(asSet(start));
+        Set<State> initialClosure = getStartStates();
         System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
         checkStates.push(start);
         checkStateSets.push(initialClosure);
@@ -216,7 +203,7 @@ public class NFA extends FiniteAutomate<Transition>
             final Set<State> stateSet = checkStateSets.pop();
             for (char c : alphabetFor(stateSet))
             {
-                Set<State> newStateSet = epsilonClosure(read(stateSet, c));
+                Set<State> newStateSet = transition(stateSet, c);
                 System.out.print((++i) + ". Δ(" + state + ", " + c + ") = " + newStateSet);
 
                 State alreadyKnown = knownStates.get(newStateSet);
@@ -227,7 +214,7 @@ public class NFA extends FiniteAutomate<Transition>
                     checkStates.push(newState);
                     checkStateSets.push(newStateSet);
                     knownStates.put(newStateSet, newState);
-                    transitions.add(new ExpectedTransition(state, c, newState));
+                    transitions.add(new CharacterTransition(state, c, newState));
                     System.out.println(" = " + newState);
 
                     for (State acceptingState : getAcceptingStates())
@@ -241,7 +228,7 @@ public class NFA extends FiniteAutomate<Transition>
                 }
                 else
                 {
-                    transitions.add(new ExpectedTransition(state, c, alreadyKnown));
+                    transitions.add(new CharacterTransition(state, c, alreadyKnown));
                     System.out.println(" = " + alreadyKnown);
                 }
             }
@@ -256,11 +243,5 @@ public class NFA extends FiniteAutomate<Transition>
     public NFA toNFA()
     {
         return this;
-    }
-
-    @Override
-    public NFA complement()
-    {
-        return new NFA(getStates(), getTransitions(), getStartState(), complementaryAcceptingStates());
     }
 }

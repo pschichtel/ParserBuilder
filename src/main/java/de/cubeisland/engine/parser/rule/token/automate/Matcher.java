@@ -26,6 +26,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 import de.cubeisland.engine.parser.util.PatternParser;
 
 import static de.cubeisland.engine.parser.Util.asSet;
@@ -34,6 +37,14 @@ public abstract class Matcher
 {
     private Matcher()
     {
+    }
+
+    public static DFA matchWildcard()
+    {
+        final State state = new State();
+        final ExpectedTransition t = new WildcardTransition(state, state);
+        final Set<State> states = asSet(state);
+        return new DFA(states, asSet(t), state, states);
     }
 
     public static DFA match(String s)
@@ -53,7 +64,7 @@ public abstract class Matcher
         {
             State state = new State();
             states.add(state);
-            transitions.add(new ExpectedTransition(lastState, c, state));
+            transitions.add(new CharacterTransition(lastState, c, state));
             lastState = state;
         }
 
@@ -68,7 +79,7 @@ public abstract class Matcher
 
         for (char c : chars)
         {
-            transitions.add(new ExpectedTransition(start, c, end));
+            transitions.add(new CharacterTransition(start, c, end));
         }
 
         return new DFA(asSet(start, end), transitions, start, asSet(end));

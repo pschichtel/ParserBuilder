@@ -22,8 +22,6 @@
  */
 package de.cubeisland.engine.parser.util;
 
-import de.cubeisland.engine.parser.rule.token.automate.State;
-
 public class UnorderedPair<L, R> implements Pair<L, R>
 {
     private final L left;

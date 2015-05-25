@@ -20,42 +20,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.transition;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import de.cubeisland.engine.parser.rule.token.automate.State;
 
-public class State
+public class CharacterTransition extends ExpectedTransition
 {
-    private static final AtomicInteger COUNTER = new AtomicInteger(0);
+    private final char with;
 
-    private final int id = COUNTER.getAndIncrement();
-
-    public State transition(DFA a, char c)
+    public CharacterTransition(State origin, char with, State destination)
     {
-        return a.getBy(this, c);
+        super(origin, destination);
+        this.with = with;
     }
 
-    public State transition(DFA a)
+    public char getWith()
     {
-        return a.getByWildcard(this);
+        return this.with;
+    }
+
+    @Override
+    public String getLabel()
+    {
+        return "'" + getWith() + "'";
     }
 
     @Override
     public boolean equals(Object o)
     {
-        // two different state instances cannot be equal
-        return this == o;
+        if (!(o instanceof CharacterTransition))
+        {
+            return false;
+        }
+        if (!super.equals(o))
+        {
+            return false;
+        }
+
+        CharacterTransition that = (CharacterTransition) o;
+
+        return this.with == that.with;
     }
 
     @Override
     public int hashCode()
     {
-        return id;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "State(" + this.id + ")";
+        int result = super.hashCode();
+        result = 31 * result + (int) with;
+        return result;
     }
 }

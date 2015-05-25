@@ -27,7 +27,7 @@ import de.cubeisland.engine.parser.rule.token.CharBuffer.Checkpoint;
 import de.cubeisland.engine.parser.rule.token.automate.DFA;
 import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
 import de.cubeisland.engine.parser.rule.token.automate.NFA;
-import de.cubeisland.engine.parser.rule.token.automate.Transition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.source.CharSequenceSource;
 
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import static de.cubeisland.engine.parser.Util.convertCharCollectionToArray;
 import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchAll;
 import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchOne;
+import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchWildcard;
 import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 
 public class PatternParser
@@ -90,7 +91,7 @@ public class PatternParser
                     }
                     break;
                 case '.':
-                    // TODO wildcard match
+                    elements.add(matchWildcard());
                 default:
                     elements.addLast(readCharacter(stream, true));
             }
@@ -118,9 +119,9 @@ public class PatternParser
         switch (s.current())
         {
             case '*':
-                return automate.kleene();
+                return automate.kleeneStar();
             case '+':
-                return automate.and(automate.kleene());
+                return automate.kleenePlus();
             case '?':
                 return automate.or(EPSILON);
             case '{':
@@ -231,8 +232,7 @@ public class PatternParser
         checkpoint.drop();
         if (negative)
         {
-            // TODO verify this
-            automate = automate.complement();
+            return automate.complement();
         }
         return automate.toDFA();
     }

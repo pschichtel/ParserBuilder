@@ -20,42 +20,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.transition;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import de.cubeisland.engine.parser.rule.token.automate.State;
 
-public class State
+public abstract class ExpectedTransition extends Transition
 {
-    private static final AtomicInteger COUNTER = new AtomicInteger(0);
-
-    private final int id = COUNTER.getAndIncrement();
-
-    public State transition(DFA a, char c)
+    public ExpectedTransition(State origin, State destination)
     {
-        return a.getBy(this, c);
-    }
-
-    public State transition(DFA a)
-    {
-        return a.getByWildcard(this);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        // two different state instances cannot be equal
-        return this == o;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return id;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "State(" + this.id + ")";
+        super(origin, destination);
     }
 }

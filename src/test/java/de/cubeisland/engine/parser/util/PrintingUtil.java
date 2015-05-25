@@ -23,6 +23,8 @@
 package de.cubeisland.engine.parser.util;
 
 import de.cubeisland.engine.parser.Variable;
+import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 
 import java.util.Map;
 import java.util.Set;
@@ -42,5 +44,15 @@ public abstract class PrintingUtil
                 System.out.println("\t" + tokenString);
             }
         }
+    }
+
+    public static void printAutomate(String name, FiniteAutomate<? extends Transition> a)
+    {
+        System.out.println(name + ":");
+        System.out.println("States:      " + a.getStates());
+        System.out.println("Transitions: " + a.getTransitions());
+        System.out.println("Accepting:   " + a.getAcceptingStates());
+        System.out.println("Start:       " + a.getStartState());
+        System.out.println();
     }
 }

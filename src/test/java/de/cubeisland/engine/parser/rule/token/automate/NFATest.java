@@ -23,6 +23,10 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.Util;
+import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.SpontaneousTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
+import de.cubeisland.engine.parser.util.PrintingUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,10 +55,10 @@ public class NFATest
         Set<Transition> transitions = asSet(
                 new SpontaneousTransition(q0, q1),
                 new SpontaneousTransition(q0, q2),
-                new ExpectedTransition(q1, 'b', q3),
-                new ExpectedTransition(q2, 'a', q4),
-                new ExpectedTransition(q3, 'a', q5),
-                new ExpectedTransition(q4, 'b', q6),
+                new CharacterTransition(q1, 'b', q3),
+                new CharacterTransition(q2, 'a', q4),
+                new CharacterTransition(q3, 'a', q5),
+                new CharacterTransition(q4, 'b', q6),
                 new SpontaneousTransition(q5, q7),
                 new SpontaneousTransition(q6, q7),
                 new SpontaneousTransition(q7, q0)
@@ -64,13 +68,13 @@ public class NFATest
 
         states = asSet(q0, q1, q2, q3);
         transitions = Util.<Transition>asSet(
-                new ExpectedTransition(q0, 'a', q0),
-                new ExpectedTransition(q0, 'b', q0),
-                new ExpectedTransition(q0, 'b', q1),
-                new ExpectedTransition(q1, 'a', q2),
-                new ExpectedTransition(q1, 'b', q2),
-                new ExpectedTransition(q2, 'a', q3),
-                new ExpectedTransition(q2, 'b', q3)
+                new CharacterTransition(q0, 'a', q0),
+                new CharacterTransition(q0, 'b', q0),
+                new CharacterTransition(q0, 'b', q1),
+                new CharacterTransition(q1, 'a', q2),
+                new CharacterTransition(q1, 'b', q2),
+                new CharacterTransition(q2, 'a', q3),
+                new CharacterTransition(q2, 'b', q3)
         );
 
         this.stroetiExample43 = new NFA(states, transitions, q0, asSet(q3));
@@ -79,7 +83,7 @@ public class NFATest
     @Test
     public void testClosure44() throws Exception
     {
-        MatcherTest.printAutomate("Stroeti NFA example 4.4", stroetiExample44);
+        PrintingUtil.printAutomate("Stroeti NFA example 4.4", stroetiExample44);
 
         for (State state : stroetiExample44.getStates())
         {
@@ -90,12 +94,12 @@ public class NFATest
     @Test
     public void testToDFA() throws Exception
     {
-        MatcherTest.printAutomate("toDFA", stroetiExample44.toDFA());
+        PrintingUtil.printAutomate("toDFA", stroetiExample44.toDFA());
     }
 
     @Test
     public void testToDFA2() throws Exception
     {
-        MatcherTest.printAutomate("toDFA", stroetiExample43.toDFA());
+        PrintingUtil.printAutomate("toDFA", stroetiExample43.toDFA());
     }
 }

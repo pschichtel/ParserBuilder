@@ -35,7 +35,7 @@ import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
 import de.cubeisland.engine.parser.rule.token.automate.Matcher;
 import de.cubeisland.engine.parser.rule.token.automate.NFA;
 import de.cubeisland.engine.parser.rule.token.automate.State;
-import de.cubeisland.engine.parser.rule.token.automate.Transition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 
 import java.io.IOException;
 import java.util.Iterator;

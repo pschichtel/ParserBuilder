@@ -23,27 +23,18 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import java.util.regex.Pattern;
+import de.cubeisland.engine.parser.util.PrintingUtil;
 import org.junit.Test;
 
 public class MatcherTest
 {
-
-    protected static void printAutomate(String name, FiniteAutomate<? extends Transition> a)
-    {
-        System.out.println(name + ":");
-        System.out.println("States:      " + a.getStates());
-        System.out.println("Transitions: " + a.getTransitions());
-        System.out.println("Accepting:   " + a.getAcceptingStates());
-        System.out.println("Start:       " + a.getStartState());
-        System.out.println();
-    }
 
     @Test
     public void testRead() throws Exception
     {
         DFA a = Matcher.matchAll('a');
 
-        printAutomate("Read char", a);
+        PrintingUtil.printAutomate("Read char", a);
     }
 
     @Test
@@ -53,7 +44,7 @@ public class MatcherTest
         DFA b = Matcher.matchAll('b');
 
         NFA c = a.and(b);
-        printAutomate("And", c);
+        PrintingUtil.printAutomate("And", c);
     }
 
     @Test
@@ -63,7 +54,7 @@ public class MatcherTest
         DFA b = Matcher.matchAll('b');
 
         NFA c = a.and(b);
-        printAutomate("Or", c);
+        PrintingUtil.printAutomate("Or", c);
     }
 
     @Test
@@ -71,8 +62,8 @@ public class MatcherTest
     {
         DFA a = Matcher.matchAll('a');
 
-        NFA b = a.kleene();
-        printAutomate("Kleene", b);
+        NFA b = a.kleeneStar();
+        PrintingUtil.printAutomate("Kleene", b);
     }
 
     @Test
@@ -82,9 +73,9 @@ public class MatcherTest
         System.out.println("Pattern.toString(): " + p.toString());
 
         NFA aPlus = Matcher.match(p).toNFA();
-        printAutomate(p.toString() + " NFA", aPlus);
+        PrintingUtil.printAutomate(p.toString() + " NFA", aPlus);
 
         DFA aPlusD = aPlus.toDFA().minimize();
-        printAutomate(p.toString() + " DFA", aPlusD);
+        PrintingUtil.printAutomate(p.toString() + " DFA", aPlusD);
     }
 }

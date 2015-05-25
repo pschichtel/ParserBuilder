@@ -22,49 +22,80 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 
 import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
 
-final class TransitionMap
+public class TransitionMap
 {
-    private final Map<Character, Set<ExpectedTransition>> expectedTransitions;
-    private final Set<SpontaneousTransition> spontaneousTransitions;
-    private final Set<Character> alphabet;
 
-    public TransitionMap(Map<Character, Set<ExpectedTransition>> expectedTransitions, Set<SpontaneousTransition> spontaneousTransitions, Set<Character> alphabet)
+    private final Map<Character, CharacterTransition> charTransitions;
+    private final WildcardTransition wildcard;
+
+    public TransitionMap(Map<Character, CharacterTransition> charTransitions, WildcardTransition wildcard)
     {
-        this.expectedTransitions = unmodifiableMap(expectedTransitions);
-        this.spontaneousTransitions = unmodifiableSet(spontaneousTransitions);
-        this.alphabet = unmodifiableSet(alphabet);
+        this.charTransitions = charTransitions;
+        this.wildcard = wildcard;
     }
 
-    public Set<ExpectedTransition> getTransitionsFor(char c)
+    public static TransitionMap build(Set<ExpectedTransition> transitions)
     {
-        Set<ExpectedTransition> transitions = this.expectedTransitions.get(c);
-        if (transitions == null)
+        final Map<Character, CharacterTransition> charTransitions = new HashMap<Character, CharacterTransition>();
+        WildcardTransition wildcard = null;
+
+        for (final ExpectedTransition t : transitions)
         {
-            return Collections.emptySet();
+            if (t instanceof CharacterTransition)
+            {
+                CharacterTransition ct = (CharacterTransition)t;
+                charTransitions.put(ct.getWith(), ct);
+            }
+            else if (t instanceof WildcardTransition)
+            {
+                if (wildcard != null)
+                {
+                    throw new IllegalArgumentException("There was more than one wildcard exception!");
+                }
+                wildcard = (WildcardTransition)t;
+            }
+            else
+            {
+                throw new UnsupportedOperationException("Unknown transition type!");
+            }
+        }
+
+        return new TransitionMap(charTransitions, wildcard);
+    }
+
+    public Set<ExpectedTransition> getTransitions()
+    {
+        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>(this.charTransitions.values());
+        if (this.wildcard != null)
+        {
+            transitions.add(this.wildcard);
         }
         return transitions;
     }
 
-    public Set<SpontaneousTransition> getSpontaneousTransitions()
+    public ExpectedTransition getTransitionFor(char c)
     {
-        return this.spontaneousTransitions;
+        ExpectedTransition transition = this.charTransitions.get(c);
+        if (transition == null)
+        {
+            transition = getWildcard();
+        }
+        return transition;
     }
 
-    public Set<Character> getAlphabet()
+    public WildcardTransition getWildcard()
     {
-        return this.alphabet;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Σ = " + getAlphabet() + ", ε-δ = " + getSpontaneousTransitions() + ", δ = " + this.expectedTransitions;
+        return wildcard;
     }
 }

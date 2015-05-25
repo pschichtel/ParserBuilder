@@ -20,52 +20,70 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.transition;
 
-public class ExpectedTransition extends Transition
+import de.cubeisland.engine.parser.rule.token.automate.State;
+
+public abstract class Transition
 {
-    private final char with;
+    private final State origin;
+    private final State destination;
 
-    public ExpectedTransition(State origin, char with, State destination)
+    public Transition(State origin, State destination)
     {
-        super(origin, destination);
-        this.with = with;
+        this.origin = origin;
+        this.destination = destination;
     }
 
-    public char getWith()
+    public State getOrigin()
     {
-        return this.with;
+        return this.origin;
     }
+
+    public State getDestination()
+    {
+        return this.destination;
+    }
+
+    public abstract String getLabel();
 
     @Override
     public boolean equals(Object o)
     {
-        if (!(o instanceof ExpectedTransition))
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Transition))
         {
             return false;
         }
-        if (!super.equals(o))
+
+        Transition that = (Transition) o;
+
+        if (!destination.equals(that.destination))
+        {
+            return false;
+        }
+        if (!origin.equals(that.origin))
         {
             return false;
         }
 
-        ExpectedTransition that = (ExpectedTransition) o;
-
-        return this.with == that.with;
-
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = super.hashCode();
-        result = 31 * result + (int) with;
-        return result;
+        return true;
     }
 
     @Override
     public String toString()
     {
-        return getOrigin() + " --'" + this.with + "'-->  " + getDestination();
+        return getOrigin() + " --" + getLabel() + "-->  " + getDestination();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = origin.hashCode();
+        result = 31 * result + destination.hashCode();
+        return result;
     }
 }

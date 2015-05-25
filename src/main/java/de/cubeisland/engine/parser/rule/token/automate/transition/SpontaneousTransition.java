@@ -20,7 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.transition;
+
+import de.cubeisland.engine.parser.rule.token.automate.State;
 
 import static de.cubeisland.engine.parser.rule.token.Epsilon.EPSILON;
 
@@ -32,8 +34,8 @@ public class SpontaneousTransition extends Transition
     }
 
     @Override
-    public String toString()
+    public String getLabel()
     {
-        return getOrigin() + " ---" + EPSILON + "---> " + getDestination();
+        return EPSILON.getName();
     }
 }

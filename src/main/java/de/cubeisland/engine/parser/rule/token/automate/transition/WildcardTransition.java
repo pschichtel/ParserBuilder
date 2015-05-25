@@ -20,60 +20,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.transition;
 
-public abstract class Transition
+import de.cubeisland.engine.parser.rule.token.automate.State;
+
+public class WildcardTransition extends ExpectedTransition
 {
-    private final State origin;
-    private final State destination;
-
-    public Transition(State origin, State destination)
+    public WildcardTransition(State origin, State destination)
     {
-        this.origin = origin;
-        this.destination = destination;
-    }
-
-    public State getOrigin()
-    {
-        return this.origin;
-    }
-
-    public State getDestination()
-    {
-        return this.destination;
+        super(origin, destination);
     }
 
     @Override
-    public boolean equals(Object o)
+    public String getLabel()
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (!(o instanceof Transition))
-        {
-            return false;
-        }
-
-        Transition that = (Transition) o;
-
-        if (!destination.equals(that.destination))
-        {
-            return false;
-        }
-        if (!origin.equals(that.origin))
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        int result = origin.hashCode();
-        result = 31 * result + destination.hashCode();
-        return result;
+        return "*";
     }
 }

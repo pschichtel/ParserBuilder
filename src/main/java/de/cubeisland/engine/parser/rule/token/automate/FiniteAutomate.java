@@ -22,13 +22,23 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
+import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.SpontaneousTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
+import de.cubeisland.engine.parser.util.UnorderedPair;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static de.cubeisland.engine.parser.Util.asSet;
+import static de.cubeisland.engine.parser.rule.token.automate.ErrorState.ERROR;
 import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 import static java.util.Collections.disjoint;
 import static java.util.Collections.unmodifiableSet;
@@ -40,7 +50,6 @@ public abstract class FiniteAutomate<T extends Transition>
     private final Set<State> acceptingStates;
     private final State start;
 
-    private final Set<Character> alphabet;
     private final Set<State> reachableStates;
 
     protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates) {
@@ -53,24 +62,8 @@ public abstract class FiniteAutomate<T extends Transition>
         this.transitions = unmodifiableSet(transitions);
         this.acceptingStates = unmodifiableSet(acceptingStates);
         this.start = start;
-        this.alphabet = unmodifiableSet(calculateAlphabet(transitions));
         this.reachableStates = unmodifiableSet(findReachableStates());
 
-    }
-
-    private static Set<Character> calculateAlphabet(Set<? extends Transition> transitions)
-    {
-        Set<Character> chars = new HashSet<Character>();
-
-        for (Transition transition : transitions)
-        {
-            if (transition instanceof ExpectedTransition)
-            {
-                chars.add(((ExpectedTransition) transition).getWith());
-            }
-        }
-
-        return chars;
     }
 
     private Set<State> findReachableStates()
@@ -115,9 +108,19 @@ public abstract class FiniteAutomate<T extends Transition>
         return this.start;
     }
 
-    public Set<Character> getAlphabet()
+    public Set<Character> getExplicitAlphabet()
     {
-        return this.alphabet;
+        Set<Character> chars = new HashSet<Character>();
+
+        for (Transition transition : transitions)
+        {
+            if (transition instanceof CharacterTransition)
+            {
+                chars.add(((CharacterTransition) transition).getWith());
+            }
+        }
+
+        return chars;
     }
 
     @SuppressWarnings("unchecked")
@@ -159,7 +162,30 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, start, asSet(accept));
     }
 
-    public NFA kleene()
+    public NFA without(FiniteAutomate<? extends Transition> other)
+    {
+        throw new UnsupportedOperationException("Not implemented yet!"); // TODO implement me
+    }
+
+    public NFA kleenePlus()
+    {
+        final Set<State> states = new HashSet<State>(getStates());
+        final Set<Transition> transitions = new HashSet<Transition>(getTransitions());
+
+        final State start = new State();
+        final State accept = new State();
+
+        transitions.add(new SpontaneousTransition(start, getStartState()));
+        for (State state : getAcceptingStates())
+        {
+            transitions.add(new SpontaneousTransition(state, getStartState()));
+            transitions.add(new SpontaneousTransition(state, accept));
+        }
+
+        return new NFA(states, transitions, start, asSet(accept));
+    }
+
+    public NFA kleeneStar()
     {
         final Set<State> states = new HashSet<State>(getStates());
         final Set<Transition> transitions = new HashSet<Transition>(getTransitions());
@@ -198,7 +224,15 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public NFA repeatMin(int min)
     {
-        return repeat(min).and(this.kleene());
+        if (min == 0)
+        {
+            return kleeneStar();
+        }
+        if (min == 1)
+        {
+            return kleenePlus();
+        }
+        return repeat(min - 1).and(this.kleenePlus());
     }
 
     public NFA repeatMinMax(int min, int max)
@@ -233,14 +267,135 @@ public abstract class FiniteAutomate<T extends Transition>
         return this.reachableStates;
     }
 
-    protected Set<State> complementaryAcceptingStates()
+    public DFA minimize()
     {
-        Set<State> states = new HashSet<State>(getStates());
-        states.removeAll(getAcceptingStates());
-        return states;
+        DFA self = toDFA();
+        final Set<State> states = new HashSet<State>(self.getReachableStates());
+        final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(self.getTransitions());
+        State start = self.getStartState();
+        final Set<State> accepting = new HashSet<State>(self.getAcceptingStates());
+
+
+        Set<UnorderedPair<State, State>> statePairs = new HashSet<UnorderedPair<State, State>>();
+
+        for (State p : states)
+        {
+            for (State q : states)
+            {
+                // number of iterations can be halved by removing iterated P's from Q in P >< Q
+                if (p != q)
+                {
+                    statePairs.add(new UnorderedPair<State, State>(p, q));
+                }
+            }
+        }
+
+        Set<UnorderedPair<State, State>> separableStates = new HashSet<UnorderedPair<State, State>>();
+        for (UnorderedPair<State, State> p : statePairs)
+        {
+            // separable if either left or right is accepting
+            if (isAccepting(p.getLeft()) != isAccepting(p.getRight()))
+            {
+                separableStates.add(p);
+            }
+        }
+
+        final Set<Character> alphabet = getExplicitAlphabet();
+        boolean changed;
+        do
+        {
+            changed = false;
+            for (UnorderedPair<State, State> pair : statePairs)
+            {
+                final State l = pair.getLeft();
+                final State r = pair.getRight();
+
+                // check for explicit alphabet
+                for (Character c : alphabet)
+                {
+                    final State p = l.transition(self, c);
+                    final State q = r.transition(self, c);
+                    if (p == ERROR || q == ERROR)
+                    {
+                        continue;
+                    }
+                    if (separableStates.contains(new UnorderedPair<State, State>(p, q)) && !separableStates.contains(pair))
+                    {
+                        separableStates.add(pair);
+                        changed = true;
+                    }
+                }
+
+                // check for wildcard transition
+                final State p = l.transition(self);
+                final State q = r.transition(self);
+                if (p == ERROR || q == ERROR)
+                {
+                    continue;
+                }
+                if (separableStates.contains(new UnorderedPair<State, State>(p, q)) && !separableStates.contains(pair))
+                {
+                    separableStates.add(pair);
+                    changed = true;
+                }
+            }
+        }
+        while (changed);
+
+        statePairs.removeAll(separableStates);
+
+        for (UnorderedPair<State, State> pair : statePairs)
+        {
+            final State p = pair.getLeft();
+            final State q = pair.getRight();
+
+            states.remove(q);
+            accepting.remove(q);
+            if (start == q)
+            {
+                start = p;
+            }
+
+            for (ExpectedTransition t : transitions)
+            {
+                State origin = t.getOrigin();
+                State destination = t.getDestination();
+                if (origin.equals(q))
+                {
+                    origin = p;
+                }
+                if (destination.equals(q))
+                {
+                    destination = p;
+                }
+
+                if (origin != t.getOrigin() || destination != t.getDestination())
+                {
+                    transitions.remove(t);
+                    if (t instanceof CharacterTransition)
+                    {
+                        transitions.add(new CharacterTransition(origin, ((CharacterTransition)t).getWith(), destination));
+                    }
+                    else if (t instanceof WildcardTransition)
+                    {
+                        transitions.add(new WildcardTransition(origin, destination));
+                    }
+                }
+            }
+        }
+
+
+        return new DFA(states, new HashSet<ExpectedTransition>(transitions), start, accepting);
     }
 
-    public abstract FiniteAutomate<? extends Transition> complement();
+    public DFA complement()
+    {
+        final DFA complete = toDFA().complete();
+        final Set<State> accepting = new HashSet<State>(complete.getStates());
+        accepting.removeAll(complete.getAcceptingStates());
+
+        return new DFA(complete.getStates(), complete.getTransitions(), complete.getStartState(), accepting);
+    }
 
     public abstract DFA toDFA();
     public abstract NFA toNFA();
@@ -294,5 +449,21 @@ public abstract class FiniteAutomate<T extends Transition>
             transitions.addAll(automate.getTransitions());
         }
         return transitions;
+    }
+
+    public static <T extends Transition> Map<State, Set<T>> groupByState(Set<T> transitions)
+    {
+        Map<State, Set<T>> stateTransitions = new HashMap<State, Set<T>>();
+        for (T transition : transitions)
+        {
+            Set<T> t = stateTransitions.get(transition.getOrigin());
+            if (t == null)
+            {
+                t = new HashSet<T>();
+                stateTransitions.put(transition.getOrigin(), t);
+            }
+            t.add(transition);
+        }
+        return stateTransitions;
     }
 }
