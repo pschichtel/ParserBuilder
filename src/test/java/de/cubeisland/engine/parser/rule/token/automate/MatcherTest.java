@@ -78,7 +78,7 @@ public class MatcherTest
     @Test
     public void testPattern() throws Exception
     {
-        Pattern p = Pattern.compile("(a+)?");
+        Pattern p = Pattern.compile("[ab]*");
         System.out.println("Pattern.toString(): " + p.toString());
 
         NFA aPlus = Matcher.match(p).toNFA();

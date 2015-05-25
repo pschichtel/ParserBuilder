@@ -22,7 +22,7 @@
  */
 package de.cubeisland.engine.parser.util;
 
-import de.cubeisland.engine.parser.rule.token.SimpleTokenSpec;
+import de.cubeisland.engine.parser.rule.token.SimpleTokenClass;
 import junit.framework.TestCase;
 
 import java.util.*;
@@ -38,13 +38,13 @@ public class TokenStringTest extends TestCase
     private final TokenString v;
     private final TokenString w;
 
-    private SimpleTokenSpec ta = new SimpleTokenSpec("a");
-    private SimpleTokenSpec tb = new SimpleTokenSpec("b");
-    private SimpleTokenSpec tc = new SimpleTokenSpec("c");
+    private SimpleTokenClass ta = new SimpleTokenClass("a");
+    private SimpleTokenClass tb = new SimpleTokenClass("b");
+    private SimpleTokenClass tc = new SimpleTokenClass("c");
 
-    private SimpleTokenSpec t1 = new SimpleTokenSpec("1");
-    private SimpleTokenSpec t2 = new SimpleTokenSpec("2");
-    private SimpleTokenSpec t3 = new SimpleTokenSpec("3");
+    private SimpleTokenClass t1 = new SimpleTokenClass("1");
+    private SimpleTokenClass t2 = new SimpleTokenClass("2");
+    private SimpleTokenClass t3 = new SimpleTokenClass("3");
 
     private Set<TokenString> m = new HashSet<TokenString>();
     private Set<TokenString> n = new HashSet<TokenString>();

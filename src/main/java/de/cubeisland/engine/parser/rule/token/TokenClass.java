@@ -22,18 +22,12 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
-public final class EndOfFileToken extends TokenClass implements Token
+import de.cubeisland.engine.parser.rule.RuleElement;
+
+public abstract class TokenClass extends RuleElement
 {
-    public static final EndOfFileToken EOF = new EndOfFileToken();
-
-    public EndOfFileToken()
+    public TokenClass(String name)
     {
-        super("<EOF>");
-    }
-
-    @Override
-    public String toString()
-    {
-        return "$";
+        super(name);
     }
 }

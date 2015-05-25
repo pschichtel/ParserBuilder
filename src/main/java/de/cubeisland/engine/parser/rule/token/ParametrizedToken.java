@@ -24,10 +24,10 @@ package de.cubeisland.engine.parser.rule.token;
 
 public class ParametrizedToken<T> implements Token
 {
-    private final ParametrizedTokenSpec<T> spec;
+    private final ParametrizedTokenClass<T> spec;
     private final T value;
 
-    public ParametrizedToken(ParametrizedTokenSpec<T> spec, T value)
+    public ParametrizedToken(ParametrizedTokenClass<T> spec, T value)
     {
         this.spec = spec;
         this.value = value;

@@ -24,7 +24,7 @@ package de.cubeisland.engine.parser.grammar;
 
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +38,7 @@ public class AugmentedGrammar extends BaseGrammar
 {
     public static final Variable AUGMENTED_START = new AugmentedStartVariable();
 
-    public AugmentedGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
+    public AugmentedGrammar(Set<Variable> variables, Set<TokenClass> tokens, List<Rule> rules, Variable start)
     {
         super(augment(variables), augmentTokens(tokens), augment(rules, start), AUGMENTED_START);
     }
@@ -57,9 +57,9 @@ public class AugmentedGrammar extends BaseGrammar
         return augmented;
     }
 
-    private static Set<TokenSpec> augmentTokens(Set<TokenSpec> original)
+    private static Set<TokenClass> augmentTokens(Set<TokenClass> original)
     {
-        Set<TokenSpec> augmented = new HashSet<TokenSpec>(original);
+        Set<TokenClass> augmented = new HashSet<TokenClass>(original);
         augmented.add(EOF);
         return augmented;
     }

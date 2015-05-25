@@ -22,12 +22,25 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
-import de.cubeisland.engine.parser.rule.RuleElement;
+import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
 
-public abstract class TokenSpec extends RuleElement
+public abstract class ReadableTokenClass extends TokenClass
 {
-    public TokenSpec(String name)
+    private final TokenAction action;
+
+    public ReadableTokenClass(String name, TokenAction action)
     {
         super(name);
+        this.action = action;
+    }
+
+    public TokenAction getAction()
+    {
+        return this.action;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " ↦ ";
     }
 }

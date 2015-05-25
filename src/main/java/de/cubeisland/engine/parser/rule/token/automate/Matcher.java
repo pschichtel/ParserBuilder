@@ -74,8 +74,8 @@ public abstract class Matcher
         return new DFA(asSet(start, end), transitions, start, asSet(end));
     }
 
-    public static FiniteAutomate<? extends Transition> match(Pattern pattern)
+    public static DFA match(Pattern pattern)
     {
-        return PatternParser.toNFA(pattern);
+        return PatternParser.toDFA(pattern).minimize();
     }
 }

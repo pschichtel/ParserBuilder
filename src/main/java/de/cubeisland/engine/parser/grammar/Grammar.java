@@ -25,7 +25,7 @@ package de.cubeisland.engine.parser.grammar;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class Grammar extends BaseGrammar
 {
-    public Grammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
+    public Grammar(Set<Variable> variables, Set<TokenClass> tokens, List<Rule> rules, Variable start)
     {
         super(variables, tokens, rules, start);
     }
@@ -74,16 +74,16 @@ public class Grammar extends BaseGrammar
             return variables;
         }
 
-        private static Set<TokenSpec> tokens(List<Rule> rules)
+        private static Set<TokenClass> tokens(List<Rule> rules)
         {
-            HashSet<TokenSpec> tokens = new HashSet<TokenSpec>();
+            HashSet<TokenClass> tokens = new HashSet<TokenClass>();
             for (final Rule rule : rules)
             {
                 for (final RuleElement element : rule.getBody())
                 {
-                    if (element instanceof TokenSpec)
+                    if (element instanceof TokenClass)
                     {
-                        tokens.add((TokenSpec)element);
+                        tokens.add((TokenClass)element);
                     }
                 }
             }

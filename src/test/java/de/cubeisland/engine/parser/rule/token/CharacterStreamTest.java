@@ -22,31 +22,18 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
-import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
+import de.cubeisland.engine.parser.rule.token.source.CharSequenceSource;
+import org.junit.Test;
 
-import static java.util.regex.Pattern.compile;
-
-public class SimpleTokenSpec extends ReadableTokenSpec
+public class CharacterStreamTest
 {
-    private static final TokenAction ACTION = new SimpleTokenAction();
-
-    public SimpleTokenSpec(String string)
+    @Test(/*expected = IllegalStateException.class*/)
+    public void testCharSequenceStream()
     {
-        super(string, ACTION);
-    }
+        CharacterStream stream = new CharacterStream(new CharSequenceSource("abc"));
 
-    @Override
-    public String toString()
-    {
-        return super.toString() + getName();
-    }
-
-    private static final class SimpleTokenAction implements TokenAction
-    {
-        @Override
-        public Token act(TokenSpec spec, String s)
-        {
-            return new SimpleToken(spec);
-        }
+        System.out.println(stream.next());
+        System.out.println(stream.next());
+        System.out.println(stream.next());
     }
 }

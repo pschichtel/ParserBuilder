@@ -24,25 +24,29 @@ package de.cubeisland.engine.parser.rule.token;
 
 import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
 
-import java.util.regex.Pattern;
+import static java.util.regex.Pattern.compile;
 
-public class ParametrizedTokenSpec<T> extends ReadableTokenSpec
+public class SimpleTokenClass extends ReadableTokenClass
 {
-    private final Pattern pattern;
+    private static final TokenAction ACTION = new SimpleTokenAction();
 
-    public ParametrizedTokenSpec(String name, Pattern pattern, TokenAction action)
+    public SimpleTokenClass(String string)
     {
-        super(name, action);
-        this.pattern = pattern;
-    }
-
-    public Pattern getPattern()
-    {
-        return pattern;
+        super(string, ACTION);
     }
 
     @Override
-    public String toString() {
-        return super.toString() + pattern;
+    public String toString()
+    {
+        return super.toString() + getName();
+    }
+
+    private static final class SimpleTokenAction implements TokenAction
+    {
+        @Override
+        public Token act(TokenClass tokenClass, String lexeme)
+        {
+            return new SimpleToken(tokenClass);
+        }
     }
 }

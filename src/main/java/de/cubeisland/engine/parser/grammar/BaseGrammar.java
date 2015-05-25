@@ -26,7 +26,7 @@ import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.EndOfFileToken;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 import de.cubeisland.engine.parser.util.TokenString;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,12 +46,12 @@ public abstract class BaseGrammar
 {
     public static final Set<TokenString> EMPTY_TOKEN_STRING_SET = Collections.unmodifiableSet(asSet(TokenString.EMPTY));
     private final Set<Variable> variables;
-    private final Set<TokenSpec> tokens;
+    private final Set<TokenClass> tokens;
     private final Set<Variable> nullables;
     private final List<Rule> rules;
     private final Variable start;
 
-    public BaseGrammar(Set<Variable> variables, Set<TokenSpec> tokens, List<Rule> rules, Variable start)
+    public BaseGrammar(Set<Variable> variables, Set<TokenClass> tokens, List<Rule> rules, Variable start)
     {
         this.variables = unmodifiableSet(variables);
         this.tokens = unmodifiableSet(tokens);
@@ -81,7 +81,7 @@ public abstract class BaseGrammar
                     boolean allNullable = true;
                     for (RuleElement ruleElement : rule.getBody())
                     {
-                        if (ruleElement instanceof TokenSpec)
+                        if (ruleElement instanceof TokenClass)
                         {
                             allNullable = false;
                             break;
@@ -114,7 +114,7 @@ public abstract class BaseGrammar
         return variables;
     }
 
-    public Set<TokenSpec> getTokens()
+    public Set<TokenClass> getTokens()
     {
         return tokens;
     }
@@ -161,9 +161,9 @@ public abstract class BaseGrammar
                     {
                         ruleFirst = TokenString.concatMany(k, ruleFirst, first.get(ruleElement));
                     }
-                    else if (ruleElement instanceof TokenSpec)
+                    else if (ruleElement instanceof TokenClass)
                     {
-                        final TokenSpec token = (TokenSpec)ruleElement;
+                        final TokenClass token = (TokenClass)ruleElement;
                         ruleFirst = TokenString.concatMany(k, ruleFirst, asSet(str(token)));
                     }
                 }
@@ -266,7 +266,7 @@ public abstract class BaseGrammar
         {
             Set<TokenString> firstR = firstList(k, followingElements.subList(1, followingElements.size()), firstSets);
 
-            return TokenString.concatMany(k, asSet(str((TokenSpec) firstElement)), firstR);
+            return TokenString.concatMany(k, asSet(str((TokenClass) firstElement)), firstR);
         }
     }
 
@@ -300,7 +300,7 @@ public abstract class BaseGrammar
     {
         StringBuilder out = new StringBuilder(getClass().getSimpleName() + "(\n");
 
-        for (final TokenSpec token : getTokens())
+        for (final TokenClass token : getTokens())
         {
             out.append('\t').append(token).append('\n');
         }

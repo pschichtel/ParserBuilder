@@ -31,7 +31,7 @@ import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
 import de.cubeisland.engine.parser.rule.RuleElement;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 import de.cubeisland.engine.parser.rule.token.tokenizer.AutomateTokenizer;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
@@ -111,7 +111,7 @@ public class LRFactory implements ParserFactory<LRParser>
         });
     }
 
-    protected Set<TokenSpec> calculateFollows(AugmentedGrammar g, Rule rule)
+    protected Set<TokenClass> calculateFollows(AugmentedGrammar g, Rule rule)
     {
         return Collections.emptySet();
     }

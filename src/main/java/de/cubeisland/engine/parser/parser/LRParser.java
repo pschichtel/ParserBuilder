@@ -24,7 +24,7 @@ package de.cubeisland.engine.parser.parser;
 
 import de.cubeisland.engine.parser.ActionTable;
 import de.cubeisland.engine.parser.GotoTable;
-import de.cubeisland.engine.parser.rule.token.InputSource;
+import de.cubeisland.engine.parser.rule.token.CharacterStream;
 import de.cubeisland.engine.parser.rule.token.Tokenizer;
 
 import java.io.IOException;
@@ -60,9 +60,9 @@ public class LRParser implements Parser
         return actionTable;
     }
 
-    public boolean parse(InputSource source) throws IOException
+    public boolean parse(CharacterStream input) throws IOException
     {
-        this.tokenizer.nextToken(source);
+        this.tokenizer.nextToken(input);
         // TODO implement me
         return false;
     }

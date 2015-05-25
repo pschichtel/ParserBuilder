@@ -32,13 +32,13 @@ public class TokenSpecFactory
     {
     }
 
-    public static SimpleTokenSpec simple(String string)
+    public static SimpleTokenClass simple(String string)
     {
-        return new SimpleTokenSpec(string);
+        return new SimpleTokenClass(string);
     }
 
-    public static <T> ParametrizedTokenSpec<T> parametrized(String name, String pattern, TokenAction action)
+    public static <T> ParametrizedTokenClass<T> parametrized(String name, String pattern, TokenAction action)
     {
-        return new ParametrizedTokenSpec<T>(name, Pattern.compile(pattern), action);
+        return new ParametrizedTokenClass<T>(name, Pattern.compile(pattern), action);
     }
 }

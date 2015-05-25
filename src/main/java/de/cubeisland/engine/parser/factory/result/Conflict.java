@@ -24,16 +24,16 @@ package de.cubeisland.engine.parser.factory.result;
 
 import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.action.Action;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 public class Conflict
 {
     private final Type type;
     private final ParseState state;
-    private final TokenSpec token;
+    private final TokenClass token;
     private final Action conflictingAction;
 
-    public Conflict(Type type, ParseState state, TokenSpec token, Action conflictingAction)
+    public Conflict(Type type, ParseState state, TokenClass token, Action conflictingAction)
     {
         this.type = type;
         this.state = state;
@@ -51,7 +51,7 @@ public class Conflict
         return state;
     }
 
-    public TokenSpec getToken()
+    public TokenClass getToken()
     {
         return token;
     }

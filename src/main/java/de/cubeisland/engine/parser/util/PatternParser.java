@@ -1,24 +1,47 @@
+/**
+ * The MIT License
+ * Copyright (c) 2014 Cube Island
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package de.cubeisland.engine.parser.util;
 
+import de.cubeisland.engine.parser.rule.token.CharacterStream;
+import de.cubeisland.engine.parser.rule.token.CharBuffer.Checkpoint;
 import de.cubeisland.engine.parser.rule.token.automate.DFA;
 import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
 import de.cubeisland.engine.parser.rule.token.automate.NFA;
 import de.cubeisland.engine.parser.rule.token.automate.Transition;
+import de.cubeisland.engine.parser.rule.token.source.CharSequenceSource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.regex.Pattern;
 
 import static de.cubeisland.engine.parser.Util.convertCharCollectionToArray;
+import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchAll;
 import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchOne;
 import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 
 public class PatternParser
 {
-
     public static DFA toDFA(Pattern pattern)
     {
         return toNFA(pattern).toDFA();
@@ -26,52 +49,61 @@ public class PatternParser
 
     public static NFA toNFA(Pattern pattern)
     {
-        return readExpression(new StringStream(pattern.toString()), 0);
+        return readExpression(new CharacterStream(new CharSequenceSource(pattern.toString())), 0);
     }
 
-    private static NFA readExpression(StringStream s, int depth) {
+    private static NFA readExpression(CharacterStream stream, int depth) {
         LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<FiniteAutomate<? extends Transition>>();
 
-        for (final char c : s)
+        for (final char c : stream)
         {
             switch (c)
             {
                 case '[':
-                    elements.addLast(readCharacterClass(s));
+                    elements.addLast(readCharacterClass(stream, 0));
                     break;
                 case '(':
-                    elements.addLast(readExpression(s, depth + 1));
+                    elements.addLast(readExpression(stream, depth + 1));
                     break;
                 case ')':
                     if (depth > 0)
                     {
                         break;
                     }
+                case '|':
+                    NFA left = bakeAutomate(elements);
+                    NFA right = readExpression(stream, depth);
+                    elements.clear();
+                    elements.add(left.or(right));
+                    break;
                 case '+':
                 case '*':
                 case '{':
                 case '?':
                     if (!elements.isEmpty())
                     {
-                        elements.addLast(readQuantifier(s, elements.removeLast()));
+                        elements.addLast(readQuantifier(stream, elements.removeLast()));
                     }
                     else
                     {
-                        elements.addLast(readCharacter(s));
+                        elements.addLast(readCharacter(stream, false));
                     }
                     break;
                 case '.':
                     // TODO wildcard match
                 default:
-                    elements.addLast(readCharacter(s));
+                    elements.addLast(readCharacter(stream, true));
             }
         }
+        return bakeAutomate(elements);
+    }
 
+    private static NFA bakeAutomate(LinkedList<FiniteAutomate<? extends Transition>> elements)
+    {
         if (elements.isEmpty())
         {
             return NFA.EMPTY;
         }
-
         NFA automate = elements.getFirst().toNFA();
         for (final FiniteAutomate<? extends Transition> element : elements.subList(1, elements.size()))
         {
@@ -81,7 +113,7 @@ public class PatternParser
         return automate;
     }
 
-    public static NFA readQuantifier(StringStream s, FiniteAutomate<? extends Transition> automate)
+    public static NFA readQuantifier(CharacterStream s, FiniteAutomate<? extends Transition> automate)
     {
         switch (s.current())
         {
@@ -98,69 +130,79 @@ public class PatternParser
         }
     }
 
-    private static NFA readSpecificQuantifier(StringStream s, FiniteAutomate<? extends Transition> automate)
+    private static NFA readSpecificQuantifier(CharacterStream s, FiniteAutomate<? extends Transition> automate)
     {
-        s.store();
+        final Checkpoint checkpoint = s.checkpoint();
 
         if (s.canPeekAhead() && Character.isDigit(s.peekAhead()))
         {
-            int atLeast = readNumber(s);
+            int min = readNumber(s, NumberSyntax.DECIMAL);
             char c = s.current();
 
             if (c == '}')
             {
-                s.drop();
-                return automate.repeat(atLeast);
+                checkpoint.drop();
+                return automate.repeat(min);
             }
-            else if (c == ',' && s.canPeekAhead() && Character.isDigit(s.peekAhead()))
+            else if (c == ',' && s.canPeekAhead())
             {
-                int atMost = readNumber(s);
-                if (s.current() == '}')
+                char peeked = s.peekAhead();
+                if (Character.isDigit(peeked))
                 {
-                    s.drop().skip();
-                    return automate.range(atLeast, atMost);
+                    int max = readNumber(s, NumberSyntax.DECIMAL);
+                    if (s.current() == '}')
+                    {
+                        checkpoint.drop();
+                        s.advance();
+                        return automate.repeatMinMax(min, max);
+                    }
+                }
+                else if (peeked == '}')
+                {
+                    checkpoint.drop();
+                    return automate.repeatMin(min);
                 }
             }
         }
 
-        s.pop();
+        checkpoint.restore();
 
-        return automate.and(readCharacter(s));
+        return automate.and(readCharacter(s, true));
     }
 
-    private static int readNumber(StringStream s)
+    private static int readNumber(CharacterStream s, NumberSyntax syntax)
     {
-        int out = 0;
+        StringBuilder buf = new StringBuilder();
         for (final char c : s)
         {
-            if (Character.isDigit(c))
+            if (syntax.accept(c))
             {
-                out = out * 10 + (c - '0');
+                buf.append(c);
             }
         }
 
-        return out;
+        return Integer.valueOf(buf.toString(), syntax.getBase());
     }
 
-    private static DFA readCharacterClass(StringStream s)
+    private static DFA readCharacterClass(CharacterStream s, int depth)
     {
         NFA automate = NFA.EMPTY;
 
         if (!s.canPeekAhead(2))
         {
-            return readCharacter(s);
+            return readCharacter(s, true);
         }
         boolean negative = s.peekAhead() == '^';
 
-        s.store();
+        final Checkpoint checkpoint = s.checkpoint();
         if (negative)
         {
-            s.skip();
+            s.advance();
         }
         if (s.peekAhead() == ']')
         {
-            s.pop();
-            return readCharacter(s);
+            checkpoint.restore();
+            return readCharacter(s, true);
         }
 
         boolean hasEnded = false;
@@ -171,15 +213,22 @@ public class PatternParser
                 hasEnded = true;
                 break;
             }
-            automate = automate.or(readCharacter(s));
+            if (c == '[')
+            {
+                automate = automate.or(readCharacterClass(s, depth + 1));
+            }
+            else
+            {
+                automate = automate.or(readCharacter(s, false));
+            }
         }
 
         if (!hasEnded)
         {
-            s.pop();
-            return readCharacter(s);
+            checkpoint.restore();
+            return readCharacter(s, true);
         }
-        s.drop();
+        checkpoint.drop();
         if (negative)
         {
             // TODO verify this
@@ -188,33 +237,40 @@ public class PatternParser
         return automate.toDFA();
     }
 
-    private static DFA readCharacter(StringStream s)
+    private static DFA readCharacter(CharacterStream s, boolean allowQuote)
     {
         char c = s.current();
         if (c == '\\')
         {
-            return readEscapeSequence(s);
+            return readEscapeSequence(s, allowQuote);
         }
         return matchOne(c);
     }
 
-    private static DFA readEscapeSequence(StringStream s)
+    private static DFA readEscapeSequence(CharacterStream s, boolean allowQuote)
     {
         switch (s.next())
         {
+            case 't':
+                return matchOne('\t');
             case 'n':
                 return matchOne('\n');
             case 'r':
                 return matchOne('\r');
+            case 'f':
+                return matchOne('\f');
+            case 'a':
+                return matchOne('\u0007');
+            case 'e':
+                return matchOne('\u001B');
             case 's':
-                return matchOne(' ', '\t', '\n', '\r');
+                return matchOne(' ', '\t', '\n', (char)0xB, '\f', '\r');
             case '\\':
                 return matchOne('\\');
             case 'd':
                 return matchOne('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
             case 'w':
                 List<Character> chars = new ArrayList<Character>();
-                NFA automate = NFA.EMPTY;
                 for (int i = 'a'; i <= 'z'; ++i)
                 {
                     chars.add((char)i);
@@ -224,125 +280,82 @@ public class PatternParser
                     chars.add((char)i);
                 }
                 chars.add('_');
+                for (int i = '0'; i <= '9'; ++i)
+                {
+                    chars.add((char)i);
+                }
                 return matchOne(convertCharCollectionToArray(chars));
+            case 'R':
+                return matchAll('\r', '\n').or(matchOne('\n', '\u000B', '\u000C', '\r', '\u0085', '\u2028', '\u2029')).toDFA();
+            case '0':
+                return matchOne((char)readNumber(s, NumberSyntax.OCTAL));
+            case 'x':
+                return matchOne((char)readNumber(s, NumberSyntax.HEXADECIMAL));
+            case 'Q':
+                if (allowQuote)
+                {
+                    return readQuoted(s);
+                }
             default:
-                return DFA.EMPTY;
+                return readCharacter(s, allowQuote);
         }
     }
 
-    private static final class StringStream implements Iterator<Character>, Iterable<Character>
+    private static DFA readQuoted(CharacterStream s)
     {
-        private final String s;
-        private volatile int offset = -1;
-        private Stack<Integer> offsetStack = new Stack<Integer>();
-
-        public StringStream(String s)
+        LinkedList<FiniteAutomate<? extends Transition>> elems = new LinkedList<FiniteAutomate<? extends Transition>>();
+        final Checkpoint checkpoint = s.checkpoint();
+        for (final Character c : s)
         {
-            this.s = s;
-        }
-
-        @Override
-        public Iterator<Character> iterator()
-        {
-            return this;
-        }
-
-        @Override
-        public boolean hasNext()
-        {
-            return offset + 1 < s.length();
-        }
-
-        @Override
-        public Character next()
-        {
-            if (!hasNext())
+            if (c == '\\' && s.canPeekAhead() && s.peekAhead() == 'E')
             {
-                throw new StringIndexOutOfBoundsException("String is depleted");
+                s.advance();
+                checkpoint.drop();
+                return bakeAutomate(elems).toDFA();
             }
-            return s.charAt(++offset);
+            elems.add(readCharacter(s, false));
         }
 
-        public boolean canPeekAhead()
-        {
-            return canPeekAhead(1);
-        }
+        checkpoint.restore();
+        return readCharacter(s, true);
+    }
 
-        public boolean canPeekAhead(int n)
-        {
-            return offset + n < s.length();
-        }
-
-        public char peekAhead()
-        {
-            return peekAhead(1);
-        }
-
-        public char peekAhead(int n)
-        {
-            if (!canPeekAhead(n))
+    private enum NumberSyntax
+    {
+        OCTAL(8) {
+            @Override
+            boolean accept(char c)
             {
-                throw new StringIndexOutOfBoundsException("Can't peek that far: " + n);
+                return c >= '0' && c <= '7';
             }
-            return s.charAt(offset + n);
-        }
-
-        public char current()
-        {
-            if (offset < 0)
+        },
+        DECIMAL(10) {
+            @Override
+            boolean accept(char c)
             {
-                throw new IllegalStateException("You can't call current() before invoking next() at least once!");
+                return c >= '0' && c <= '9';
             }
-            return s.charAt(offset);
-        }
-
-        @Override
-        public void remove()
-        {
-            skip();
-        }
-
-        public StringStream skip()
-        {
-            if (hasNext())
+        },
+        HEXADECIMAL(16) {
+            @Override
+            boolean accept(char c)
             {
-                offset++;
+                return DECIMAL.accept(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';
             }
-            return this;
+        };
+
+        private final int base;
+
+        NumberSyntax(int base)
+        {
+            this.base = base;
         }
 
-        public boolean isAtStart()
+        public int getBase()
         {
-            return offset == 0;
+            return base;
         }
 
-        public boolean isAtEnd()
-        {
-            return !canPeekAhead();
-        }
-
-        public StringStream store()
-        {
-            offsetStack.push(offset);
-            return this;
-        }
-
-        public StringStream pop()
-        {
-            if (!offsetStack.empty())
-            {
-                offset = offsetStack.pop();
-            }
-            return this;
-        }
-
-        public StringStream drop()
-        {
-            if (!offsetStack.empty())
-            {
-                offsetStack.pop();
-            }
-            return this;
-        }
+        abstract boolean accept(char c);
     }
 }

@@ -22,7 +22,7 @@
  */
 package de.cubeisland.engine.parser.util;
 
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import java.util.*;
 
@@ -30,24 +30,24 @@ import static de.cubeisland.engine.parser.Util.asSet;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
-public class TokenString implements Iterable<TokenSpec>
+public class TokenString implements Iterable<TokenClass>
 {
-    public static final TokenString EMPTY = new TokenString(Collections.<TokenSpec>emptyList());
+    public static final TokenString EMPTY = new TokenString(Collections.<TokenClass>emptyList());
     private static final Set<TokenString> EMPTY_SET = asSet(EMPTY);
 
-    private final List<TokenSpec> tokens;
+    private final List<TokenClass> tokens;
 
-    private TokenString(List<TokenSpec> tokens)
+    private TokenString(List<TokenClass> tokens)
     {
         this.tokens = unmodifiableList(tokens);
     }
 
-    public TokenSpec tokenAt(int i)
+    public TokenClass tokenAt(int i)
     {
         return this.tokens.get(i);
     }
 
-    public Iterator<TokenSpec> iterator()
+    public Iterator<TokenClass> iterator()
     {
         return this.tokens.iterator();
     }
@@ -68,7 +68,7 @@ public class TokenString implements Iterable<TokenSpec>
 
     public TokenString concat(int k, TokenString other)
     {
-        List<TokenSpec> concatenatedString = new ArrayList<TokenSpec>(this.tokens);
+        List<TokenClass> concatenatedString = new ArrayList<TokenClass>(this.tokens);
         concatenatedString.addAll(other.tokens);
         final int length = concatenatedString.size();
         return new TokenString(concatenatedString.subList(0, k < length ? k : length));
@@ -104,7 +104,7 @@ public class TokenString implements Iterable<TokenSpec>
         return result;
     }
 
-    public static TokenString str(List<TokenSpec> tokens)
+    public static TokenString str(List<TokenClass> tokens)
     {
         if (tokens.isEmpty())
         {
@@ -113,7 +113,7 @@ public class TokenString implements Iterable<TokenSpec>
         return new TokenString(tokens);
     }
 
-    public static TokenString str(TokenSpec... tokens)
+    public static TokenString str(TokenClass... tokens)
     {
         if (tokens.length == 0)
         {

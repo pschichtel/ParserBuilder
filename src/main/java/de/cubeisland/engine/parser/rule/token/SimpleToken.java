@@ -25,9 +25,9 @@ package de.cubeisland.engine.parser.rule.token;
 
 public class SimpleToken implements Token
 {
-    private final TokenSpec spec;
+    private final TokenClass spec;
 
-    public SimpleToken(TokenSpec spec)
+    public SimpleToken(TokenClass spec)
     {
         this.spec = spec;
     }

@@ -25,10 +25,10 @@ package de.cubeisland.engine.parser;
 import de.cubeisland.engine.parser.grammar.Grammar;
 import de.cubeisland.engine.parser.rule.token.Epsilon;
 import de.cubeisland.engine.parser.rule.token.ParametrizedToken;
-import de.cubeisland.engine.parser.rule.token.ParametrizedTokenSpec;
+import de.cubeisland.engine.parser.rule.token.ParametrizedTokenClass;
 import de.cubeisland.engine.parser.rule.token.Token;
 import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import static de.cubeisland.engine.parser.TestGrammars.SimpleExpr.*;
 import static de.cubeisland.engine.parser.TestGrammars.FirstFollowExpr.*;
@@ -44,19 +44,19 @@ public class TestGrammars
         public static final Variable factor = new Variable("factor");
         public static final Variable expr = new Variable("expr");
 
-        public static final TokenSpec ADD = simple("+");
-        public static final TokenSpec SUB = simple("-");
-        public static final TokenSpec MUL = simple("*");
-        public static final TokenSpec DIV = simple("/");
-        public static final TokenSpec BGN = simple("(");
-        public static final TokenSpec END = simple(")");
+        public static final TokenClass ADD = simple("+");
+        public static final TokenClass SUB = simple("-");
+        public static final TokenClass MUL = simple("*");
+        public static final TokenClass DIV = simple("/");
+        public static final TokenClass BGN = simple("(");
+        public static final TokenClass END = simple(")");
 
-        public static final ParametrizedTokenSpec<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", new TokenAction() {
+        public static final ParametrizedTokenClass<Integer> NUM = parametrized("NUM", "0|[1-9][0-9]*", new TokenAction() {
             @SuppressWarnings("unchecked")
             @Override
-            public Token act(TokenSpec spec, String s)
+            public Token act(TokenClass tokenClass, String lexeme)
             {
-                return new ParametrizedToken<Integer>((ParametrizedTokenSpec<Integer>) spec, Integer.valueOf(s));
+                return new ParametrizedToken<Integer>((ParametrizedTokenClass<Integer>)tokenClass, Integer.valueOf(lexeme));
             }
         });
     }
@@ -68,12 +68,12 @@ public class TestGrammars
         public static final Variable c = new Variable("c");
         public static final Variable d = new Variable("d");
 
-        public static final TokenSpec B = simple("b");
-        public static final TokenSpec C = simple("c");
-        public static final TokenSpec D = simple("d");
-        public static final TokenSpec L = simple("l");
-        public static final TokenSpec M = simple("m");
-        public static final TokenSpec H = simple("h");
+        public static final TokenClass B = simple("b");
+        public static final TokenClass C = simple("c");
+        public static final TokenClass D = simple("d");
+        public static final TokenClass L = simple("l");
+        public static final TokenClass M = simple("m");
+        public static final TokenClass H = simple("h");
     }
 
     public static final Grammar SIMPLE_EXPR = Grammar

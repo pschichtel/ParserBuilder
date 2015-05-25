@@ -24,7 +24,6 @@ package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
-import de.cubeisland.engine.parser.util.OrderedPair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +45,7 @@ public abstract class FiniteAutomate<T extends Transition>
 
     protected FiniteAutomate(Set<State> states, Set<T> transitions, State start, Set<State> acceptingStates) {
 
+        states = new HashSet<State>(states);
         states.addAll(acceptingStates);
         states.add(start);
 
@@ -178,43 +178,44 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, start, asSet(accept));
     }
 
-    public NFA repeat(int atLeast)
+    public NFA repeat(int n)
     {
-        if (atLeast < 0)
+        if (n < 0)
         {
-            throw new IllegalArgumentException("atLeast must be > 0");
+            throw new IllegalArgumentException("Can't repeat negative amount!");
         }
-        NFA automate = EPSILON;
-
-        for (int i = 0; i < atLeast; ++i)
+        if (n == 0)
+        {
+            return EPSILON;
+        }
+        NFA automate = this.toNFA();
+        for (int i = 1; i < n; ++i)
         {
             automate = automate.and(this);
         }
-
-        return automate.and(kleene());
+        return automate;
     }
 
-    public NFA range(int atLeast, int atMost)
+    public NFA repeatMin(int min)
     {
-        if (atLeast < 0)
+        return repeat(min).and(this.kleene());
+    }
+
+    public NFA repeatMinMax(int min, int max)
+    {
+        if (max < min)
         {
-            throw new IllegalArgumentException("atLeast must be > 0");
-        }
-        if (atMost < atLeast)
-        {
-            throw new IllegalArgumentException("atMost must be >= atLeast");
+            throw new IllegalArgumentException("max must be >= min");
         }
 
-        NFA automate = EPSILON;
-
-        int i = 0;
-        for (; i < atLeast; ++i)
+        NFA automate = repeat(min);
+        if (min == max)
         {
-            automate = automate.and(this);
+            return automate;
         }
 
         NFA maybe = this.or(EPSILON);
-        for (; i < atMost; ++i)
+        for (int i = min; i < max; ++i)
         {
             automate = automate.and(maybe);
         }

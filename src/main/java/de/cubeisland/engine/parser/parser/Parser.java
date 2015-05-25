@@ -22,11 +22,11 @@
  */
 package de.cubeisland.engine.parser.parser;
 
-import de.cubeisland.engine.parser.rule.token.InputSource;
+import de.cubeisland.engine.parser.rule.token.CharacterStream;
 
 import java.io.IOException;
 
 public interface Parser
 {
-    boolean parse(InputSource source) throws IOException;
+    boolean parse(CharacterStream input) throws IOException;
 }

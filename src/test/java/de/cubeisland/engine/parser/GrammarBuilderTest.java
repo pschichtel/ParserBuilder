@@ -23,7 +23,7 @@
 package de.cubeisland.engine.parser;
 
 import de.cubeisland.engine.parser.grammar.Grammar;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 import org.junit.Test;
 
 import static de.cubeisland.engine.parser.rule.token.TokenSpecFactory.simple;
@@ -36,8 +36,8 @@ public class GrammarBuilderTest
     public void testBuild() throws Exception
     {
         final Variable start = new Variable("start");
-        final TokenSpec A = simple("a");
-        final TokenSpec B = simple("b");
+        final TokenClass A = simple("a");
+        final TokenClass B = simple("b");
         Grammar g = Grammar
             .with(start.produces(A).skip())
             .with(start.produces(B).skip())

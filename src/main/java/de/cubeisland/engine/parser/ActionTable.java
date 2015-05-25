@@ -24,7 +24,7 @@ package de.cubeisland.engine.parser;
 
 import de.cubeisland.engine.parser.action.Action;
 import de.cubeisland.engine.parser.parser.ParseState;
-import de.cubeisland.engine.parser.rule.token.TokenSpec;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class ActionTable
         this.actions = actions;
     }
 
-    public Action resolve(ParseState state, TokenSpec token)
+    public Action resolve(ParseState state, TokenClass token)
     {
         Action action = this.actions.get(new Entry(state, token));
         if (action == null)
@@ -52,9 +52,9 @@ public class ActionTable
     public static final class Entry
     {
         public final ParseState state;
-        public final TokenSpec spec;
+        public final TokenClass spec;
 
-        public Entry(ParseState state, TokenSpec spec)
+        public Entry(ParseState state, TokenClass spec)
         {
             this.state = state;
             this.spec = spec;
