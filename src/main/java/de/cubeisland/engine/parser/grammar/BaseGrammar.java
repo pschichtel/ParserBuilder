@@ -22,18 +22,16 @@
  */
 package de.cubeisland.engine.parser.grammar;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenClass;
 import de.cubeisland.engine.parser.util.TokenString;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static de.cubeisland.engine.parser.util.TokenString.concatMany;
-import static de.cubeisland.engine.parser.util.TokenString.str;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
@@ -53,7 +51,6 @@ public abstract class BaseGrammar
         this.start = start;
 
         this.nullables = GrammarUtils.nullClosure(variables, rules);
-
     }
 
     public Set<Variable> getVariables()

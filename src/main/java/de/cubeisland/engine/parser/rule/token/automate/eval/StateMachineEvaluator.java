@@ -25,5 +25,6 @@ package de.cubeisland.engine.parser.rule.token.automate.eval;
 public interface StateMachineEvaluator
 {
     boolean transition(char c);
+
     boolean isCurrentAccepting();
 }

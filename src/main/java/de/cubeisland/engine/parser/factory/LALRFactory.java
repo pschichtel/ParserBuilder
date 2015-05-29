@@ -22,10 +22,10 @@
  */
 package de.cubeisland.engine.parser.factory;
 
-import de.cubeisland.engine.parser.parser.LRParser;
 import de.cubeisland.engine.parser.factory.result.CompilationResult;
 import de.cubeisland.engine.parser.factory.result.SuccessfulResult;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
+import de.cubeisland.engine.parser.parser.LRParser;
 
 import static de.cubeisland.engine.parser.factory.result.CompilationResult.success;
 

@@ -22,13 +22,10 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-
 import de.cubeisland.engine.parser.Util;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
@@ -48,7 +45,7 @@ final class TransitionMultiMap
     private final Set<ExpectedTransition> wildcardSet;
 
     private TransitionMultiMap(Map<Character, Set<ExpectedTransition>> expectedTransitions, WildcardTransition wildcard,
-                              Set<SpontaneousTransition> spontaneousTransitions, Set<Character> alphabet)
+                               Set<SpontaneousTransition> spontaneousTransitions, Set<Character> alphabet)
     {
         this.wildcard = wildcard;
         if (wildcard != null)
@@ -75,7 +72,7 @@ final class TransitionMultiMap
         {
             if (t instanceof SpontaneousTransition)
             {
-                spontaneousTransitions.add((SpontaneousTransition) t);
+                spontaneousTransitions.add((SpontaneousTransition)t);
             }
             else if (t instanceof CharacterTransition)
             {

@@ -22,9 +22,8 @@
  */
 package de.cubeisland.engine.parser.factory.result;
 
-import de.cubeisland.engine.parser.parser.Parser;
-
 import java.util.List;
+import de.cubeisland.engine.parser.parser.Parser;
 
 public abstract class CompilationResult<T extends Parser>
 {

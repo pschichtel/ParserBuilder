@@ -70,7 +70,8 @@ public final class CharacterStream implements Iterator<Character>, Iterable<Char
                 this.buffer.offer(source.read());
             }
             catch (SourceDepletedException ignored) // will not be thrown due to hasNext() check
-            {}
+            {
+            }
             catch (IOException e)
             {
                 throw new SourceReadException(e);

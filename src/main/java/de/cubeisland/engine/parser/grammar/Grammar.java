@@ -22,13 +22,12 @@
  */
 package de.cubeisland.engine.parser.grammar;
 
-import de.cubeisland.engine.parser.Variable;
-import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.rule.token.TokenClass;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import de.cubeisland.engine.parser.Variable;
+import de.cubeisland.engine.parser.rule.Rule;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import static de.cubeisland.engine.parser.grammar.GrammarUtils.allTokensOf;
 import static de.cubeisland.engine.parser.grammar.GrammarUtils.allVariablesOf;

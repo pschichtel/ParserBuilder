@@ -22,13 +22,13 @@
  */
 package de.cubeisland.engine.parser.grammar;
 
-import de.cubeisland.engine.parser.Variable;
-import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.rule.token.TokenClass;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import de.cubeisland.engine.parser.Variable;
+import de.cubeisland.engine.parser.rule.Rule;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import static de.cubeisland.engine.parser.rule.Reaction.SkipReaction.SKIP;
 import static de.cubeisland.engine.parser.rule.token.EndOfFileToken.EOF;
@@ -47,7 +47,6 @@ public class AugmentedGrammar extends BaseGrammar
     {
         return getRules().get(0);
     }
-
 
 
     private static Set<Variable> augment(Set<Variable> original)

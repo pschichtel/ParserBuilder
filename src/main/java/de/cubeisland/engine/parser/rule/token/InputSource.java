@@ -28,6 +28,8 @@ import de.cubeisland.engine.parser.rule.token.CharacterStream.SourceDepletedExce
 public interface InputSource extends Iterable<Character>
 {
     boolean isDepleted() throws IOException;
+
     char read() throws IOException, SourceDepletedException;
+
     CharacterStream stream();
 }

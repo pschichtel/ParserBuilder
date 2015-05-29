@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright (c) 2014 Cube Island
- * <p/>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,6 +22,13 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import de.cubeisland.engine.parser.Util;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
@@ -32,15 +39,6 @@ import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
 import de.cubeisland.engine.parser.util.OrderedPair;
 import de.cubeisland.engine.parser.util.Pair;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.Stack;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 
@@ -203,7 +201,8 @@ public class NFA extends FiniteAutomate<Transition>
             {
                 continue;
             }
-            for (final ExpectedTransition transition : map.getTransitionsFor(c, Collections.<ExpectedTransition>emptySet()))
+            for (final ExpectedTransition transition : map.getTransitionsFor(c,
+                                                                             Collections.<ExpectedTransition>emptySet()))
             {
                 out.add(transition.getDestination());
             }

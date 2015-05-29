@@ -23,15 +23,11 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
-import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
-
-import static java.util.Collections.unmodifiableMap;
 
 public class TransitionMap
 {
@@ -72,16 +68,6 @@ public class TransitionMap
         }
 
         return new TransitionMap(charTransitions, wildcard);
-    }
-
-    public Set<ExpectedTransition> getTransitions()
-    {
-        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>(this.charTransitions.values());
-        if (this.wildcard != null)
-        {
-            transitions.add(this.wildcard);
-        }
-        return transitions;
     }
 
     public ExpectedTransition getTransitionFor(char c)

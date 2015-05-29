@@ -121,7 +121,8 @@ public class GrammarUtils
         return first(1, variables, rules);
     }
 
-    public static Map<Variable, Set<TokenString>> first(int k, final Set<Variable> variables, final Iterable<Rule> rules)
+    public static Map<Variable, Set<TokenString>> first(int k, final Set<Variable> variables,
+                                                        final Iterable<Rule> rules)
     {
         final Map<Variable, Set<TokenString>> first = initializedMap(variables);
         final Set<TokenString> initialEmptySet = emptySet();
@@ -161,12 +162,14 @@ public class GrammarUtils
         return first;
     }
 
-    public static Map<Variable, Set<TokenString>> follow(final Variable start, final Set<Variable> variables, final Iterable<Rule> rules)
+    public static Map<Variable, Set<TokenString>> follow(final Variable start, final Set<Variable> variables,
+                                                         final Iterable<Rule> rules)
     {
         return follow(1, start, variables, rules);
     }
 
-    public static Map<Variable, Set<TokenString>> follow(int k, final Variable start, final Set<Variable> variables, final Iterable<Rule> rules)
+    public static Map<Variable, Set<TokenString>> follow(int k, final Variable start, final Set<Variable> variables,
+                                                         final Iterable<Rule> rules)
     {
         final Map<Variable, Set<TokenString>> follow = initializedMap(variables);
         final Map<Variable, Set<TokenString>> first = first(k, variables, rules);
@@ -204,13 +207,14 @@ public class GrammarUtils
                     }
                 }
             }
-        } while(change);
-
+        }
+        while (change);
 
         return follow;
     }
 
-    private static Set<TokenString> firstList(int k, List<RuleElement> followingElements, Map<Variable, Set<TokenString>> firstSets)
+    private static Set<TokenString> firstList(int k, List<RuleElement> followingElements,
+                                              Map<Variable, Set<TokenString>> firstSets)
     {
         if (followingElements.isEmpty())
         {
@@ -230,7 +234,7 @@ public class GrammarUtils
         {
             Set<TokenString> firstR = firstList(k, followingElements.subList(1, followingElements.size()), firstSets);
 
-            return TokenString.concatMany(k, asSet(str((TokenClass) firstElement)), firstR);
+            return TokenString.concatMany(k, asSet(str((TokenClass)firstElement)), firstR);
         }
     }
 

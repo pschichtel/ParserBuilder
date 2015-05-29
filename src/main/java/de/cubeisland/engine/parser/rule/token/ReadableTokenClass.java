@@ -40,7 +40,8 @@ public abstract class ReadableTokenClass extends TokenClass
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return getName() + " ↦ ";
     }
 }

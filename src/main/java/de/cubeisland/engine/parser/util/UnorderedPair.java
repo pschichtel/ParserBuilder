@@ -49,6 +49,7 @@ public class UnorderedPair<L, R> implements Pair<L, R>
      * This implementation ignores the order of the fields, so <a, b> = <b, a>
      *
      * @param o the other object
+     *
      * @return true of they're the same
      */
     @Override
@@ -63,7 +64,7 @@ public class UnorderedPair<L, R> implements Pair<L, R>
             return false;
         }
 
-        UnorderedPair that = (UnorderedPair) o;
+        UnorderedPair that = (UnorderedPair)o;
 
         if (left.equals(that.left) && right.equals(that.right))
         {

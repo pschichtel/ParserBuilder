@@ -22,8 +22,16 @@
  */
 package de.cubeisland.engine.parser.factory;
 
-import de.cubeisland.engine.parser.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import de.cubeisland.engine.parser.ActionTable;
+import de.cubeisland.engine.parser.GotoTable;
 import de.cubeisland.engine.parser.GotoTable.Entry;
+import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.action.Action;
 import de.cubeisland.engine.parser.action.Reduce;
 import de.cubeisland.engine.parser.action.Shift;
@@ -40,8 +48,6 @@ import de.cubeisland.engine.parser.rule.token.tokenizer.AutomateTokenizer;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
 import de.cubeisland.engine.parser.util.TokenString;
-
-import java.util.*;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.action.Accept.ACCEPT;
@@ -81,7 +87,8 @@ public class LRFactory implements ParserFactory<LRParser>
                 if (element instanceof TokenClass)
                 {
                     final TokenClass token = (TokenClass)element;
-                    actions.put(new ActionTable.Entry(current, token), new Shift(targetState)); // TODO this doesn't seem right...
+                    actions.put(new ActionTable.Entry(current, token), new Shift(
+                        targetState)); // TODO this doesn't seem right...
                 }
                 else
                 {
@@ -111,7 +118,8 @@ public class LRFactory implements ParserFactory<LRParser>
             }
         }
 
-        return success(new LRParser(AutomateTokenizer.fromGrammar(g), states, new GotoTable(gotos), new ActionTable(actions)));
+        return success(new LRParser(AutomateTokenizer.fromGrammar(g), states, new GotoTable(gotos), new ActionTable(
+            actions)));
     }
 
     protected ParseState calculateInitialState(AugmentedGrammar g)

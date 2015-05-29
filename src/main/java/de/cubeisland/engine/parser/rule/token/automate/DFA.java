@@ -22,18 +22,18 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate;
 
-import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
-import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
-import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
-import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
-import de.cubeisland.engine.parser.util.OrderedPair;
-import de.cubeisland.engine.parser.util.Pair;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
+import de.cubeisland.engine.parser.util.OrderedPair;
+import de.cubeisland.engine.parser.util.Pair;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.rule.token.automate.ErrorState.ERROR;
@@ -253,7 +253,6 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
                 }
             }
         }
-
 
         return new DFA(new HashSet<State>(stateMap.values()), transitions, start, accepting);
     }

@@ -22,17 +22,13 @@
  */
 package de.cubeisland.engine.parser.parser;
 
+import java.util.HashSet;
+import java.util.Set;
 import de.cubeisland.engine.parser.Identified;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
 import de.cubeisland.engine.parser.rule.RuleElement;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
 public class ParseState extends Identified

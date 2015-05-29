@@ -57,7 +57,7 @@ public class OrderedPair<L, R> implements Pair<L, R>
             return false;
         }
 
-        OrderedPair that = (OrderedPair) o;
+        OrderedPair that = (OrderedPair)o;
 
         if (left != null ? !left.equals(that.left) : that.left != null)
         {

@@ -57,7 +57,7 @@ public class CharacterTransition extends ExpectedTransition
             return false;
         }
 
-        CharacterTransition that = (CharacterTransition) o;
+        CharacterTransition that = (CharacterTransition)o;
 
         return this.with == that.with;
     }
@@ -66,7 +66,7 @@ public class CharacterTransition extends ExpectedTransition
     public int hashCode()
     {
         int result = super.hashCode();
-        result = 31 * result + (int) with;
+        result = 31 * result + (int)with;
         return result;
     }
 }

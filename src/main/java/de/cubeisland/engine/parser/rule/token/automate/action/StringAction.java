@@ -27,9 +27,11 @@ import de.cubeisland.engine.parser.rule.token.ParametrizedTokenClass;
 import de.cubeisland.engine.parser.rule.token.Token;
 import de.cubeisland.engine.parser.rule.token.TokenClass;
 
-public class StringAction implements TokenAction {
+public class StringAction implements TokenAction
+{
     @Override
-    public Token act(TokenClass tokenClass, String lexeme) {
+    public Token act(TokenClass tokenClass, String lexeme)
+    {
         return new ParametrizedToken<String>((ParametrizedTokenClass<String>)tokenClass, lexeme);
     }
 }

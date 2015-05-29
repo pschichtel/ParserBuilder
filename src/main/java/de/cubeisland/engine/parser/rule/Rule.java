@@ -22,13 +22,11 @@
  */
 package de.cubeisland.engine.parser.rule;
 
-import de.cubeisland.engine.parser.Variable;
-
 import java.util.Collections;
 import java.util.List;
+import de.cubeisland.engine.parser.Variable;
 
 import static de.cubeisland.engine.parser.rule.Reaction.SkipReaction.SKIP;
-import static java.util.Arrays.asList;
 
 public class Rule
 {
@@ -43,7 +41,8 @@ public class Rule
         this.reaction = reaction;
     }
 
-    public Variable getHead() {
+    public Variable getHead()
+    {
         return this.head;
     }
 

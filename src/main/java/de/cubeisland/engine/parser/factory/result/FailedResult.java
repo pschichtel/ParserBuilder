@@ -22,10 +22,9 @@
  */
 package de.cubeisland.engine.parser.factory.result;
 
-import de.cubeisland.engine.parser.parser.Parser;
-
 import java.util.Collections;
 import java.util.List;
+import de.cubeisland.engine.parser.parser.Parser;
 
 public class FailedResult<T extends Parser> extends CompilationResult<T>
 {

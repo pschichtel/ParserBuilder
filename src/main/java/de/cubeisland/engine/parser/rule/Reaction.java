@@ -31,6 +31,7 @@ public interface Reaction
         public static final SkipReaction SKIP = new SkipReaction();
 
         public void react()
-        {}
+        {
+        }
     }
 }

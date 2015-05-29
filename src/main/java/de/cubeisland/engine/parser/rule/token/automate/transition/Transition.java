@@ -59,7 +59,7 @@ public abstract class Transition
             return false;
         }
 
-        Transition that = (Transition) o;
+        Transition that = (Transition)o;
 
         if (!destination.equals(that.destination))
         {

@@ -22,6 +22,9 @@
  */
 package de.cubeisland.engine.parser.rule.token.tokenizer;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
 import de.cubeisland.engine.parser.grammar.BaseGrammar;
 import de.cubeisland.engine.parser.rule.token.CharacterStream;
 import de.cubeisland.engine.parser.rule.token.ParametrizedTokenClass;
@@ -36,10 +39,6 @@ import de.cubeisland.engine.parser.rule.token.automate.Matcher;
 import de.cubeisland.engine.parser.rule.token.automate.NFA;
 import de.cubeisland.engine.parser.rule.token.automate.State;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
 
 import static de.cubeisland.engine.parser.rule.token.EndOfFileToken.EOF;
 import static de.cubeisland.engine.parser.rule.token.automate.ErrorState.ERROR;
@@ -100,7 +99,6 @@ public class AutomateTokenizer implements Tokenizer
         }
         while (next != ERROR && !input.isDepleted());
 
-
         if (!this.automate.isAccepting(currentState))
         {
             this.currentChar = null;
@@ -119,7 +117,7 @@ public class AutomateTokenizer implements Tokenizer
         }
         else if (p instanceof ParametrizedTokenClass<?>)
         {
-            return Matcher.match(((ParametrizedTokenClass) p).getPattern());
+            return Matcher.match(((ParametrizedTokenClass)p).getPattern());
         }
         return NFA.EPSILON;
     }

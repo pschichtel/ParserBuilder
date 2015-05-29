@@ -22,13 +22,12 @@
  */
 package de.cubeisland.engine.parser.parser;
 
+import java.io.IOException;
+import java.util.Set;
 import de.cubeisland.engine.parser.ActionTable;
 import de.cubeisland.engine.parser.GotoTable;
 import de.cubeisland.engine.parser.rule.token.CharacterStream;
 import de.cubeisland.engine.parser.rule.token.Tokenizer;
-
-import java.io.IOException;
-import java.util.Set;
 
 public class LRParser implements Parser
 {

@@ -22,9 +22,13 @@
  */
 package de.cubeisland.engine.parser.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import de.cubeisland.engine.parser.rule.token.TokenClass;
-
-import java.util.*;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static java.util.Arrays.asList;
@@ -57,11 +61,13 @@ public class TokenString implements Iterable<TokenClass>
         return this.tokens.size();
     }
 
-    public TokenString substring(int begin, int end) {
+    public TokenString substring(int begin, int end)
+    {
         return new TokenString(this.tokens.subList(begin, end));
     }
 
-    public TokenString maximumSubstring(int begin, int end) {
+    public TokenString maximumSubstring(int begin, int end)
+    {
         final int max = size();
         return substring(begin, end < max ? end : max);
     }

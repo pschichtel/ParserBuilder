@@ -22,9 +22,8 @@
  */
 package de.cubeisland.engine.parser.rule.token;
 
-import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
-
 import java.util.regex.Pattern;
+import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
 
 public class TokenSpecFactory
 {

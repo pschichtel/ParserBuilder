@@ -22,9 +22,8 @@
  */
 package de.cubeisland.engine.parser.parser;
 
-import de.cubeisland.engine.parser.rule.token.CharacterStream;
-
 import java.io.IOException;
+import de.cubeisland.engine.parser.rule.token.CharacterStream;
 
 public interface Parser
 {

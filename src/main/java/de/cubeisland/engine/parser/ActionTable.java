@@ -22,11 +22,10 @@
  */
 package de.cubeisland.engine.parser;
 
+import java.util.Map;
 import de.cubeisland.engine.parser.action.Action;
 import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.rule.token.TokenClass;
-
-import java.util.Map;
 
 import static de.cubeisland.engine.parser.action.Error.ERROR;
 

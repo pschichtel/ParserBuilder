@@ -22,13 +22,12 @@
  */
 package de.cubeisland.engine.parser;
 
-import de.cubeisland.engine.parser.util.OrderedPair;
-import de.cubeisland.engine.parser.util.UnorderedPair;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import de.cubeisland.engine.parser.util.OrderedPair;
+import de.cubeisland.engine.parser.util.UnorderedPair;
 
 public abstract class Util
 {

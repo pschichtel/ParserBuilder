@@ -22,14 +22,13 @@
  */
 package de.cubeisland.engine.parser.rule.token.source;
 
-import de.cubeisland.engine.parser.rule.token.CharacterStream;
-import de.cubeisland.engine.parser.rule.token.CharacterStream.SourceDepletedException;
-import de.cubeisland.engine.parser.rule.token.InputSource;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import de.cubeisland.engine.parser.rule.token.CharacterStream;
+import de.cubeisland.engine.parser.rule.token.CharacterStream.SourceDepletedException;
+import de.cubeisland.engine.parser.rule.token.InputSource;
 
 public class InputStreamSource implements InputSource, Closeable
 {

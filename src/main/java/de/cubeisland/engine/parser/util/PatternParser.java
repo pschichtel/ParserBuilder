@@ -22,23 +22,19 @@
  */
 package de.cubeisland.engine.parser.util;
 
-import de.cubeisland.engine.parser.rule.token.CharacterStream;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import de.cubeisland.engine.parser.rule.token.CharBuffer.Checkpoint;
+import de.cubeisland.engine.parser.rule.token.CharacterStream;
 import de.cubeisland.engine.parser.rule.token.automate.DFA;
 import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
 import de.cubeisland.engine.parser.rule.token.automate.NFA;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.source.CharSequenceSource;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import static de.cubeisland.engine.parser.Util.convertCharCollectionToArray;
-import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchAll;
-import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchOne;
-import static de.cubeisland.engine.parser.rule.token.automate.Matcher.matchWildcard;
+import static de.cubeisland.engine.parser.rule.token.automate.Matcher.*;
 import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 
 public class PatternParser
@@ -53,7 +49,8 @@ public class PatternParser
         return readExpression(new CharacterStream(new CharSequenceSource(pattern.toString())), 0);
     }
 
-    private static NFA readExpression(CharacterStream stream, int depth) {
+    private static NFA readExpression(CharacterStream stream, int depth)
+    {
         LinkedList<FiniteAutomate<? extends Transition>> elements = new LinkedList<FiniteAutomate<? extends Transition>>();
 
         for (final char c : stream)
@@ -286,7 +283,8 @@ public class PatternParser
                 }
                 return matchOne(convertCharCollectionToArray(chars));
             case 'R':
-                return matchAll('\r', '\n').or(matchOne('\n', '\u000B', '\u000C', '\r', '\u0085', '\u2028', '\u2029')).toDFA();
+                return matchAll('\r', '\n').or(matchOne('\n', '\u000B', '\u000C', '\r', '\u0085', '\u2028',
+                                                        '\u2029')).toDFA();
             case '0':
                 return matchOne((char)readNumber(s, NumberSyntax.OCTAL));
             case 'x':
@@ -322,27 +320,30 @@ public class PatternParser
 
     private enum NumberSyntax
     {
-        OCTAL(8) {
-            @Override
-            boolean accept(char c)
+        OCTAL(8)
             {
-                return c >= '0' && c <= '7';
-            }
-        },
-        DECIMAL(10) {
-            @Override
-            boolean accept(char c)
+                @Override
+                boolean accept(char c)
+                {
+                    return c >= '0' && c <= '7';
+                }
+            },
+        DECIMAL(10)
             {
-                return c >= '0' && c <= '9';
-            }
-        },
-        HEXADECIMAL(16) {
-            @Override
-            boolean accept(char c)
+                @Override
+                boolean accept(char c)
+                {
+                    return c >= '0' && c <= '9';
+                }
+            },
+        HEXADECIMAL(16)
             {
-                return DECIMAL.accept(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';
-            }
-        };
+                @Override
+                boolean accept(char c)
+                {
+                    return DECIMAL.accept(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';
+                }
+            };
 
         private final int base;
 

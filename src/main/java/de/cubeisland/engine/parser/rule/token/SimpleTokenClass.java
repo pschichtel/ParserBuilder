@@ -24,8 +24,6 @@ package de.cubeisland.engine.parser.rule.token;
 
 import de.cubeisland.engine.parser.rule.token.automate.action.TokenAction;
 
-import static java.util.regex.Pattern.compile;
-
 public class SimpleTokenClass extends ReadableTokenClass
 {
     private static final TokenAction ACTION = new SimpleTokenAction();

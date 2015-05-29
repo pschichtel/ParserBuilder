@@ -124,6 +124,7 @@ public final class CharBuffer
      * O(n)
      *
      * @param n the number of elements to peek ahead of the current element
+     *
      * @return the element that is n positions behind the current element
      */
     public char peekAhead(int n)

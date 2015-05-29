@@ -25,7 +25,6 @@ package de.cubeisland.engine.parser.rule.token.automate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;

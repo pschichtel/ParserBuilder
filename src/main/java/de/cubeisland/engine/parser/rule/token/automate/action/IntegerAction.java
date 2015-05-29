@@ -22,11 +22,16 @@
  */
 package de.cubeisland.engine.parser.rule.token.automate.action;
 
-import de.cubeisland.engine.parser.rule.token.*;
+import de.cubeisland.engine.parser.rule.token.ParametrizedToken;
+import de.cubeisland.engine.parser.rule.token.ParametrizedTokenClass;
+import de.cubeisland.engine.parser.rule.token.Token;
+import de.cubeisland.engine.parser.rule.token.TokenClass;
 
-public class IntegerAction implements TokenAction {
+public class IntegerAction implements TokenAction
+{
     @Override
-    public Token act(TokenClass tokenClass, String lexeme) {
+    public Token act(TokenClass tokenClass, String lexeme)
+    {
         // TODO proper typing
         return new ParametrizedToken<Integer>((ParametrizedTokenClass<Integer>)tokenClass, Integer.parseInt(lexeme));
     }
