@@ -86,10 +86,15 @@ public class TransitionMap
 
     public ExpectedTransition getTransitionFor(char c)
     {
+        return getTransitionFor(c, getWildcard());
+    }
+
+    ExpectedTransition getTransitionFor(char c, ExpectedTransition def)
+    {
         ExpectedTransition transition = this.charTransitions.get(c);
         if (transition == null)
         {
-            transition = getWildcard();
+            return def;
         }
         return transition;
     }

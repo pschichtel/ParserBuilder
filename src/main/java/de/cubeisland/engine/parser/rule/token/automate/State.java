@@ -32,7 +32,7 @@ public class State
 
     public State transition(DFA a, char c)
     {
-        return a.getBy(this, c);
+        return a.transition(this, c);
     }
 
     public State transition(DFA a)

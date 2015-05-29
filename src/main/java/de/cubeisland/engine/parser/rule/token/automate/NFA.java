@@ -203,7 +203,7 @@ public class NFA extends FiniteAutomate<Transition>
             {
                 continue;
             }
-            for (final ExpectedTransition transition : map.getExplicitTransitionsFor(c))
+            for (final ExpectedTransition transition : map.getTransitionsFor(c, Collections.<ExpectedTransition>emptySet()))
             {
                 out.add(transition.getDestination());
             }

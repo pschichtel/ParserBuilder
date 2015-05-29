@@ -105,22 +105,17 @@ final class TransitionMultiMap
         return new TransitionMultiMap(expectedTransitions, wildcard, spontaneousTransitions, expectedChars);
     }
 
-    public Set<ExpectedTransition> getExplicitTransitionsFor(char c)
-    {
-        final Set<ExpectedTransition> transitions = this.expectedTransitions.get(c);
-        if (transitions == null)
-        {
-            return emptySet();
-        }
-        return transitions;
-    }
-
     public Set<ExpectedTransition> getTransitionsFor(char c)
     {
-        Set<ExpectedTransition> transitions = getExplicitTransitionsFor(c);
-        if (transitions.isEmpty())
+        return getTransitionsFor(c, this.wildcardSet);
+    }
+
+    public Set<ExpectedTransition> getTransitionsFor(char c, Set<ExpectedTransition> def)
+    {
+        Set<ExpectedTransition> transitions = expectedTransitions.get(c);
+        if (transitions == null)
         {
-            return this.wildcardSet;
+            return def;
         }
         return transitions;
     }

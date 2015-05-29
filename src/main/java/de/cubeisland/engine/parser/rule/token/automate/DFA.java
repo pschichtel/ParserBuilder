@@ -79,9 +79,24 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         return transitionMap.getTransitionFor(c);
     }
 
-    public State getBy(State s, char c)
+    public State transition(State s, char c)
     {
         Transition t = getTransitionFor(s, c);
+        if (t == null)
+        {
+            return ERROR;
+        }
+        return t.getDestination();
+    }
+
+    private State transitionExplicit(State s, char c)
+    {
+        TransitionMap transitionMap = this.transitionLookup.get(s);
+        if (transitionMap == null)
+        {
+            return ERROR;
+        }
+        ExpectedTransition t = transitionMap.getTransitionFor(c, null);
         if (t == null)
         {
             return ERROR;
@@ -203,8 +218,8 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
             // check against alphabet
             for (final char c : alphabet)
             {
-                aNext = a.transition(self, c);
-                bNext = b.transition(other, c);
+                aNext = self.transitionExplicit(a, c);
+                bNext = other.transitionExplicit(b, c);
                 if (aNext != ERROR || bNext != ERROR)
                 {
                     if (aNext == ERROR)

@@ -245,11 +245,11 @@ public class DFATest
         assertTrue("union: bb", matchAgainstString(union, "bb"));
         assertTrue("union: abb", matchAgainstString(union, "abb"));
         assertTrue("union: bba", matchAgainstString(union, "bba"));
-        //assertTrue("union: bab", matchAgainstString(union, "bab"));
-        assertFalse("union: baa", matchAgainstString(union, "baa"));
-        assertFalse("union: aab", matchAgainstString(union, "aab"));
-        assertFalse("union: aba", matchAgainstString(union, "aba"));
-        //assertFalse("union: aa", matchAgainstString(union, "aa"));
+        assertTrue("union: bab", matchAgainstString(union, "bab"));
+        assertTrue("union: baa", matchAgainstString(union, "baa"));
+        assertTrue("union: aab", matchAgainstString(union, "aab"));
+        assertTrue("union: aba", matchAgainstString(union, "aba"));
+        assertTrue("union: aa", matchAgainstString(union, "aa"));
         assertTrue("union: ab", matchAgainstString(union, "ab"));
         assertTrue("union: a", matchAgainstString(union, "a"));
 
@@ -262,9 +262,9 @@ public class DFATest
         assertTrue("intersection: abb", matchAgainstString(intersection, "abb"));
         assertTrue("intersection: bba", matchAgainstString(intersection, "bba"));
         assertTrue("intersection: bab", matchAgainstString(intersection, "bab"));
-        assertFalse("intersection: baa", matchAgainstString(intersection, "baa"));
-        assertFalse("intersection: aab", matchAgainstString(intersection, "aab"));
-        assertFalse("intersection: aba", matchAgainstString(intersection, "aba"));
+        assertTrue("intersection: baa", matchAgainstString(intersection, "baa"));
+        assertTrue("intersection: aab", matchAgainstString(intersection, "aab"));
+        assertTrue("intersection: aba", matchAgainstString(intersection, "aba"));
         assertFalse("intersection: aa", matchAgainstString(intersection, "aa"));
         assertFalse("intersection: ab", matchAgainstString(intersection, "ab"));
         assertFalse("intersection: a", matchAgainstString(intersection, "a"));
@@ -281,7 +281,7 @@ public class DFATest
         assertFalse("difference: baa", matchAgainstString(difference, "baa"));
         assertFalse("difference: aab", matchAgainstString(difference, "aab"));
         assertFalse("difference: aba", matchAgainstString(difference, "aba"));
-        assertFalse("difference: aa", matchAgainstString(difference, "aa"));
+        assertTrue("difference: aa", matchAgainstString(difference, "aa"));
         assertTrue("difference: ab", matchAgainstString(difference, "ab"));
         assertTrue("difference: a", matchAgainstString(difference, "a"));
     }
@@ -295,7 +295,8 @@ public class DFATest
             evaluator.transition(c);
             System.out.print(" --" + c + "--> " + evaluator);
         }
-        System.out.println();
-        return evaluator.isCurrentAccepting();
+        final boolean accepted = evaluator.isCurrentAccepting();
+        System.out.println("  " + (accepted ? "✓" : "X"));
+        return accepted;
     }
 }
