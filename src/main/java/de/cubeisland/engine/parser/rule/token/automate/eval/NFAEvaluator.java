@@ -20,21 +20,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.eval;
 
-public class ErrorState extends State
+import java.util.Set;
+import de.cubeisland.engine.parser.rule.token.automate.NFA;
+import de.cubeisland.engine.parser.rule.token.automate.State;
+
+public class NFAEvaluator implements StateMachineEvaluator
 {
-    public static final ErrorState ERROR = new ErrorState();
+    private final NFA automate;
+    private Set<State> currentStates;
+    private boolean currentlyAccepting;
+
+    public NFAEvaluator(NFA automate)
+    {
+        this.automate = automate;
+        this.currentStates = automate.getStartStates();
+        this.currentlyAccepting = automate.isAccepting(this.currentStates);
+    }
 
     @Override
-    public State transition(DFA a, char c)
+    public boolean transition(char c)
     {
-        return this;
+        this.currentStates = this.automate.transition(this.currentStates, c);
+        this.currentlyAccepting = this.automate.isAccepting(this.currentStates);
+        return isCurrentAccepting();
+    }
+
+    @Override
+    public boolean isCurrentAccepting()
+    {
+        return this.currentlyAccepting;
     }
 
     @Override
     public String toString()
     {
-        return "State(ERROR)";
+        return this.currentStates.toString();
     }
 }

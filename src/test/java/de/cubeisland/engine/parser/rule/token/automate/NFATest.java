@@ -33,6 +33,7 @@ import org.junit.Test;
 import java.util.Set;
 
 import static de.cubeisland.engine.parser.Util.asSet;
+import static de.cubeisland.engine.parser.util.PrintingUtil.printAutomate;
 
 public class NFATest
 {
@@ -101,5 +102,17 @@ public class NFATest
     public void testToDFA2() throws Exception
     {
         PrintingUtil.printAutomate("toDFA", stroetiExample43.toDFA());
+    }
+
+    @Test
+    public void testWithWildcardToDFA() throws Exception
+    {
+        printAutomate("wildcard match", Matcher.matchWildcard());
+        final NFA a = Matcher.matchWildcard().and(Matcher.matchWildcard());
+        //final NFA a = Matcher.matchAll('a').and(Matcher.matchAll('a'));
+        printAutomate("a", a);
+        DFA dfa = a.toDFA();
+        printAutomate("a as DFA", dfa);
+        printAutomate("a as minimized DFA", dfa.minimize());
     }
 }

@@ -29,11 +29,14 @@ import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
+import de.cubeisland.engine.parser.util.OrderedPair;
+import de.cubeisland.engine.parser.util.Pair;
 import de.cubeisland.engine.parser.util.UnorderedPair;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -75,7 +78,7 @@ public abstract class FiniteAutomate<T extends Transition>
             {
                 Set<State> out = new HashSet<State>();
 
-                for (T t : getTransitions())
+                for (Transition t : getTransitions())
                 {
                     if (t.getOrigin() == in)
                     {
@@ -162,11 +165,6 @@ public abstract class FiniteAutomate<T extends Transition>
         return new NFA(states, transitions, start, asSet(accept));
     }
 
-    public NFA without(FiniteAutomate<? extends Transition> other)
-    {
-        throw new UnsupportedOperationException("Not implemented yet!"); // TODO implement me
-    }
-
     public NFA kleenePlus()
     {
         final Set<State> states = new HashSet<State>(getStates());
@@ -187,21 +185,14 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public NFA kleeneStar()
     {
-        final Set<State> states = new HashSet<State>(getStates());
-        final Set<Transition> transitions = new HashSet<Transition>(getTransitions());
-
-        final State start = new State();
-        final State accept = new State();
-
-        transitions.add(new SpontaneousTransition(start, accept));
-        transitions.add(new SpontaneousTransition(start, getStartState()));
-        for (State state : getAcceptingStates())
+        final NFA base = kleenePlus();
+        final Set<Transition> transitions = new HashSet<Transition>(base.getTransitions());
+        for (final State state : base.getAcceptingStates())
         {
-            transitions.add(new SpontaneousTransition(state, getStartState()));
-            transitions.add(new SpontaneousTransition(state, accept));
+            transitions.add(new SpontaneousTransition(base.getStartState(), state));
         }
 
-        return new NFA(states, transitions, start, asSet(accept));
+        return new NFA(base.getStates(), transitions, base.getStartState(), base.getAcceptingStates());
     }
 
     public NFA repeat(int n)
@@ -259,7 +250,7 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public boolean isAccepting(State s)
     {
-        return getAcceptingStates().contains(s);
+        return s != ERROR && getAcceptingStates().contains(s);
     }
 
     public Set<State> getReachableStates()
@@ -269,6 +260,10 @@ public abstract class FiniteAutomate<T extends Transition>
 
     public DFA minimize()
     {
+        if (isEmpty())
+        {
+            return DFA.EMPTY;
+        }
         DFA self = toDFA();
         final Set<State> states = new HashSet<State>(self.getReachableStates());
         final Set<ExpectedTransition> transitions = new CopyOnWriteArraySet<ExpectedTransition>(self.getTransitions());
@@ -417,8 +412,10 @@ public abstract class FiniteAutomate<T extends Transition>
             return false;
         }
 
-        // TODO implement me properly
-        return false;
+        final DFA self = toDFA();
+        final DFA other = ((FiniteAutomate<? extends Transition>)o).toDFA();
+
+        return self.without(other).isEmpty() && other.without(self).isEmpty();
     }
 
     @Override
@@ -465,5 +462,32 @@ public abstract class FiniteAutomate<T extends Transition>
             t.add(transition);
         }
         return stateTransitions;
+    }
+
+    public enum Combination
+    {
+        UNION {
+            @Override
+            public boolean isAccepting(boolean a, boolean b)
+            {
+                return a || b;
+            }
+        },
+        INTERSECTION {
+            @Override
+            public boolean isAccepting(boolean a, boolean b)
+            {
+                return a && b;
+            }
+        },
+        DIFFERENCE {
+            @Override
+            public boolean isAccepting(boolean a, boolean b)
+            {
+                return a && !b;
+            }
+        };
+
+        public abstract boolean isAccepting(boolean a, boolean b);
     }
 }

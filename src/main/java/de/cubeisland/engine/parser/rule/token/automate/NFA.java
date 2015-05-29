@@ -1,17 +1,17 @@
 /**
  * The MIT License
  * Copyright (c) 2014 Cube Island
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,13 +27,18 @@ import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTrans
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.SpontaneousTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
+import de.cubeisland.engine.parser.util.OrderedPair;
+import de.cubeisland.engine.parser.util.Pair;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -141,6 +146,37 @@ public class NFA extends FiniteAutomate<Transition>
         return epsilonClosure(read(states, c));
     }
 
+    private Set<State> transitionExplicit(Set<State> states, char c)
+    {
+        return epsilonClosure(readExplicit(states, c));
+    }
+
+    private Set<State> transition(Set<State> states)
+    {
+        return epsilonClosure(read(states));
+    }
+
+    private Set<State> read(Set<State> states)
+    {
+        Set<State> out = new HashSet<State>();
+
+        for (State state : states)
+        {
+            final TransitionMultiMap map = this.transitionLookup.get(state);
+            if (map == null)
+            {
+                continue;
+            }
+            final WildcardTransition wildcard = map.getWildcard();
+            if (wildcard != null)
+            {
+                out.add(wildcard.getDestination());
+            }
+        }
+
+        return out;
+    }
+
     private Set<State> read(Set<State> states, char c)
     {
         Set<State> out = new HashSet<State>();
@@ -148,6 +184,26 @@ public class NFA extends FiniteAutomate<Transition>
         for (State state : states)
         {
             for (ExpectedTransition transition : getExpectedTransitionsFor(state, c))
+            {
+                out.add(transition.getDestination());
+            }
+        }
+
+        return out;
+    }
+
+    private Set<State> readExplicit(Set<State> states, char c)
+    {
+        Set<State> out = new HashSet<State>();
+
+        for (State state : states)
+        {
+            final TransitionMultiMap map = this.transitionLookup.get(state);
+            if (map == null)
+            {
+                continue;
+            }
+            for (final ExpectedTransition transition : map.getExplicitTransitionsFor(c))
             {
                 out.add(transition.getDestination());
             }
@@ -167,7 +223,20 @@ public class NFA extends FiniteAutomate<Transition>
         }
         return false;
     }
-    // TODO wildcards!
+
+    private boolean willAccept(Set<State> newState)
+    {
+        final Set<State> accept = getAcceptingStates();
+        for (final State state : newState)
+        {
+            if (accept.contains(state))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public DFA toDFA()
     {
@@ -176,54 +245,74 @@ public class NFA extends FiniteAutomate<Transition>
         final State start = getStartState();
         final Set<State> accepting = new HashSet<State>();
 
-
         Map<Set<State>, State> knownStates = new HashMap<Set<State>, State>();
-        Stack<State> checkStates = new Stack<State>();
-        Stack<Set<State>> checkStateSets = new Stack<Set<State>>();
-
+        Queue<Pair<State, Set<State>>> stateQueue = new LinkedList<Pair<State, Set<State>>>();
 
         Set<State> initialClosure = getStartStates();
         System.out.println("1. " + start + " = ec(" + start + ") = " + initialClosure);
-        checkStates.push(start);
-        checkStateSets.push(initialClosure);
+        stateQueue.offer(new OrderedPair<State, Set<State>>(start, initialClosure));
         knownStates.put(initialClosure, start);
-        for (State acceptingState : getAcceptingStates())
+        if (willAccept(initialClosure))
         {
-            if (initialClosure.contains(acceptingState))
-            {
-                accepting.add(start);
-                break;
-            }
+            accepting.add(start);
         }
 
         int i = 1;
-        while (!checkStates.empty())
+        while (!stateQueue.isEmpty())
         {
-            final State state = checkStates.pop();
-            final Set<State> stateSet = checkStateSets.pop();
+            final Pair<State, Set<State>> pair = stateQueue.poll();
+            final State state = pair.getLeft();
+            final Set<State> stateSet = pair.getRight();
+
+            // check for wildcard edges
+            Set<State> newStateSet = transition(stateSet);
+            System.out.print((++i) + ". Δ(" + state + ", *) = " + newStateSet);
+
+            if (!newStateSet.isEmpty())
+            {
+                State alreadyKnown = knownStates.get(newStateSet);
+                if (alreadyKnown == null)
+                {
+                    State newState = new State();
+                    states.add(newState);
+                    stateQueue.offer(new OrderedPair<State, Set<State>>(newState, newStateSet));
+                    knownStates.put(newStateSet, newState);
+                    transitions.add(new WildcardTransition(state, newState));
+                    System.out.println(" = " + newState);
+                    if (willAccept(newStateSet))
+                    {
+                        accepting.add(newState);
+                    }
+                }
+                else
+                {
+                    transitions.add(new WildcardTransition(state, alreadyKnown));
+                    System.out.println(" = " + alreadyKnown);
+                }
+            }
+
+            // check for explicit edges
             for (char c : alphabetFor(stateSet))
             {
-                Set<State> newStateSet = transition(stateSet, c);
+                newStateSet = transitionExplicit(stateSet, c);
                 System.out.print((++i) + ". Δ(" + state + ", " + c + ") = " + newStateSet);
+                if (newStateSet.isEmpty())
+                {
+                    continue;
+                }
 
                 State alreadyKnown = knownStates.get(newStateSet);
                 if (alreadyKnown == null)
                 {
                     State newState = new State();
                     states.add(newState);
-                    checkStates.push(newState);
-                    checkStateSets.push(newStateSet);
+                    stateQueue.offer(new OrderedPair<State, Set<State>>(newState, newStateSet));
                     knownStates.put(newStateSet, newState);
                     transitions.add(new CharacterTransition(state, c, newState));
                     System.out.println(" = " + newState);
-
-                    for (State acceptingState : getAcceptingStates())
+                    if (willAccept(newStateSet))
                     {
-                        if (newStateSet.contains(acceptingState))
-                        {
-                            accepting.add(newState);
-                            break;
-                        }
+                        accepting.add(newState);
                     }
                 }
                 else

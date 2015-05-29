@@ -20,21 +20,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.eval;
 
-public class ErrorState extends State
+public interface StateMachineEvaluator
 {
-    public static final ErrorState ERROR = new ErrorState();
-
-    @Override
-    public State transition(DFA a, char c)
-    {
-        return this;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "State(ERROR)";
-    }
+    boolean transition(char c);
+    boolean isCurrentAccepting();
 }

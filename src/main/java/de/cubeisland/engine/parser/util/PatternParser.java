@@ -43,12 +43,12 @@ import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 
 public class PatternParser
 {
-    public static DFA toDFA(Pattern pattern)
+    public static DFA toDFA(String pattern)
     {
         return toNFA(pattern).toDFA();
     }
 
-    public static NFA toNFA(Pattern pattern)
+    public static NFA toNFA(String pattern)
     {
         return readExpression(new CharacterStream(new CharSequenceSource(pattern.toString())), 0);
     }

@@ -41,10 +41,10 @@ public abstract class Matcher
 
     public static DFA matchWildcard()
     {
-        final State state = new State();
-        final ExpectedTransition t = new WildcardTransition(state, state);
-        final Set<State> states = asSet(state);
-        return new DFA(states, asSet(t), state, states);
+        final State start = new State();
+        final State accept = new State();
+        final ExpectedTransition t = new WildcardTransition(start, accept);
+        return new DFA(asSet(start, accept), asSet(t), start, asSet(accept));
     }
 
     public static DFA match(String s)
@@ -85,8 +85,13 @@ public abstract class Matcher
         return new DFA(asSet(start, end), transitions, start, asSet(end));
     }
 
+    public static DFA matchJavaCompatibleRegex(String regex)
+    {
+        return PatternParser.toDFA(regex).minimize();
+    }
+
     public static DFA match(Pattern pattern)
     {
-        return PatternParser.toDFA(pattern).minimize();
+        return matchJavaCompatibleRegex(pattern.toString());
     }
 }

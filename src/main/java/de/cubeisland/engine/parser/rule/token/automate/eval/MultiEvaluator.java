@@ -20,21 +20,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.eval;
 
-public class ErrorState extends State
+import java.util.HashSet;
+import java.util.Set;
+
+public class MultiEvaluator implements StateMachineEvaluator
 {
-    public static final ErrorState ERROR = new ErrorState();
+    private final Set<StateMachineEvaluator> evaluators;
+    private boolean currentlyAccepting;
 
-    @Override
-    public State transition(DFA a, char c)
+    public MultiEvaluator(Set<StateMachineEvaluator> evaluators)
     {
-        return this;
+        this.evaluators = new HashSet<StateMachineEvaluator>(evaluators);
+
+        this.currentlyAccepting = true;
+        for (final StateMachineEvaluator evaluator : evaluators)
+        {
+            if (!evaluator.isCurrentAccepting())
+            {
+                this.currentlyAccepting = false;
+                break;
+            }
+        }
     }
 
     @Override
-    public String toString()
+    public boolean transition(char c)
     {
-        return "State(ERROR)";
+        this.currentlyAccepting = true;
+        for (final StateMachineEvaluator evaluator : evaluators)
+        {
+            if (!evaluator.transition(c))
+            {
+                this.currentlyAccepting = false;
+                break;
+            }
+        }
+        return isCurrentAccepting();
+    }
+
+    @Override
+    public boolean isCurrentAccepting()
+    {
+        return this.currentlyAccepting;
     }
 }

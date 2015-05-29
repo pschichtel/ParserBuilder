@@ -26,14 +26,14 @@ import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTrans
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
-import de.cubeisland.engine.parser.util.UnorderedPair;
-
+import de.cubeisland.engine.parser.util.OrderedPair;
+import de.cubeisland.engine.parser.util.Pair;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.rule.token.automate.ErrorState.ERROR;
@@ -129,7 +129,6 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         final State start = getStartState();
         final Set<State> accepting = getAcceptingStates();
 
-
         final State catchAll = new State();
         states.add(catchAll);
 
@@ -151,5 +150,111 @@ public class DFA extends FiniteAutomate<ExpectedTransition>
         }
 
         return new DFA(states, transitions, start, accepting);
+    }
+
+    public DFA combine(FiniteAutomate<? extends Transition> o, Combination combination)
+    {
+        final DFA self = toDFA();
+        final DFA other = o.toDFA();
+        Map<Pair<State, State>, State> stateMap = new HashMap<Pair<State, State>, State>();
+        final Set<State> accepting = new HashSet<State>();
+
+        Set<Character> alphabet = new HashSet<Character>(self.getExplicitAlphabet());
+        alphabet.addAll(other.getExplicitAlphabet());
+
+        for (final State selfState : self.getStates())
+        {
+            for (final State otherState : other.getStates())
+            {
+                final State newState = new State();
+                stateMap.put(new OrderedPair<State, State>(selfState, otherState), newState);
+                if (combination.isAccepting(self.isAccepting(selfState), other.isAccepting(otherState)))
+                {
+                    accepting.add(newState);
+                }
+            }
+        }
+        final State start = stateMap.get(new OrderedPair<State, State>(self.getStartState(), other.getStartState()));
+
+        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        for (final Entry<Pair<State, State>, State> e : stateMap.entrySet())
+        {
+            final State a = e.getKey().getLeft();
+            final State b = e.getKey().getRight();
+            final State ab = e.getValue();
+
+            /// check against wildcard
+            State aNext = a.transition(self);
+            State bNext = b.transition(other);
+            if (aNext != ERROR || bNext != ERROR)
+            {
+                if (aNext == ERROR)
+                {
+                    aNext = a;
+                }
+                if (bNext == ERROR)
+                {
+                    bNext = b;
+                }
+                final State abNext = stateMap.get(new OrderedPair<State, State>(aNext, bNext));
+                transitions.add(new WildcardTransition(ab, abNext));
+            }
+
+            // check against alphabet
+            for (final char c : alphabet)
+            {
+                aNext = a.transition(self, c);
+                bNext = b.transition(other, c);
+                if (aNext != ERROR || bNext != ERROR)
+                {
+                    if (aNext == ERROR)
+                    {
+                        aNext = a;
+                    }
+                    if (bNext == ERROR)
+                    {
+                        bNext = b;
+                    }
+                    final State abNext = stateMap.get(new OrderedPair<State, State>(aNext, bNext));
+
+                    // if there is already a wildcard between these states, another explicit transition is useless
+                    boolean wildcardExisting = false;
+                    for (final ExpectedTransition transition : transitions)
+                    {
+                        if (transition instanceof WildcardTransition)
+                        {
+                            WildcardTransition w = (WildcardTransition)transition;
+                            if (w.getOrigin() == ab && w.getDestination() == abNext)
+                            {
+                                wildcardExisting = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!wildcardExisting)
+                    {
+                        transitions.add(new CharacterTransition(ab, c, abNext));
+                    }
+                }
+            }
+        }
+
+
+        return new DFA(new HashSet<State>(stateMap.values()), transitions, start, accepting);
+    }
+
+    public DFA union(FiniteAutomate<? extends Transition> other)
+    {
+        return combine(other, Combination.UNION);
+    }
+
+    public DFA intersectWith(FiniteAutomate<? extends Transition> other)
+    {
+        return combine(other, Combination.INTERSECTION);
+    }
+
+    public DFA without(FiniteAutomate<? extends Transition> other)
+    {
+        return combine(other, Combination.DIFFERENCE);
     }
 }

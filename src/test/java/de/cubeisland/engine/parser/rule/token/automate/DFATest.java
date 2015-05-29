@@ -23,8 +23,11 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.Util;
+import de.cubeisland.engine.parser.rule.token.automate.eval.Evaluator;
+import de.cubeisland.engine.parser.rule.token.automate.eval.StateMachineEvaluator;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
+import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 import org.junit.Test;
 
@@ -34,6 +37,7 @@ import java.util.Set;
 import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.util.PrintingUtil.printAutomate;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -142,14 +146,156 @@ public class DFATest
         transitions.add(new WildcardTransition(s0, s1));
         transitions.add(new WildcardTransition(s1, s2));
         transitions.add(new WildcardTransition(s2, s0));
-//        transitions.add(new CharacterTransition(s0, 'a', s1));
-//        transitions.add(new CharacterTransition(s1, 'a', s2));
-//        transitions.add(new CharacterTransition(s2, 'a', s0));
 
         DFA a = new DFA(states, transitions, s0, states);
         DFA aMin = a.minimize();
 
         printAutomate("a unminimized", a);
         printAutomate("a minimized", aMin);
+    }
+
+    @Test
+    public void testCombine() throws Exception
+    {
+        State _1 = new NamedState("1");
+        State _2 = new NamedState("2");
+        State A = new NamedState("A");
+        State B = new NamedState("B");
+        State C = new NamedState("C");
+
+        DFA a1 = new DFA(asSet(_1, _2), Util.<ExpectedTransition>asSet(new CharacterTransition(_1, 'a', _2)), _1, asSet(_2));
+        DFA a2 = new DFA(asSet(A, B, C), Util.<ExpectedTransition>asSet(
+            new CharacterTransition(A, 'b', B),
+            new CharacterTransition(B, 'b', C)
+                                                                       ), A, asSet(C));
+
+        printAutomate("a1", a1);
+        printAutomate("a2", a2);
+
+        final DFA union = a1.union(a2);
+        printAutomate("a1 union a2", union);
+        assertFalse("union: b", matchAgainstString(union, "b"));
+        assertTrue("union: ba", matchAgainstString(union, "ba"));
+        assertTrue("union: bb", matchAgainstString(union, "bb"));
+        assertTrue("union: abb", matchAgainstString(union, "abb"));
+        assertTrue("union: bba", matchAgainstString(union, "bba"));
+        assertTrue("union: bab", matchAgainstString(union, "bab"));
+        assertFalse("union: baa", matchAgainstString(union, "baa"));
+        assertFalse("union: aab", matchAgainstString(union, "aab"));
+        assertFalse("union: aba", matchAgainstString(union, "aba"));
+        assertFalse("union: aa", matchAgainstString(union, "aa"));
+        assertTrue("union: ab", matchAgainstString(union, "ab"));
+        assertTrue("union: a", matchAgainstString(union, "a"));
+
+
+        final DFA intersection = a1.intersectWith(a2);
+        printAutomate("a1 intersected by a2", intersection);
+        assertFalse("intersection: b", matchAgainstString(intersection, "b"));
+        assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
+        assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
+        assertTrue("intersection: abb", matchAgainstString(intersection, "abb"));
+        assertTrue("intersection: bba", matchAgainstString(intersection, "bba"));
+        assertTrue("intersection: bab", matchAgainstString(intersection, "bab"));
+        assertFalse("intersection: baa", matchAgainstString(intersection, "baa"));
+        assertFalse("intersection: aab", matchAgainstString(intersection, "aab"));
+        assertFalse("intersection: aba", matchAgainstString(intersection, "aba"));
+        assertFalse("intersection: aa", matchAgainstString(intersection, "aa"));
+        assertFalse("intersection: ab", matchAgainstString(intersection, "ab"));
+        assertFalse("intersection: a", matchAgainstString(intersection, "a"));
+
+
+        final DFA difference = a1.without(a2);
+        printAutomate("a1 without a2", difference);
+        assertFalse("difference: b", matchAgainstString(difference, "b"));
+        assertTrue("difference: ba", matchAgainstString(difference, "ba"));
+        assertFalse("difference: bb", matchAgainstString(difference, "bb"));
+        assertFalse("difference: abb", matchAgainstString(difference, "abb"));
+        assertFalse("difference: bba", matchAgainstString(difference, "bba"));
+        assertFalse("difference: bab", matchAgainstString(difference, "bab"));
+        assertFalse("difference: baa", matchAgainstString(difference, "baa"));
+        assertFalse("difference: aab", matchAgainstString(difference, "aab"));
+        assertFalse("difference: aba", matchAgainstString(difference, "aba"));
+        assertFalse("difference: aa", matchAgainstString(difference, "aa"));
+        assertTrue("difference: ab", matchAgainstString(difference, "ab"));
+        assertTrue("difference: a", matchAgainstString(difference, "a"));
+    }
+
+    @Test
+    public void testCombineWithWildcard() throws Exception
+    {
+        State _1 = new NamedState("1");
+        State _2 = new NamedState("2");
+        State A = new NamedState("A");
+        State B = new NamedState("B");
+        State C = new NamedState("C");
+
+        DFA a1 = new DFA(asSet(_1, _2), Util.<ExpectedTransition>asSet(new CharacterTransition(_1, 'a', _2)), _1, asSet(_2));
+        DFA a2 = new DFA(asSet(A, B, C), Util.<ExpectedTransition>asSet(
+            new WildcardTransition(A, B),
+            new WildcardTransition(B, C)
+        ), A, asSet(C));
+
+        printAutomate("a1", a1);
+        printAutomate("a2", a2);
+
+        final DFA union = a1.union(a2);
+        printAutomate("a1 union a2", union);
+        assertFalse("union: b", matchAgainstString(union, "b"));
+        assertTrue("union: ba", matchAgainstString(union, "ba"));
+        assertTrue("union: bb", matchAgainstString(union, "bb"));
+        assertTrue("union: abb", matchAgainstString(union, "abb"));
+        assertTrue("union: bba", matchAgainstString(union, "bba"));
+        //assertTrue("union: bab", matchAgainstString(union, "bab"));
+        assertFalse("union: baa", matchAgainstString(union, "baa"));
+        assertFalse("union: aab", matchAgainstString(union, "aab"));
+        assertFalse("union: aba", matchAgainstString(union, "aba"));
+        //assertFalse("union: aa", matchAgainstString(union, "aa"));
+        assertTrue("union: ab", matchAgainstString(union, "ab"));
+        assertTrue("union: a", matchAgainstString(union, "a"));
+
+
+        final DFA intersection = a1.intersectWith(a2);
+        printAutomate("a1 intersected by a2", intersection);
+        assertFalse("intersection: b", matchAgainstString(intersection, "b"));
+        assertFalse("intersection: ba", matchAgainstString(intersection, "ba"));
+        assertFalse("intersection: bb", matchAgainstString(intersection, "bb"));
+        assertTrue("intersection: abb", matchAgainstString(intersection, "abb"));
+        assertTrue("intersection: bba", matchAgainstString(intersection, "bba"));
+        assertTrue("intersection: bab", matchAgainstString(intersection, "bab"));
+        assertFalse("intersection: baa", matchAgainstString(intersection, "baa"));
+        assertFalse("intersection: aab", matchAgainstString(intersection, "aab"));
+        assertFalse("intersection: aba", matchAgainstString(intersection, "aba"));
+        assertFalse("intersection: aa", matchAgainstString(intersection, "aa"));
+        assertFalse("intersection: ab", matchAgainstString(intersection, "ab"));
+        assertFalse("intersection: a", matchAgainstString(intersection, "a"));
+
+
+        final DFA difference = a1.without(a2);
+        printAutomate("a1 without a2", difference);
+        assertFalse("difference: b", matchAgainstString(difference, "b"));
+        assertTrue("difference: ba", matchAgainstString(difference, "ba"));
+        assertFalse("difference: bb", matchAgainstString(difference, "bb"));
+        assertFalse("difference: abb", matchAgainstString(difference, "abb"));
+        assertFalse("difference: bba", matchAgainstString(difference, "bba"));
+        assertFalse("difference: bab", matchAgainstString(difference, "bab"));
+        assertFalse("difference: baa", matchAgainstString(difference, "baa"));
+        assertFalse("difference: aab", matchAgainstString(difference, "aab"));
+        assertFalse("difference: aba", matchAgainstString(difference, "aba"));
+        assertFalse("difference: aa", matchAgainstString(difference, "aa"));
+        assertTrue("difference: ab", matchAgainstString(difference, "ab"));
+        assertTrue("difference: a", matchAgainstString(difference, "a"));
+    }
+
+    private static boolean matchAgainstString(FiniteAutomate<? extends Transition> automate, String str)
+    {
+        StateMachineEvaluator evaluator = Evaluator.eval(automate);
+        System.out.print(evaluator);
+        for (final char c : str.toCharArray())
+        {
+            evaluator.transition(c);
+            System.out.print(" --" + c + "--> " + evaluator);
+        }
+        System.out.println();
+        return evaluator.isCurrentAccepting();
     }
 }
