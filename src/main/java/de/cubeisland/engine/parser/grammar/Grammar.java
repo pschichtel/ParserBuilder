@@ -24,13 +24,14 @@ package de.cubeisland.engine.parser.grammar;
 
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
-import de.cubeisland.engine.parser.rule.RuleElement;
 import de.cubeisland.engine.parser.rule.token.TokenClass;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static de.cubeisland.engine.parser.grammar.GrammarUtils.allTokensOf;
+import static de.cubeisland.engine.parser.grammar.GrammarUtils.allVariablesOf;
 
 public class Grammar extends BaseGrammar
 {
@@ -61,33 +62,7 @@ public class Grammar extends BaseGrammar
 
         public Grammar startingWith(Variable start)
         {
-            return new Grammar(variables(rules), tokens(rules), rules, start);
-        }
-
-        private static Set<Variable> variables(List<Rule> rules)
-        {
-            Set<Variable> variables = new HashSet<Variable>();
-            for (final Rule rule : rules)
-            {
-                variables.add(rule.getHead());
-            }
-            return variables;
-        }
-
-        private static Set<TokenClass> tokens(List<Rule> rules)
-        {
-            HashSet<TokenClass> tokens = new HashSet<TokenClass>();
-            for (final Rule rule : rules)
-            {
-                for (final RuleElement element : rule.getBody())
-                {
-                    if (element instanceof TokenClass)
-                    {
-                        tokens.add((TokenClass)element);
-                    }
-                }
-            }
-            return tokens;
+            return new Grammar(allVariablesOf(rules), allTokensOf(rules), rules, start);
         }
     }
 }

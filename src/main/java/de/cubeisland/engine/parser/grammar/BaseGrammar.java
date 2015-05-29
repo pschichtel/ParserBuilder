@@ -25,26 +25,20 @@ package de.cubeisland.engine.parser.grammar;
 import de.cubeisland.engine.parser.Variable;
 import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.RuleElement;
-import de.cubeisland.engine.parser.rule.token.EndOfFileToken;
 import de.cubeisland.engine.parser.rule.token.TokenClass;
 import de.cubeisland.engine.parser.util.TokenString;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static de.cubeisland.engine.parser.Util.asSet;
 import static de.cubeisland.engine.parser.util.TokenString.concatMany;
 import static de.cubeisland.engine.parser.util.TokenString.str;
-import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
 public abstract class BaseGrammar
 {
-    public static final Set<TokenString> EMPTY_TOKEN_STRING_SET = Collections.unmodifiableSet(asSet(TokenString.EMPTY));
     private final Set<Variable> variables;
     private final Set<TokenClass> tokens;
     private final Set<Variable> nullables;
@@ -58,55 +52,8 @@ public abstract class BaseGrammar
         this.rules = unmodifiableList(rules);
         this.start = start;
 
-        this.nullables = nullClosure();
+        this.nullables = GrammarUtils.nullClosure(variables, rules);
 
-    }
-
-    protected Set<Variable> nullClosure()
-    {
-        Set<Variable> nullable = new HashSet<Variable>();
-        int oldSize = 0;
-        int newSize = 0;
-
-        do
-        {
-            Set<Variable> notNullVariables = new HashSet<Variable>(variables);
-            notNullVariables.removeAll(nullable);
-
-            for (Variable variable : notNullVariables)
-            {
-                Set<Rule> rulesForVar = getRulesFor(variable);
-                for (Rule rule : rulesForVar)
-                {
-                    boolean allNullable = true;
-                    for (RuleElement ruleElement : rule.getBody())
-                    {
-                        if (ruleElement instanceof TokenClass)
-                        {
-                            allNullable = false;
-                            break;
-                        }
-                        else if (ruleElement instanceof Variable && !nullable.contains(ruleElement))
-                        {
-                            allNullable = false;
-                            break;
-                        }
-                    }
-
-                    if (allNullable)
-                    {
-                        nullable.add(variable);
-                        break;
-                    }
-                }
-            }
-
-            oldSize = newSize;
-            newSize = nullable.size();
-        }
-        while (oldSize < newSize);
-
-        return nullable;
     }
 
     public Set<Variable> getVariables()
@@ -126,15 +73,7 @@ public abstract class BaseGrammar
 
     public Set<Rule> getRulesFor(Variable head)
     {
-        Set<Rule> rules = new HashSet<Rule>();
-        for (final Rule rule : this.rules)
-        {
-            if (rule.getHead() == head)
-            {
-                rules.add(rule);
-            }
-        }
-        return rules;
+        return GrammarUtils.getRulesFor(head, getRules());
     }
 
     public Map<Variable, Set<TokenString>> first()
@@ -144,57 +83,8 @@ public abstract class BaseGrammar
 
     public Map<Variable, Set<TokenString>> first(int k)
     {
-        final Map<Variable, Set<TokenString>> first = this.initializedMap();
-        final Set<TokenString> initialEmptySet = emptySet();
-
-        boolean changed;
-        do
-        {
-            changed = false;
-            for (Rule rule : this.rules)
-            {
-                Set<TokenString> ruleFirst = initialEmptySet;
-
-                for (RuleElement ruleElement : rule.getBody())
-                {
-                    if (ruleElement instanceof Variable)
-                    {
-                        ruleFirst = TokenString.concatMany(k, ruleFirst, first.get(ruleElement));
-                    }
-                    else if (ruleElement instanceof TokenClass)
-                    {
-                        final TokenClass token = (TokenClass)ruleElement;
-                        ruleFirst = TokenString.concatMany(k, ruleFirst, asSet(str(token)));
-                    }
-                }
-
-                final Set<TokenString> firstSet = first.get(rule.getHead());
-                final int oldSize = firstSet.size();
-                firstSet.addAll(ruleFirst);
-
-                if (oldSize != firstSet.size())
-                {
-                    changed = true;
-                }
-            }
-        }
-        while (changed);
-
-        return first;
+        return GrammarUtils.first(k, getVariables(), getRules());
     }
-
-    public Map<Variable, Set<TokenString>> initializedMap()
-    {
-        final Map<Variable, Set<TokenString>> initializedMap = new HashMap<Variable, Set<TokenString>>();
-
-        for (Variable variable : this.getVariables())
-        {
-            initializedMap.put(variable, new HashSet<TokenString>());
-        }
-
-        return initializedMap;
-    }
-
 
     public Map<Variable, Set<TokenString>> follow()
     {
@@ -203,71 +93,7 @@ public abstract class BaseGrammar
 
     public Map<Variable, Set<TokenString>> follow(int k)
     {
-        final Map<Variable, Set<TokenString>> follow = this.initializedMap();
-        final Map<Variable, Set<TokenString>> first = first(k);
-
-        follow.put(this.getStart(), asSet(str(EndOfFileToken.EOF)));
-
-        boolean change;
-        do
-        {
-            change = false;
-
-            for (Rule rule : this.getRules())
-            {
-                List<RuleElement> body = rule.getBody();
-
-                for (int i = 0; i < body.size(); i++)
-                {
-                    RuleElement currentElement = body.get(i);
-
-                    if (currentElement instanceof Variable)
-                    {
-
-                        final Set<TokenString> currentFollow = follow.get(currentElement);
-                        int oldSize = currentFollow.size();
-
-                        Set<TokenString> tail = firstList(k, body.subList(i+1, body.size()), first);
-
-                        Set<TokenString> newFollow = concatMany(k, tail, follow.get(rule.getHead()));
-
-                        currentFollow.addAll(newFollow);
-
-                        if (currentFollow.size() > oldSize)
-                        {
-                            change = true;
-                        }
-                    }
-                }
-            }
-        } while(change);
-
-
-        return follow;
-    }
-
-    public Set<TokenString> firstList(int k, List<RuleElement> followingElements, Map<Variable, Set<TokenString>> firstSets)
-    {
-        if (followingElements.isEmpty())
-        {
-            return EMPTY_TOKEN_STRING_SET;
-        }
-
-        RuleElement firstElement = followingElements.get(0);
-
-        if (firstElement instanceof Variable)
-        {
-            Set<TokenString> firstV = firstSets.get(firstElement);
-            Set<TokenString> firstR = firstList(k, followingElements.subList(1, followingElements.size()), firstSets);
-
-            return TokenString.concatMany(k, firstV, firstR);
-        }
-        else
-        {
-            Set<TokenString> firstR = firstList(k, followingElements.subList(1, followingElements.size()), firstSets);
-
-            return TokenString.concatMany(k, asSet(str((TokenClass) firstElement)), firstR);
-        }
+        return GrammarUtils.follow(k, getStart(), getVariables(), getRules());
     }
 
     public Set<Rule> getRulesContaining(RuleElement element)

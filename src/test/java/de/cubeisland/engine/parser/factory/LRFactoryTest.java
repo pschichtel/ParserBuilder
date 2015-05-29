@@ -61,6 +61,6 @@ public class LRFactoryTest
         ParseState newState = lr.goTo(a, initial, SimpleExpr.BGN);
         System.out.println(newState);
 
-        assertThat("LRType.goTo() did not find all productions", newState.getRules().size(), is(9));
+        assertThat("LRType.goTo() did not find all productions", newState.getMarkedRules().size(), is(9));
     }
 }

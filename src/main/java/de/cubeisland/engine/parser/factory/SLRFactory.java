@@ -22,6 +22,26 @@
  */
 package de.cubeisland.engine.parser.factory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import de.cubeisland.engine.parser.Variable;
+import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
+import de.cubeisland.engine.parser.parser.ParseState;
+import de.cubeisland.engine.parser.rule.Rule;
+import de.cubeisland.engine.parser.util.TokenString;
+
 public class SLRFactory extends LRFactory
 {
+    private Map<Variable, Set<TokenString>> follows = new HashMap<Variable, Set<TokenString>>();
+
+    @Override
+    protected Set<TokenString> getFollows(AugmentedGrammar g, ParseState state, Rule rule, int k)
+    {
+        if (this.follows.isEmpty())
+        {
+            this.follows.putAll(g.follow(k));
+        }
+        return this.follows.get(rule.getHead());
+    }
 }

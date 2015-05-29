@@ -23,9 +23,13 @@
 package de.cubeisland.engine.parser.factory;
 
 import de.cubeisland.engine.parser.*;
+import de.cubeisland.engine.parser.GotoTable.Entry;
 import de.cubeisland.engine.parser.action.Action;
+import de.cubeisland.engine.parser.action.Reduce;
+import de.cubeisland.engine.parser.action.Shift;
 import de.cubeisland.engine.parser.factory.result.CompilationResult;
 import de.cubeisland.engine.parser.grammar.AugmentedGrammar;
+import de.cubeisland.engine.parser.grammar.GrammarUtils;
 import de.cubeisland.engine.parser.parser.LRParser;
 import de.cubeisland.engine.parser.parser.ParseState;
 import de.cubeisland.engine.parser.rule.Rule;
@@ -35,11 +39,14 @@ import de.cubeisland.engine.parser.rule.token.TokenClass;
 import de.cubeisland.engine.parser.rule.token.tokenizer.AutomateTokenizer;
 import de.cubeisland.engine.parser.util.FixPoint;
 import de.cubeisland.engine.parser.util.Function;
+import de.cubeisland.engine.parser.util.TokenString;
 
 import java.util.*;
 
 import static de.cubeisland.engine.parser.Util.asSet;
+import static de.cubeisland.engine.parser.action.Accept.ACCEPT;
 import static de.cubeisland.engine.parser.factory.result.CompilationResult.success;
+import static de.cubeisland.engine.parser.grammar.GrammarUtils.allVariablesOf;
 
 public class LRFactory implements ParserFactory<LRParser>
 {
@@ -53,17 +60,56 @@ public class LRFactory implements ParserFactory<LRParser>
         final Map<ActionTable.Entry, Action> actions = new HashMap<ActionTable.Entry, Action>();
         final Map<GotoTable.Entry, ParseState> gotos = new HashMap<GotoTable.Entry, ParseState>();
 
+        Map<ParseState, ParseState> knownStates = new HashMap<ParseState, ParseState>();
+        Queue<ParseState> stateQueue = new LinkedList<ParseState>();
+        stateQueue.offer(initial);
+        while (!stateQueue.isEmpty())
+        {
+            ParseState current = stateQueue.poll();
+            for (final RuleElement element : current.getReadableElements())
+            {
+                ParseState newState = goTo(g, current, element);
+                ParseState targetState = knownStates.get(newState);
+                if (targetState == null)
+                {
+                    targetState = newState;
+                    stateQueue.offer(newState);
+                    states.add(newState);
+                    knownStates.put(newState, newState);
+                }
 
-        ParseState state = initial;
-//        while (true);
-//        {
-//
-//            Set<ParseState> parseStates = new HashSet<ParseState>();
-//            for (final RuleElement element : elements)
-//            {
-//                parseStates.add(goTo(g, state, element));
-//            }
-//        }
+                if (element instanceof TokenClass)
+                {
+                    final TokenClass token = (TokenClass)element;
+                    actions.put(new ActionTable.Entry(current, token), new Shift(targetState)); // TODO this doesn't seem right...
+                }
+                else
+                {
+                    gotos.put(new Entry(current, element), targetState);
+                }
+            }
+
+            for (final MarkedRule markedRule : current.getMarkedRules())
+            {
+                if (markedRule.isFinished())
+                {
+                    final Rule rule = markedRule.getRule();
+                    for (final TokenString followString : getFollows(g, current, rule, k))
+                    {
+                        Action action;
+                        if (rule.getHead() == g.getStart())
+                        {
+                            action = ACCEPT;
+                        }
+                        else
+                        {
+                            action = new Reduce(rule);
+                        }
+                        actions.put(new ActionTable.Entry(current, followString.tokenAt(0)), action);
+                    }
+                }
+            }
+        }
 
         return success(new LRParser(AutomateTokenizer.fromGrammar(g), states, new GotoTable(gotos), new ActionTable(actions)));
     }
@@ -73,11 +119,11 @@ public class LRFactory implements ParserFactory<LRParser>
         return new ParseState(closure(g, asSet(g.getStartRule().mark())));
     }
 
-    public ParseState goTo(AugmentedGrammar g, ParseState initial, RuleElement element)
+    public ParseState goTo(AugmentedGrammar g, ParseState current, RuleElement element)
     {
         Set<MarkedRule> consumed = new HashSet<MarkedRule>();
 
-        for (final MarkedRule rule : initial.getRules())
+        for (final MarkedRule rule : current.getMarkedRules())
         {
             if (rule.getMarkedElement() == element)
             {
@@ -85,9 +131,9 @@ public class LRFactory implements ParserFactory<LRParser>
             }
         }
 
-        if (consumed.equals(initial.getRules()))
+        if (consumed.equals(current.getMarkedRules()))
         {
-            return initial;
+            return current;
         }
 
         return new ParseState(closure(g, consumed));
@@ -111,9 +157,11 @@ public class LRFactory implements ParserFactory<LRParser>
         });
     }
 
-    protected Set<TokenClass> calculateFollows(AugmentedGrammar g, Rule rule)
+    protected Set<TokenString> getFollows(AugmentedGrammar g, ParseState state, Rule rule, int k)
     {
-        return Collections.emptySet();
+        final Variable head = rule.getHead();
+        final Set<Rule> rules = state.getRules();
+        return GrammarUtils.follow(k, head, allVariablesOf(rules), rules).get(head);
     }
 
     protected static Set<MarkedRule> markAll(Set<Rule> rules)

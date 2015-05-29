@@ -23,10 +23,16 @@
 package de.cubeisland.engine.parser.parser;
 
 import de.cubeisland.engine.parser.Identified;
+import de.cubeisland.engine.parser.rule.Rule;
 import de.cubeisland.engine.parser.rule.Rule.MarkedRule;
+import de.cubeisland.engine.parser.rule.RuleElement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableSet;
 
 public class ParseState extends Identified
@@ -38,9 +44,33 @@ public class ParseState extends Identified
         this.rules = unmodifiableSet(rules);
     }
 
-    public Set<MarkedRule> getRules()
+    public Set<MarkedRule> getMarkedRules()
     {
         return rules;
+    }
+
+    public Set<Rule> getRules()
+    {
+        Set<Rule> rawRules = new HashSet<Rule>(rules.size());
+
+        for (final MarkedRule rule : this.rules)
+        {
+            rawRules.add(rule.getRule());
+        }
+
+        return rawRules;
+    }
+
+    public Set<RuleElement> getReadableElements()
+    {
+        Set<RuleElement> readableElements = new HashSet<RuleElement>();
+
+        for (final MarkedRule markedRule : getMarkedRules())
+        {
+            readableElements.add(markedRule.getMarkedElement());
+        }
+
+        return readableElements;
     }
 
     @Override

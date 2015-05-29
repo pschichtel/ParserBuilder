@@ -39,9 +39,9 @@ public class ActionTable
         this.actions = actions;
     }
 
-    public Action resolve(ParseState state, TokenClass token)
+    public Action resolve(ParseState state, TokenClass tokenClass)
     {
-        Action action = this.actions.get(new Entry(state, token));
+        Action action = this.actions.get(new Entry(state, tokenClass));
         if (action == null)
         {
             return ERROR;
@@ -52,12 +52,12 @@ public class ActionTable
     public static final class Entry
     {
         public final ParseState state;
-        public final TokenClass spec;
+        public final TokenClass token;
 
-        public Entry(ParseState state, TokenClass spec)
+        public Entry(ParseState state, TokenClass token)
         {
             this.state = state;
-            this.spec = spec;
+            this.token = token;
         }
 
         @Override
@@ -74,7 +74,7 @@ public class ActionTable
 
             final Entry entry = (Entry)o;
 
-            if (spec != null ? !spec.equals(entry.spec) : entry.spec != null)
+            if (token != null ? !token.equals(entry.token) : entry.token != null)
             {
                 return false;
             }
@@ -90,7 +90,7 @@ public class ActionTable
         public int hashCode()
         {
             int result = state != null ? state.hashCode() : 0;
-            result = 31 * result + (spec != null ? spec.hashCode() : 0);
+            result = 31 * result + (token != null ? token.hashCode() : 0);
             return result;
         }
     }
