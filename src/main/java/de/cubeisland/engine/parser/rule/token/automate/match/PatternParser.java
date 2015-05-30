@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.util;
+package de.cubeisland.engine.parser.rule.token.automate.match;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,11 +34,14 @@ import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.source.CharSequenceSource;
 
 import static de.cubeisland.engine.parser.Util.convertCharCollectionToArray;
-import static de.cubeisland.engine.parser.rule.token.automate.Matcher.*;
+import static de.cubeisland.engine.parser.rule.token.automate.match.Matcher.*;
 import static de.cubeisland.engine.parser.rule.token.automate.NFA.EPSILON;
 
-public class PatternParser
+public abstract class PatternParser
 {
+    private PatternParser()
+    {}
+
     public static DFA toDFA(String pattern)
     {
         return toNFA(pattern).toDFA();
@@ -46,7 +49,7 @@ public class PatternParser
 
     public static NFA toNFA(String pattern)
     {
-        return readExpression(new CharacterStream(new CharSequenceSource(pattern.toString())), 0);
+        return readExpression(new CharacterStream(new CharSequenceSource(pattern)), 0);
     }
 
     private static NFA readExpression(CharacterStream stream, int depth)
@@ -96,7 +99,7 @@ public class PatternParser
         return bakeAutomate(elements);
     }
 
-    private static NFA bakeAutomate(LinkedList<FiniteAutomate<? extends Transition>> elements)
+    static NFA bakeAutomate(LinkedList<FiniteAutomate<? extends Transition>> elements)
     {
         if (elements.isEmpty())
         {
@@ -234,7 +237,7 @@ public class PatternParser
         return automate.toDFA();
     }
 
-    private static DFA readCharacter(CharacterStream s, boolean allowQuote)
+    static DFA readCharacter(CharacterStream s, boolean allowQuote)
     {
         char c = s.current();
         if (c == '\\')

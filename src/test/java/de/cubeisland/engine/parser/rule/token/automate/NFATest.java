@@ -23,6 +23,7 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import de.cubeisland.engine.parser.Util;
+import de.cubeisland.engine.parser.rule.token.automate.match.Matcher;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.SpontaneousTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;

@@ -25,6 +25,7 @@ package de.cubeisland.engine.parser.rule.token.automate;
 import de.cubeisland.engine.parser.Util;
 import de.cubeisland.engine.parser.rule.token.automate.eval.Evaluator;
 import de.cubeisland.engine.parser.rule.token.automate.eval.StateMachineEvaluator;
+import de.cubeisland.engine.parser.rule.token.automate.match.Matcher;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
@@ -146,6 +147,28 @@ public class DFATest
         transitions.add(new WildcardTransition(s0, s1));
         transitions.add(new WildcardTransition(s1, s2));
         transitions.add(new WildcardTransition(s2, s0));
+
+        DFA a = new DFA(states, transitions, s0, states);
+        DFA aMin = a.minimize();
+
+        printAutomate("a unminimized", a);
+        printAutomate("a minimized", aMin);
+    }
+
+    @Test
+    public void testMinimizeSimple() throws Exception
+    {
+        State s0 = new State();
+        State s1 = new State();
+        State s2 = new State();
+        State s3 = new State();
+        final Set<State> states = asSet(s0, s1, s2, s3);
+
+        Set<ExpectedTransition> transitions = new HashSet<ExpectedTransition>();
+        transitions.add(new CharacterTransition(s0, 'a', s1));
+        transitions.add(new CharacterTransition(s1, 'a', s2));
+        transitions.add(new CharacterTransition(s2, 'a', s3));
+        transitions.add(new WildcardTransition(s3, s0));
 
         DFA a = new DFA(states, transitions, s0, states);
         DFA aMin = a.minimize();
@@ -298,5 +321,12 @@ public class DFATest
         final boolean accepted = evaluator.isCurrentAccepting();
         System.out.println("  " + (accepted ? "✓" : "X"));
         return accepted;
+    }
+
+    @Test
+    public void testEquivalence() throws Exception
+    {
+
+
     }
 }

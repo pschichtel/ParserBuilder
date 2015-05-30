@@ -23,6 +23,7 @@
 package de.cubeisland.engine.parser.rule.token.automate;
 
 import java.util.regex.Pattern;
+import de.cubeisland.engine.parser.rule.token.automate.match.Matcher;
 import de.cubeisland.engine.parser.util.PrintingUtil;
 import org.junit.Test;
 

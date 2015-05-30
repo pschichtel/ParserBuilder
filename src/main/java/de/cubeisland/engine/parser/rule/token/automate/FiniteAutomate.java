@@ -284,7 +284,7 @@ public abstract class FiniteAutomate<T extends Transition>
         for (UnorderedPair<State, State> p : statePairs)
         {
             // separable if either left or right is accepting
-            if (isAccepting(p.getLeft()) != isAccepting(p.getRight()))
+            if (self.isAccepting(p.getLeft()) != self.isAccepting(p.getRight()))
             {
                 separableStates.add(p);
             }
@@ -397,6 +397,14 @@ public abstract class FiniteAutomate<T extends Transition>
         return disjoint(getReachableStates(), getAcceptingStates());
     }
 
+    public boolean equivalentTo(FiniteAutomate<? extends Transition> o)
+    {
+        final DFA self = toDFA();
+        final DFA other = o.toDFA();
+
+        return self.without(other).isEmpty() && other.without(self).isEmpty();
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -409,10 +417,21 @@ public abstract class FiniteAutomate<T extends Transition>
             return false;
         }
 
-        final DFA self = toDFA();
-        final DFA other = ((FiniteAutomate<? extends Transition>)o).toDFA();
+        final FiniteAutomate<?> that = (FiniteAutomate<?>)o;
 
-        return self.without(other).isEmpty() && other.without(self).isEmpty();
+        if (!states.equals(that.states))
+        {
+            return false;
+        }
+        if (!transitions.equals(that.transitions))
+        {
+            return false;
+        }
+        if (!acceptingStates.equals(that.acceptingStates))
+        {
+            return false;
+        }
+        return start.equals(that.start);
     }
 
     @Override

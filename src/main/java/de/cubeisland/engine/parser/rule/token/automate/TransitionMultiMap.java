@@ -26,14 +26,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import de.cubeisland.engine.parser.Util;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.SpontaneousTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
 
-import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 
 final class TransitionMultiMap
@@ -41,21 +39,12 @@ final class TransitionMultiMap
     private final Map<Character, Set<ExpectedTransition>> expectedTransitions;
     private final Set<SpontaneousTransition> spontaneousTransitions;
     private final Set<Character> alphabet;
-    private final WildcardTransition wildcard;
-    private final Set<ExpectedTransition> wildcardSet;
+    private final Set<WildcardTransition> wildcards;
 
-    private TransitionMultiMap(Map<Character, Set<ExpectedTransition>> expectedTransitions, WildcardTransition wildcard,
+    private TransitionMultiMap(Map<Character, Set<ExpectedTransition>> expectedTransitions, Set<WildcardTransition> wildcards,
                                Set<SpontaneousTransition> spontaneousTransitions, Set<Character> alphabet)
     {
-        this.wildcard = wildcard;
-        if (wildcard != null)
-        {
-            this.wildcardSet = unmodifiableSet(Util.<ExpectedTransition>asSet(wildcard));
-        }
-        else
-        {
-            this.wildcardSet = emptySet();
-        }
+        this.wildcards = unmodifiableSet(wildcards);
         this.expectedTransitions = expectedTransitions;
         this.spontaneousTransitions = unmodifiableSet(spontaneousTransitions);
         this.alphabet = unmodifiableSet(alphabet);
@@ -66,7 +55,7 @@ final class TransitionMultiMap
         Map<Character, Set<ExpectedTransition>> expectedTransitions = new HashMap<Character, Set<ExpectedTransition>>();
         Set<SpontaneousTransition> spontaneousTransitions = new HashSet<SpontaneousTransition>();
         Set<Character> expectedChars = new HashSet<Character>();
-        WildcardTransition wildcard = null;
+        Set<WildcardTransition> wildcards = new HashSet<WildcardTransition>();
 
         for (Transition t : transitions)
         {
@@ -88,38 +77,35 @@ final class TransitionMultiMap
             }
             else if (t instanceof WildcardTransition)
             {
-                if (wildcard != null)
-                {
-                    throw new IllegalArgumentException("There was more than one wildcard exception!");
-                }
-                wildcard = (WildcardTransition)t;
+                wildcards.add((WildcardTransition)t);
             }
             else
             {
                 throw new UnsupportedOperationException("Unknown transition type!");
             }
         }
-        return new TransitionMultiMap(expectedTransitions, wildcard, spontaneousTransitions, expectedChars);
+        return new TransitionMultiMap(expectedTransitions, wildcards, spontaneousTransitions, expectedChars);
     }
 
     public Set<ExpectedTransition> getTransitionsFor(char c)
     {
-        return getTransitionsFor(c, this.wildcardSet);
+        return getTransitionsFor(c, getWildcards());
     }
 
-    public Set<ExpectedTransition> getTransitionsFor(char c, Set<ExpectedTransition> def)
+    @SuppressWarnings("unchecked")
+    public Set<ExpectedTransition> getTransitionsFor(char c, Set<? extends ExpectedTransition> def)
     {
         Set<ExpectedTransition> transitions = expectedTransitions.get(c);
         if (transitions == null)
         {
-            return def;
+            return (Set<ExpectedTransition>)def;
         }
         return transitions;
     }
 
-    public WildcardTransition getWildcard()
+    public Set<WildcardTransition> getWildcards()
     {
-        return wildcard;
+        return this.wildcards;
     }
 
     public Set<SpontaneousTransition> getSpontaneousTransitions()

@@ -20,15 +20,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package de.cubeisland.engine.parser.rule.token.automate;
+package de.cubeisland.engine.parser.rule.token.automate.match;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import de.cubeisland.engine.parser.rule.token.automate.DFA;
+import de.cubeisland.engine.parser.rule.token.automate.State;
 import de.cubeisland.engine.parser.rule.token.automate.transition.CharacterTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.ExpectedTransition;
 import de.cubeisland.engine.parser.rule.token.automate.transition.WildcardTransition;
-import de.cubeisland.engine.parser.util.PatternParser;
 
 import static de.cubeisland.engine.parser.Util.asSet;
 

@@ -165,10 +165,9 @@ public class NFA extends FiniteAutomate<Transition>
             {
                 continue;
             }
-            final WildcardTransition wildcard = map.getWildcard();
-            if (wildcard != null)
+            for (final WildcardTransition transition : map.getWildcards())
             {
-                out.add(wildcard.getDestination());
+                out.add(transition.getDestination());
             }
         }
 

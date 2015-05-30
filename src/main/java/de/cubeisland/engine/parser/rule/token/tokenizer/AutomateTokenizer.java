@@ -35,7 +35,7 @@ import de.cubeisland.engine.parser.rule.token.TokenClass;
 import de.cubeisland.engine.parser.rule.token.Tokenizer;
 import de.cubeisland.engine.parser.rule.token.automate.DFA;
 import de.cubeisland.engine.parser.rule.token.automate.FiniteAutomate;
-import de.cubeisland.engine.parser.rule.token.automate.Matcher;
+import de.cubeisland.engine.parser.rule.token.automate.match.Matcher;
 import de.cubeisland.engine.parser.rule.token.automate.NFA;
 import de.cubeisland.engine.parser.rule.token.automate.State;
 import de.cubeisland.engine.parser.rule.token.automate.transition.Transition;
